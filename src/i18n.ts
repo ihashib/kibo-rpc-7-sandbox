@@ -1,4 +1,4 @@
-/* ---------- the language of the apps: English (the site's default) or Bangla ---------- */
+/* ---------- the language of the apps: Bangla (the site's default) or English ---------- */
 // The page decides: lang.js sets <html data-lang> before the apps load (a page without it is English, so the
 // bundle works as before when embedded elsewhere). Text in the code is written in both languages side by side,
 // English first: L('Start flying', 'ওড়া শুরু করো'). Switching language reloads the page, so the text is built once.

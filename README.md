@@ -2,7 +2,7 @@
 
 **Live: https://ihashib.github.io/kibo-rpc-7-sandbox/**
 
-Practice pages for the Kibo Robot Programming Challenge (Kibo-RPC), in Bangla and English (English by default; a button switches):
+Practice pages for the Kibo Robot Programming Challenge (Kibo-RPC), in Bangla and English (Bangla by default; a button switches, and `?lang=en` in the address opens a page in English):
 
 - **Sandbox** (`index.html`): plan a route for the robot in Kibo's module, drive it by hand, see it from the top, side, end, in 3D and through its camera, and check it against the 7th Kibo-RPC's rules.
 - **The robots**: the Int-Ball2 ball and the Astrobee cube, part by part, in 3D.

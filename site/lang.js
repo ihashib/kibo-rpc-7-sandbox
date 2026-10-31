@@ -1,5 +1,5 @@
-/* The site's language: English, unless Bangla was chosen in this tab or the address asks for one (?lang=en, ?lang=bn).
-   The choice lasts until the tab is closed (sessionStorage), so every new visit starts in English. Loaded in each page's head, before the content shows: it sets <html lang> and data-lang,
+/* The site's language: Bangla, unless English was chosen in this tab or the address asks for one (?lang=en, ?lang=bn).
+   The choice lasts until the tab is closed (sessionStorage), so every new visit starts in Bangla. Loaded in each page's head, before the content shows: it sets <html lang> and data-lang,
    which the pages' CSS (.bn and .en blocks) and the apps (L() in src/i18n.ts) follow.
 
    - The language buttons ([data-setlang]) switch. A page with an app on it reloads (the apps build their text once);
@@ -10,8 +10,8 @@
    - Anchors: an English heading's id is the Bangla one's with "en-" in front, so a link to either language's heading
      opens the one shown. A link into a folded <details> opens it. */
 (function () {
-  var KEY = 'kibo-nav-sandbox:lang', root = document.documentElement, bnTitle = null, lang = 'en';
-  try { if (sessionStorage.getItem(KEY) === 'bn') lang = 'bn'; } catch (e) { /* storage blocked: English */ }
+  var KEY = 'kibo-nav-sandbox:lang', root = document.documentElement, bnTitle = null, lang = 'bn';
+  try { if (sessionStorage.getItem(KEY) === 'en') lang = 'en'; } catch (e) { /* storage blocked: Bangla */ }
   try { localStorage.removeItem(KEY); } catch (e) { /* storage blocked */ } // a choice kept for good by older versions
   var asked = /[?&]lang=(bn|en)(?=&|$)/.exec(location.search);
   if (asked) { lang = asked[1]; save(lang); }
