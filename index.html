@@ -1,0 +1,56 @@
+<!doctype html>
+<!-- KIBO RPC 7 Nav Sandbox by ihashib · https://ihashib.github.io -->
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KIBO RPC 7 Nav Sandbox</title>
+  <meta name="title-en" content="KIBO RPC 7 Nav Sandbox">
+  <meta name="description" content="সিমুলেটর খোলার আগেই ব্রাউজারে Kibo-RPC-র মতো করে রোবট চালানোর অনুশীলন করো।">
+  <link rel="stylesheet" href="vendor/fonts.css">
+  <script src="lang.js"></script>
+  <style>
+    /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
+    html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
+    html[data-lang="bn"] body { line-height: 1.75; }
+    nav.tabs .langsw { flex: none; margin-left: auto; align-self: center; padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; color: var(--fg); font-size: 13.5px; font-weight: 600; }
+    nav.tabs .langsw:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 480px) { nav.tabs .langsw { flex: none; min-height: 32px; padding: 0 9px; margin: 0 0 0 4px; border-radius: 999px; font-size: 12.5px; } }
+    /* Phones and tablets: the language button sits above the tabs, top right, so the six tabs keep the row. */
+    @media (max-width: 860px) { main { position: relative; } nav.tabs .langsw { position: absolute; top: 1px; right: 16px; margin: 0; min-height: 0; padding: 1px 10px; font-size: 12.5px; line-height: 1.5; } }
+    @media (max-width: 380px) { html[data-lang="en"] nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    :root { color-scheme: dark; --bg: #0d1016; --fg: #e6e9f0; --muted: #9aa3b5; --border: #2c3342; --code: #161a23; --accent: #86a2ff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 24px 16px 0; }
+    .full { padding: 0 16px; }
+    .sig { max-width: 960px; margin: 0 auto; padding: 14px 16px 32px; color: var(--muted); font-size: 14px; }
+    h1 { font-size: 28px; margin: 0 0 4px; }
+    nav.tabs { display: flex; gap: 2px; margin: 0 0 18px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+    nav.tabs a { flex: none; padding: 8px 14px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; font-size: 15px; text-decoration: none; white-space: nowrap; }
+    nav.tabs a:hover { color: var(--fg); }
+    nav.tabs a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
+    nav.tabs a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    nav.tabs a:active { color: var(--fg); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    /* Phones: the tabs share the row and are full-height touch targets (44px). */
+    @media (max-width: 480px) { nav.tabs { gap: 0; } nav.tabs a { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; box-sizing: border-box; padding: 0 6px; font-size: 14px; border-radius: 8px 8px 0 0; } }
+    @media (max-width: 400px) { nav.tabs a { padding: 0 3px; font-size: 13px; min-width: 44px; flex-shrink: 0; } }
+    @media (max-width: 340px) { nav.tabs { margin-left: -8px; margin-right: -8px; } nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    /* Phones and tablets: shorter tab names so all six fit (the full name stays as the link's accessible name). */
+    nav.tabs .ts { display: none; }
+    @media (max-width: 860px) { nav.tabs .tl { display: none; } nav.tabs .ts { display: inline; } }
+    a { color: var(--accent); }
+  </style>
+  <script src="dist/kibo-nav-sandbox.js"></script>
+</head>
+<body>
+<main>
+  <nav class="tabs" aria-label="পাতাগুলো" data-aria-bn="পাতাগুলো" data-aria-en="Pages"><a href="index.html" aria-current="page"><span class="bn">স্যান্ডবক্স</span><span class="en">Sandbox</span></a><a href="robots.html" aria-label="রোবটগুলো" data-aria-bn="রোবটগুলো" data-aria-en="The robots"><span class="tl"><span class="bn">রোবটগুলো</span><span class="en">The robots</span></span><span class="ts"><span class="bn">রোবট</span><span class="en">Robots</span></span></a><a href="rotations.html" aria-label="স্থানাঙ্ক ও ঘূর্ণন" data-aria-bn="স্থানাঙ্ক ও ঘূর্ণন" data-aria-en="Coordinates and rotations"><span class="tl"><span class="bn">স্থানাঙ্ক ও ঘূর্ণন</span><span class="en">Coordinates &amp; rotations</span></span><span class="ts"><span class="bn">ঘূর্ণন</span><span class="en">Rotations</span></span></a><a href="learn.html" aria-label="নিয়মের গাইড" data-aria-bn="নিয়মের গাইড" data-aria-en="Rules guide"><span class="tl"><span class="bn">নিয়মের গাইড</span><span class="en">Rules guide</span></span><span class="ts"><span class="bn">নিয়ম</span><span class="en">Rules</span></span></a><a href="manual.html" aria-label="ব্যবহারবিধি" data-aria-bn="ব্যবহারবিধি" data-aria-en="How to use"><span class="tl"><span class="bn">ব্যবহারবিধি</span><span class="en">How to use</span></span><span class="ts"><span class="bn">সাহায্য</span><span class="en">Help</span></span></a><a class="langsw bn" href="?lang=en" data-setlang="en" lang="en" title="Read this site in English"><span class="tl">English</span><span class="ts">EN</span></a><a class="langsw en" href="?lang=bn" data-setlang="bn" lang="bn" title="সাইটটি বাংলায় পড়ো"><span class="tl">বাংলা</span><span class="ts">বাং</span></a></nav>
+  <h1>KIBO RPC 7 Nav Sandbox</h1>
+
+</main>
+<!-- The sandbox uses the full width of the screen; its tabs sit below the views. -->
+<div class="full"><kibo-nav-sandbox id="demo" theme="dark" height="min(680px, 78vh)" center-on-load></kibo-nav-sandbox></div>
+<footer class="sig"><span class="bn"><a href="LICENSE.txt" target="_blank" rel="noopener">লাইসেন্স</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">ihashib-এর তৈরি</a></span><span class="en" lang="en"><a href="LICENSE.txt" target="_blank" rel="noopener">License</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">Developed by ihashib</a></span></footer>
+</body>
+</html>

@@ -1,0 +1,1531 @@
+<!doctype html>
+<!-- KIBO RPC 7 Nav Sandbox by ihashib · https://ihashib.github.io -->
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kibo-RPC 7: নিয়মের সহজ গাইড</title>
+  <meta name="title-en" content="Kibo-RPC 7 rules guide">
+  <meta name="description" content="সপ্তম Kibo-RPC-র রুলবুক আর প্রোগ্রামিং ম্যানুয়ালের সহজ ভাষায় সারাংশ, ছবি আর JAXA-র আসল ডকুমেন্টের লিংকসহ।">
+  <link rel="stylesheet" href="vendor/fonts.css">
+  <script src="lang.js"></script>
+  <style>
+    /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
+    html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
+    html[data-lang="bn"] body { line-height: 1.75; }
+    html[data-lang="bn"] .bn ol:not(.flow):not(.steps):not(.goals) { list-style-type: bengali; }
+    html[data-lang="bn"] .bn ol.flow > li::before { content: counter(step, bengali); }
+    html[data-lang="bn"] .bn h2.part { letter-spacing: 0; text-transform: none; font-size: 14px; }
+    nav.tabs .langsw { flex: none; margin-left: auto; align-self: center; padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; color: var(--fg); font-size: 13.5px; font-weight: 600; }
+    nav.tabs .langsw:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 480px) { nav.tabs .langsw { flex: none; min-height: 32px; padding: 0 9px; margin: 0 0 0 4px; border-radius: 999px; font-size: 12.5px; } }
+    /* Phones and tablets: the language button sits above the tabs, top right, so the six tabs keep the row. */
+    @media (max-width: 860px) { main { position: relative; } nav.tabs .langsw { position: absolute; top: 1px; right: 16px; margin: 0; min-height: 0; padding: 1px 10px; font-size: 12.5px; line-height: 1.5; } }
+    @media (max-width: 380px) { html[data-lang="en"] nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    :root { color-scheme: dark; --bg: #0d1016; --fg: #e6e9f0; --muted: #9aa3b5; --border: #2c3342; --code: #161a23; --accent: #86a2ff; --soft: #141924; --ok: #3ccf9f; --warn: #f0b54a; --bad: #ff6b6b; --cp: #f07ad8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+    h1 { font-size: 28px; margin: 0 0 4px; }
+    h2 { font-size: 20px; margin: 40px 0 8px; padding-top: 4px; }
+    h2.part { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 56px 0 0; padding-top: 14px; border-top: 2px solid var(--border); }
+    h2.part + h2 { margin-top: 10px; }
+    details.intro + h2.part { margin-top: 28px; }
+    h3 { font-size: 16px; margin: 22px 0 6px; }
+    p.lead { color: var(--muted); margin: 0 0 18px; }
+    ol, ul { padding-left: 22px; }
+    li { margin: 4px 0; }
+    code { font-family: ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; font-size: 0.9em; background: var(--code); border-radius: 4px; padding: 0 3px; overflow-wrap: anywhere; }
+    pre { background: var(--code); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; overflow-x: auto; font: 13px/1.5 ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; }
+    pre code { background: none; padding: 0; font-size: inherit; overflow-wrap: normal; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 15px; }
+    th, td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    td.n { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .wrap { overflow-x: auto; }
+    a { color: var(--accent); }
+    nav.tabs { display: flex; gap: 2px; margin: 0 0 18px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+    nav.tabs a { flex: none; padding: 8px 14px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; font-size: 15px; text-decoration: none; white-space: nowrap; }
+    nav.tabs a:hover { color: var(--fg); }
+    nav.tabs a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
+    nav.tabs a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    nav.tabs a:active { color: var(--fg); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    /* Phones: the tabs share the row and are full-height touch targets (44px). */
+    @media (max-width: 480px) { nav.tabs { gap: 0; } nav.tabs a { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; box-sizing: border-box; padding: 0 6px; font-size: 14px; border-radius: 8px 8px 0 0; } }
+    @media (max-width: 400px) { nav.tabs a { padding: 0 3px; font-size: 13px; min-width: 44px; flex-shrink: 0; } }
+    @media (max-width: 340px) { nav.tabs { margin-left: -8px; margin-right: -8px; } nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    /* Phones and tablets: shorter tab names so all six fit (the full name stays as the link's accessible name). */
+    nav.tabs .ts { display: none; }
+    @media (max-width: 860px) { nav.tabs .tl { display: none; } nav.tabs .ts { display: inline; } }
+    nav.toc { border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; margin: 0 0 8px; }
+    nav.toc b { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); }
+    nav.toc ol { margin: 2px 0 6px; columns: 2 230px; }
+    .note { color: var(--muted); font-size: 15px; }
+    .box { border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 10px 14px; margin: 14px 0; background: var(--soft); }
+    .box.warn { border-left-color: var(--warn); }
+    .box.try { border-left-color: var(--ok); }
+    .box > :first-child { margin-top: 0; }
+    .box > :last-child { margin-bottom: 0; }
+    /* Official documents */
+    .docs { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin: 10px 0; }
+    .doc { display: block; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--fg); background: var(--soft); }
+    .doc:hover { border-color: var(--accent); }
+    .doc b { color: var(--accent); display: block; }
+    .doc small { color: var(--muted); display: block; font-size: 13px; line-height: 1.45; margin-top: 2px; }
+    /* Sketches */
+    figure.sketch { margin: 16px 0; border: 1px dashed var(--border); border-radius: 12px; padding: 12px; background: var(--soft); }
+    figure.sketch > svg { max-width: 600px; margin: 0 auto; }
+    figure.sketch figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    figure.sketch figcaption b { color: var(--fg); }
+    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .trio > div { text-align: center; }
+    .trio h4 { margin: 0 0 2px; font-size: 14px; }
+    svg { display: block; width: 100%; height: auto; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif; }
+    svg .ln { stroke: var(--fg); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    svg .thin { stroke: var(--muted); fill: none; stroke-width: 1.1; stroke-linecap: round; }
+    svg .dash { stroke-dasharray: 5 4; }
+    svg .acc { stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; }
+    svg .cp { stroke: var(--cp); fill: none; stroke-width: 1.6; }
+    svg .fill { fill: var(--fg); }
+    svg .facc { fill: var(--accent); }
+    svg .fcp { fill: var(--cp); }
+    svg .fbg { fill: var(--bg); }
+    svg .fsoft { fill: var(--code); }
+    svg text { fill: var(--fg); font-size: 13px; }
+    svg text.m { fill: var(--muted); font-size: 12px; }
+    svg text.a { fill: var(--accent); font-weight: 600; }
+    svg text.c { fill: var(--cp); font-weight: 600; }
+    svg text.b { font-weight: 600; }
+    .map { min-width: 560px; }
+    /* Step flows (drawn in HTML so they wrap on phones) */
+    ol.flow { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px 28px; counter-reset: step; }
+    ol.flow > li { position: relative; flex: 1 1 130px; margin: 0; border: 1.5px solid var(--fg); border-radius: 10px; padding: 8px 10px 8px 34px; background: var(--bg); font-size: 14px; line-height: 1.45; counter-increment: step; }
+    ol.flow > li::before { content: counter(step); position: absolute; left: 8px; top: 8px; width: 19px; height: 19px; border-radius: 50%; background: var(--accent); color: var(--bg); font: 700 12px/19px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; }
+    ol.flow > li:not(:last-child)::after { content: "→"; position: absolute; right: -22px; top: 50%; transform: translateY(-50%); color: var(--accent); font-weight: 700; }
+    ol.flow > li b { display: block; }
+    ol.flow code { overflow-wrap: normal; }
+    ol.flow.col { flex-direction: column; gap: 22px; }
+    ol.flow.col > li { flex: none; }
+    ol.flow.col > li:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -21px; transform: translateX(-50%); }
+    ol.flow > li.loop { border-style: dashed; }
+    .again { text-align: right; color: var(--accent); font-size: 14px; margin-top: 6px; }
+    .lv { display: inline-block; min-width: 34px; text-align: center; border-radius: 6px; padding: 0 6px; font-weight: 700; font-size: 13px; color: var(--bg); background: var(--ok); }
+    .lv.l2 { background: var(--warn); }
+    .lv.l1 { background: var(--accent); }
+    .lv.no { background: var(--bad); }
+    .formula { font: 600 17px/1.5 ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; text-align: center; padding: 12px 8px; border: 1.5px solid var(--fg); border-radius: 10px; background: var(--bg); overflow-wrap: anywhere; }
+    .formula small { display: block; font: 13px/1.5 system-ui, "Noto Sans Bengali", sans-serif; color: var(--muted); margin-top: 4px; }
+    .timeline { list-style: none; padding: 0 0 0 18px; margin: 10px 0; border-left: 2px solid var(--accent); }
+    .timeline li { position: relative; margin: 0 0 12px; }
+    .timeline li::before { content: ""; position: absolute; left: -25px; top: 7px; width: 10px; height: 10px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); }
+    .timeline b { display: block; }
+    footer { margin-top: 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+    @media (max-width: 620px) {
+      .trio { grid-template-columns: 1fr; }
+      .trio svg { max-width: 300px; margin: 0 auto; }
+      ol.flow { flex-direction: column; gap: 22px; }
+      ol.flow > li { flex: none; }
+      ol.flow > li:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -21px; transform: translateX(-50%); }
+      nav.toc ol { columns: 1; }
+    }
+    /* Learning helpers (the four learning pages): the path through them, what to read first, new words, things to
+       try, quick self-checks and the deeper detail for older students. */
+    .path { display: flex; flex-wrap: wrap; gap: 6px 4px; align-items: center; margin: 6px 0 20px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--soft, #141924); font-size: 14px; }
+    .path > b { flex: 1 0 100%; color: var(--muted); font-size: 13px; font-weight: 600; }
+    .path a, .path .here { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px; border: 1px solid var(--border); color: var(--fg); text-decoration: none; }
+    .path a:hover { border-color: var(--accent); }
+    .path .here { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); font-weight: 700; }
+    .path i { font-style: normal; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--fg); font-size: 12px; font-weight: 700; }
+    .path .here i { background: var(--accent); color: var(--bg); }
+    .path .arr { color: var(--muted); }
+    /* The page's intro, learning path and contents sit folded in a bar under the title, so the page opens on its content. */
+    details.intro { margin: 10px 0 18px; }
+    details.intro + details.intro { margin-top: -10px; }
+    details.intro > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; min-height: 44px; box-sizing: border-box; padding: 6px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--soft, #141924); cursor: pointer; list-style: none; font-weight: 700; }
+    details.intro > summary::-webkit-details-marker { display: none; }
+    details.intro > summary::before { content: '\25B8'; color: var(--muted); }
+    details.intro[open] > summary::before { content: '\25BE'; }
+    details.intro > summary:hover { border-color: var(--accent); }
+    details.intro > summary small { color: var(--muted); font-size: 13px; font-weight: 400; }
+    details.intro[open] > summary { margin-bottom: 14px; }
+    .need, .word, .try, .check { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin: 14px 0; background: var(--soft, #141924); }
+    .need { border-left: 4px solid var(--warn, #f0b54a); }
+    .word { border-left: 4px solid var(--accent); }
+    .try { border-left: 4px solid var(--ok, #3ccf9f); }
+    .check { border-left: 4px solid #f07ad8; }
+    .need > :last-child, .word > :last-child, .try > :last-child, .check > :last-child { margin-bottom: 0; }
+    .tag { display: block; font-size: 12.5px; font-weight: 700; margin: 0 0 4px; }
+    .need .tag { color: var(--warn, #f0b54a); } .word .tag { color: var(--accent); } .try .tag { color: var(--ok, #3ccf9f); } .check .tag { color: #f07ad8; }
+    .word dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; }
+    .word dt { font-weight: 700; } .word dd { margin: 0; }
+    .check details { border-top: 1px dashed var(--border); padding: 6px 0; }
+    .check details:first-of-type { border-top: 0; }
+    .check summary { cursor: pointer; font-weight: 600; }
+    .check summary::marker { color: #f07ad8; }
+    .check details[open] summary { color: #f07ad8; }
+    .check details > p { margin: 6px 0 2px; }
+    details.deeper { border: 1px dashed var(--border); border-radius: 10px; padding: 8px 14px; margin: 14px 0; }
+    details.deeper > summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+    details.deeper[open] > summary { margin-bottom: 6px; color: var(--fg); }
+    .steps { counter-reset: s; list-style: none; padding: 0; }
+    .steps > li { counter-increment: s; position: relative; padding-left: 34px; margin: 8px 0; }
+    .steps > li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--bg); font: 700 13px/24px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; }
+    html[data-lang="bn"] .bn .steps > li::before { content: counter(s, bengali); }
+    nav.mini { border: 1px solid var(--border); border-radius: 10px; padding: 8px 16px; margin: 0 0 8px; }
+    nav.mini ol { margin: 4px 0; columns: 2 230px; }
+    dl.words { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+    dl.words dt { font-weight: 700; } dl.words dd { margin: 0; }
+    figure.wide { max-width: 640px; margin: 12px auto; }
+    @media (max-width: 560px) { dl.words, .word dl { grid-template-columns: 1fr; gap: 0; } dl.words dd, .word dd { margin-bottom: 8px; } }
+    svg .ff { fill: var(--fg); } svg .fa { fill: var(--accent); } svg .fm { fill: var(--muted); }
+    svg .sa { stroke: var(--accent); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    svg .sm { stroke: var(--muted); fill: none; stroke-width: 1.2; stroke-linecap: round; }
+    svg .dsh { stroke-dasharray: 5 4; }
+    .lesson { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; align-items: start; }
+    .lesson figure, figure.wide { margin: 0; border: 1px dashed var(--border); border-radius: 12px; padding: 10px; background: var(--soft, #141924); }
+    figure.wide { margin: 12px auto; }
+    .lesson figure svg, figure.wide svg { width: 100%; height: auto; display: block; max-width: none; margin: 0; }
+    .lesson figure figcaption, figure.wide figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    @media (max-width: 820px) { .lesson { grid-template-columns: 1fr; } .lesson figure { max-width: 360px; } }
+    svg .ball { fill: var(--bg); stroke: var(--fg); stroke-width: 1.6; }
+    figure.shot { margin: 12px 0; }
+    .shotbox { position: relative; }
+    .shotbox img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; }
+    .pin { position: absolute; transform: translate(-50%, -50%); width: 24px; height: 24px; border-radius: 50%; background: #f0b54a; color: #111; font: 700 13px/24px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; box-shadow: 0 0 0 2px #111, 0 2px 6px rgba(0, 0, 0, .6); pointer-events: none; }
+    figure.shot figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    ol.steps.pins { columns: 2 320px; column-gap: 24px; }
+    ol.steps.pins > li { break-inside: avoid; }
+    ol.steps.pins > li::before { background: #f0b54a; color: #111; }
+    @media (max-width: 560px) { .pin { width: 18px; height: 18px; font-size: 10.5px; line-height: 18px; } }
+  </style>
+</head>
+<body>
+<main>
+  <nav class="tabs" aria-label="পাতাগুলো" data-aria-bn="পাতাগুলো" data-aria-en="Pages"><a href="index.html"><span class="bn">স্যান্ডবক্স</span><span class="en">Sandbox</span></a><a href="robots.html" aria-label="রোবটগুলো" data-aria-bn="রোবটগুলো" data-aria-en="The robots"><span class="tl"><span class="bn">রোবটগুলো</span><span class="en">The robots</span></span><span class="ts"><span class="bn">রোবট</span><span class="en">Robots</span></span></a><a href="rotations.html" aria-label="স্থানাঙ্ক ও ঘূর্ণন" data-aria-bn="স্থানাঙ্ক ও ঘূর্ণন" data-aria-en="Coordinates and rotations"><span class="tl"><span class="bn">স্থানাঙ্ক ও ঘূর্ণন</span><span class="en">Coordinates &amp; rotations</span></span><span class="ts"><span class="bn">ঘূর্ণন</span><span class="en">Rotations</span></span></a><a href="learn.html" aria-current="page" aria-label="নিয়মের গাইড" data-aria-bn="নিয়মের গাইড" data-aria-en="Rules guide"><span class="tl"><span class="bn">নিয়মের গাইড</span><span class="en">Rules guide</span></span><span class="ts"><span class="bn">নিয়ম</span><span class="en">Rules</span></span></a><a href="manual.html" aria-label="ব্যবহারবিধি" data-aria-bn="ব্যবহারবিধি" data-aria-en="How to use"><span class="tl"><span class="bn">ব্যবহারবিধি</span><span class="en">How to use</span></span><span class="ts"><span class="bn">সাহায্য</span><span class="en">Help</span></span></a><a class="langsw bn" href="?lang=en" data-setlang="en" lang="en" title="Read this site in English"><span class="tl">English</span><span class="ts">EN</span></a><a class="langsw en" href="?lang=bn" data-setlang="bn" lang="bn" title="সাইটটি বাংলায় পড়ো"><span class="tl">বাংলা</span><span class="ts">বাং</span></a></nav>
+<div class="bn">
+<h1>Kibo-RPC 7-এর নিয়মের গাইড</h1>
+  <details class="intro">
+    <summary>এই পাতা সম্পর্কে<small>শেখার পথ · কীভাবে পড়বে · সূচিপত্র</small></summary>
+    <p class="lead">৭ম Kibo Robot Programming Challenge-এর জন্য JAXA-র রুলবুক আর প্রোগ্রামিং ম্যানুয়ালের সহজ ভাষায় সারাংশ, সঙ্গে কিছু স্কেচ। শুরু করতে এগুলো কাজে লাগবে; তবে শেষ কথা অফিশিয়াল ডকুমেন্টগুলোর।</p>
+
+    <nav class="path" aria-label="শেখার পথ"><b>শেখার পথ: ধাপে ধাপে এগোও</b><a href="robots.html"><i>১</i>রোবটকে চেনো</a><span class="arr">→</span><a href="rotations.html"><i>২</i>কোথায় আর কোন দিকে</a><span class="arr">→</span><span class="here" aria-current="step"><i>৩</i>খেলার নিয়ম</span><span class="arr">→</span><a href="manual.html"><i>৪</i>স্যান্ডবক্স চালানো</a><span class="arr">→</span><a href="index.html"><i>৫</i>অনুশীলন</a></nav>
+    <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="robots.html">রোবটের পাতা</a>, আর <a href="rotations.html">স্থানাঙ্ক ও ঘূর্ণনের</a> ১ থেকে ৬ নম্বর পাঠ (অবস্থান, ডিগ্রি আর রোল)।</div>
+    <div class="try"><span class="tag">কীভাবে পড়বে</span>নতুন হলে শুধু <b>প্রথম ভাগ</b> (১ থেকে ৯) পড়ো; খেলাটা পুরো বুঝে যাবে। প্রোগ্রাম লেখা শুরু করলে পড়ো <b>দ্বিতীয় ভাগ</b>; তার শুরুতেই প্রোগ্রামিংয়ের দরকারি শব্দগুলো সহজ করে বোঝানো আছে। প্রতিটা অংশের শুরুতে লেখা থাকে, আগে কী জেনে আসতে হবে।</div>
+
+    <nav class="toc" aria-label="সূচি">
+      <b>প্রথম ভাগ · রুলবুক</b>
+      <ol>
+        <li><a href="#challenge">এক মিনিটে চ্যালেঞ্জটা</a></li>
+        <li><a href="#game">একটা খেলা যেভাবে চলে</a></li>
+        <li><a href="#given">কী জানানো হয়, আর কী হয় না</a></li>
+        <li><a href="#checkpoint">চেকপয়েন্ট পার হওয়া</a></li>
+        <li><a href="#scoring">স্কোর</a></li>
+        <li><a href="#runs">দশটা রান, একটা গড়</a></li>
+        <li><a href="#dates">তারিখ আর জমা দেওয়া</a></li>
+        <li><a href="#final">ISS-এ ফাইনাল রাউন্ড</a></li>
+        <li><a href="#words">যে শব্দগুলো জানা দরকার</a></li>
+      </ol>
+      <b>দ্বিতীয় ভাগ · প্রোগ্রামিং ম্যানুয়াল</b>
+      <p style="margin:2px 0 0 6px"><a href="#codewords">শুরুর আগে: প্রোগ্রামিংয়ের শব্দগুলো, সহজ করে</a></p>
+      <ol start="10">
+        <li><a href="#loop">কাজের চক্র</a></li>
+        <li><a href="#setup">প্রস্তুতি</a></li>
+        <li><a href="#folder">প্রজেক্ট ফোল্ডার</a></li>
+        <li><a href="#sims">ওয়েব আর লোকাল সিমুলেটর</a></li>
+        <li><a href="#results">ফলাফল পড়া</a></li>
+        <li><a href="#template">টেমপ্লেট প্রোগ্রাম যেভাবে চলে</a></li>
+        <li><a href="#api">এক নজরে API</a></li>
+        <li><a href="#move">রোবট চালানো</a></li>
+        <li><a href="#ar">AR মার্কার পড়া</a></li>
+        <li><a href="#safe">নিরাপদ প্রোগ্রাম লেখা</a></li>
+      </ol>
+      <b>তৃতীয় ভাগ</b>
+      <ol start="20">
+        <li><a href="#sandbox">স্যান্ডবক্সে অনুশীলন</a></li>
+      </ol>
+    </nav>
+  </details>
+  <details class="intro" id="official">
+    <summary>অফিশিয়াল ডকুমেন্ট<small>JAXA-র রুলবুক আর ম্যানুয়াল (PDF)</small></summary>
+    <p>এগুলো JAXA-র কাছ থেকেই পড়ো। নিচের সারাংশগুলো রুলবুকের ১.১ সংস্করণ (১৫ অক্টোবর ২০২৬) আর প্রোগ্রামিং ম্যানুয়ালের ১.০ সংস্করণ (৫ অক্টোবর ২০২৬) অনুযায়ী লেখা।</p>
+    <div class="docs">
+      <a class="doc" href="https://jaxa.krpc.jp/static/2881600683dab1897ef65741461f8618/7thKibo-RPC_Rulebook.pdf" target="_blank" rel="noopener"><b>রুলবুক (PDF)</b><small>খেলা, চেকপয়েন্ট, স্কোর, তারিখ আর ফাইনাল রাউন্ড। v1.1, ১৫ অক্টোবর ২০২৬, ২.৮৫ MB।</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/static/b60d4a181401f2875ca8d8371f6c0c5a/ProgrammingManual.pdf" target="_blank" rel="noopener"><b>প্রোগ্রামিং ম্যানুয়াল (PDF)</b><small>সেটআপ, সিমুলেটর, টেমপ্লেট প্রোগ্রাম আর গেম API। v1.0, ৫ অক্টোবর ২০২৬, ৭.০১ MB।</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/static/6fae6038e074dda360f3e390675dad8f/7thKibo-RPC_BeginnerCourseRulebook.pdf" target="_blank" rel="noopener"><b>বিগিনার কোর্সের রুলবুক (PDF)</b><small>বিগিনার কোর্সের নিয়ম। এখানে এর সারাংশ নেই।</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/static/ed119ca818940fcb2fe4bc4ed03f2303/The%207th%20Kibo-RPC_Guidebook.pdf" target="_blank" rel="noopener"><b>গাইডবুক (PDF)</b><small>চ্যালেঞ্জে কীভাবে নাম লেখাবে। কারা অংশ নিতে পারে, তা আছে ১ নম্বর অংশে।</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/download" target="_blank" rel="noopener"><b>ডাউনলোড পাতা</b><small>সবচেয়ে নতুন সংস্করণ, নমুনা সোর্স কোড আর সিমুলেটরের ফাইলগুলো সবসময় এখানে থাকে।</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/" target="_blank" rel="noopener"><b>Kibo-RPC ওয়েবসাইট</b><small>খবর, FAQ, টিউটোরিয়াল ভিডিও আর ওয়েব সিমুলেটরে লগইন।</small></a>
+    </div>
+    <p class="note">কোনো PDF লিংক কাজ না করলে বুঝবে, JAXA নতুন সংস্করণ প্রকাশ করেছে: ডাউনলোড পাতা থেকে সেটা নামিয়ে নাও, আর নিয়মে কিছু বদলেছে কি না দেখে নাও।</p>
+  </details>
+
+  <!-- ===================== PART 1 ===================== -->
+  <h2 class="part">প্রথম ভাগ · রুলবুক</h2>
+  <h2 id="challenge">১. এক মিনিটে চ্যালেঞ্জটা</h2>
+  <div class="word"><span class="tag">সহজ কথায়</span>তুমি আর তোমার দল একটা প্রোগ্রাম লিখবে। প্রোগ্রামটা মহাকাশ স্টেশনের একটা রোবটকে বলে দেবে কোথায় কোথায় যেতে হবে আর কী দেখতে হবে। যে দলের রোবট সবচেয়ে নিখুঁতভাবে আর তাড়াতাড়ি কাজ শেষ করে, তারাই জেতে।</div>
+  <p>তুমি প্রোগ্রাম লিখবে <b>Int-Ball2</b> (IB2)-এর জন্য: ছোট্ট একটা উড়ে বেড়ানো ক্যামেরা রোবট, যেটা JAXA চালায় আন্তর্জাতিক মহাকাশ স্টেশনে জাপানের মডিউল <b>Kibo</b>-র ভেতরে। এটা Kibo-র ভেতরে উড়ে বেড়ায়, যাতে নভোচারীদের ক্যামেরা হাতে ধরে রাখতে কম সময় দিতে হয়। <a href="robots.html">Int-Ball2 আর Astrobee-কে 3D-তে দেখো →</a></p>
+  <ul>
+    <li><b>গল্পটা:</b> Kibo-র ভেতরের চাপ কমে যাচ্ছে। যেসব জায়গায় লিক আছে বলে সন্দেহ, IB2 সেই <b>চেকপয়েন্ট</b>গুলোতে যায় আর কারণ খুঁজতে প্রতিটার <b>AR মার্কার</b> পড়ে।</li>
+    <li><b>প্রাথমিক রাউন্ড:</b> প্রতিটা দেশ বা অঞ্চলে আলাদা করে হয়। তোমার প্রোগ্রাম চলে JAXA-র ওয়েব সিমুলেটরে। কিছু অঞ্চল নিজেদের বিচারের নিয়মও যোগ করে, তাই তোমার এলাকার Kibo-RPC পাতা দেখে নিও।</li>
+    <li><b>ফাইনাল রাউন্ড:</b> বিজয়ী দলগুলোর প্রোগ্রাম চলে কক্ষপথে, Kibo-র ভেতরে আসল Int-Ball2-এ।</li>
+  </ul>
+
+  <h3>কারা অংশ নিতে পারে</h3>
+  <ul>
+    <li><b>রেগুলার কোর্স</b> (মূল প্রতিযোগিতা): স্কুল থেকে শুরু করে বিশ্ববিদ্যালয়, এমনকি পোস্টগ্র্যাজুয়েট পর্যন্ত যেকোনো শিক্ষার্থী। দলে থাকতে হয় ৩ থেকে ৮ জন।</li>
+    <li><b>বিগিনার কোর্স</b> (৭ম আসরে নতুন): দলের সবাই জুনিয়র হাই স্কুলের বয়সী বা তার ছোট (মোটামুটি নবম শ্রেণি পর্যন্ত), আর প্রোগ্রামিংয়ে নতুন। এখানে চেকপয়েন্ট কম, আর রোবটের দিক (রোল ইত্যাদি) ধরা হয় না, তাই সহজ। জিতলে পুরস্কার আছে, কিন্তু ISS-এ প্রোগ্রাম চালানোর সুযোগ নেই।</li>
+    <li>উচ্চমাধ্যমিক (HSC) বা তার নিচের শিক্ষার্থীদের দলে একজন অভিভাবক বা শিক্ষকের তথ্য দিতে হয়। দেশভেদে নিয়ম একটু আলাদা হতে পারে, তাই নিজের দেশের আয়োজকদের ঘোষণা দেখে নিও।</li>
+  </ul>
+  <p class="note">সূত্র: ৭ম Kibo-RPC গাইডবুক, ৩.১, ৩.২ আর ৩.৪ অংশ।</p>
+
+  <h2 id="game">২. একটা খেলা যেভাবে চলে</h2>
+  <div class="word"><span class="tag">সহজ কথায়</span>রোবট নিজের “বাসা” (ডক) থেকে বেরোয়, কয়েকটা জায়গায় গিয়ে সেখানকার মার্কারের দিকে ক্যামেরা তাক করে, তারপর শেষ জায়গায় গিয়ে জানায় “কাজ শেষ”। সবকিছু ৫ মিনিটের মধ্যে।</div>
+  <figure class="sketch">
+    <ol class="flow">
+      <li><b>আনডক</b>IB2 নিজে নিজেই ডক স্টেশন ছেড়ে বেরোয়। ৫ মিনিটের টাইমার শুরু হয়।</li>
+      <li><b>চেকপয়েন্টগুলো নাও</b>সেগুলোর অবস্থান আর দিক পড়ে নাও; তোমার প্রোগ্রাম এগুলো নিজে থেকেই পায়।</li>
+      <li><b>ভালো একটা রুটে ওড়ো</b>কম সময় লাগে এমন ক্রমে চেকপয়েন্টগুলোতে যাও।</li>
+      <li><b>প্রতিটা AR মার্কার পড়ো</b>প্রতিটা চেকপয়েন্টে দরকারি অবস্থান আর দিক ধরে রাখো।</li>
+      <li><b>গোল আর রিপোর্ট</b>গোল চেকপয়েন্টে পৌঁছে মিশন শেষের রিপোর্ট পাঠাও।</li>
+    </ol>
+    <figcaption><b>স্কেচ ১।</b> পাঁচ ধাপে খেলাটা (রুলবুক ২.২.১ আর ২.২.৩)। রিপোর্টটা ৫ মিনিটের মধ্যেই পাঠাতে হবে।</figcaption>
+  </figure>
+  <ul>
+    <li>আনডক শেষ হলে টাইমার শুরু হয়, আর থামে মিশন শেষের রিপোর্টে। সময়সীমার মধ্যে রিপোর্ট না হলে তার জন্য কোনো পয়েন্ট পাবে না।</li>
+    <li>মিশন শেষ হওয়ার পরে IB2 যা-ই করুক, তা গোনা হয় না।</li>
+  </ul>
+
+  <h2 id="given">৩. কী জানানো হয়, আর কী হয় না</h2>
+  <div class="wrap"><table>
+    <tr><th>রানের আগেই জানা</th><th>প্রতি রানে এলোমেলো</th><th>কখনোই জানানো হয় না</th></tr>
+    <tr>
+      <td>শুরুর জায়গা (ডক স্টেশন)<br>শেষের রিপোর্টের সময়কার অবস্থান আর দিক<br>কয়টা চেকপয়েন্ট থাকবে<br>চেকপয়েন্টগুলো কোথায় কোথায় থাকতে পারে (কঠিনতার লেভেল অনুযায়ী)<br>প্রতিটা AR মার্কারের অবস্থান আর ID<br>গোল পয়েন্ট</td>
+      <td>প্রতিটা চেকপয়েন্টের অবস্থান আর দিক, তার AR মার্কার থেকে একটা কোণ আর দূরত্ব দিয়ে ঠিক করা</td>
+      <td>রান শুরুর আগে চেকপয়েন্টের নকশা (রান শুরু হলে তোমার প্রোগ্রাম সেটা চেয়ে নেয়)<br>মাইক্রোগ্র্যাভিটি মডিউলের বাধাবিঘ্নের ধরন</td>
+    </tr>
+  </table></div>
+  <ul>
+    <li>চেকপয়েন্ট থাকে <b>৬ থেকে ১২টা</b>; লেভেল যত কঠিন, সংখ্যা তত বেশি। ওয়েব সিমুলেশন শুরু করার সময় লেভেল বেছে নেবে: Easy, Normal, Hard বা Very Hard। কোন লেভেলে কয়টা চেকপয়েন্ট, ডকুমেন্টে তা বলা নেই, আর কোন কোন মার্কারে চেকপয়েন্ট পড়বে, সেটা রান থেকে রানে বদলায়।</li>
+    <li>প্রতিটা চেকপয়েন্ট একটা <b>গোলক</b>, তার AR মার্কারের সাপেক্ষে বসানো।</li>
+    <li>একটা <b>মাইক্রোগ্র্যাভিটি মডিউল</b> (শুধু সিমুলেটরে) রোবটকে এদিক-ওদিক ঠেলে দেয়, তাই IB2 সবসময় ঠিক যেখানে পাঠিয়েছ, সেখানে থাকবে না।</li>
+  </ul>
+
+  <div class="word"><span class="tag">নতুন শব্দ</span><dl>
+    <dt>চেকপয়েন্ট</dt><dd>রোবটকে যেসব জায়গায় যেতে হয়; বাসের স্টপেজের মতো। প্রতিটা একটা অদৃশ্য বলের মতো গোল জায়গা (গোলক), একটা AR মার্কারের সামনে।</dd>
+    <dt>গোল চেকপয়েন্ট</dt><dd>সবশেষে যেখানে যেতে হয়।</dd>
+    <dt>লেভেল</dt><dd>কত ভালোভাবে পার হলো: Lv1 মোটামুটি, Lv3 সবচেয়ে ভালো।</dd>
+    <dt>সিমুলেটর</dt><dd>কম্পিউটারের ভেতরে আসল রোবট আর স্টেশনের মতো আচরণ করা একটা নকল, ভিডিও গেমের মতো। প্রাথমিক রাউন্ড এতেই হয়।</dd>
+  </dl></div>
+  <p>জায়গাগুলো লেখা হয় তিনটা সংখ্যায় (x, y, z), আর দিক কোয়াটারনিয়নে। এগুলো অচেনা লাগলে আগে <a href="rotations.html">স্থানাঙ্ক ও ঘূর্ণন</a> পাতাটা দেখে নাও।</p>
+  <h3>কোন জিনিস কোথায়, রোবট জানে কীভাবে?</h3>
+  <p>যা যা দরকার, তার প্রতিটা আসে আলাদা জায়গা থেকে:</p>
+  <div class="docs" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))">
+    <div class="doc"><b>AR মার্কারগুলো</b><small><i>রানের আগেই, রুলবুক থেকে।</i> প্রতিটা মার্কারের অবস্থান, দিক আর ID রুলবুকের টেবিলে আছে (নিচে দেখো), তাই এগুলো প্রোগ্রামেই লিখে রাখতে পারো।</small></div>
+    <div class="doc"><b>চেকপয়েন্টগুলো</b><small><i>রান শুরু হলে, <code>/mission/get_checkpoints</code> থেকে।</i> প্রতি রানে এগুলো এলোমেলো, তাই তোমার প্রোগ্রাম চেয়ে নেয়: প্রতিটার অবস্থান, তার মার্কারের পোজ, কোন দিকে মুখ করে থাকতে হবে, লেভেলের সীমা, আর কোনটা গোল।</small></div>
+    <div class="doc"><b>রোবট নিজে</b><small><i>সবসময়, <code>/sensor_fusion/navigation</code> থেকে।</i> Kibo-র ভেতরে IB2-এর নিজের অবস্থান, দিক আর গতি।</small></div>
+    <div class="doc"><b>চোখের সামনের মার্কার</b><small><i>প্রতিটা চেকপয়েন্টে, ক্যামেরা থেকে।</i> মার্কারটা পড়লে বোঝা যায় রোবটের তুলনায় সেটা কোথায়, তাই বিচার চাওয়ার আগে সেটাকে ছবির মাঝখানে আনতে পারো।</small></div>
+  </div>
+  <p class="note">রুলবুক শুধু বলে, চেকপয়েন্টের অবস্থান আর দিক “নিজে থেকেই দেওয়া হয়”; API কলগুলো কীভাবে করতে হয়, তা ব্যাখ্যা করে প্রোগ্রামিং ম্যানুয়াল (৬.৩.১ আর ৬.৩.২ অংশ)। ৭ম Kibo-RPC-তে ব্যবহার হয় Int-Ball2, NASA-র Astrobee নয়; Astrobee উড়েছিল আগের আসরগুলোতে।</p>
+
+  <h3>মার্কারগুলো কোথায়</h3>
+  <figure class="sketch">
+    <div class="wrap">
+      <svg class="map" viewBox="0 0 640 262" role="img" aria-label="ওপর থেকে দেখা Kibo, ১২টা AR মার্কার আর ডকসহ">
+        <text x="313" y="20" text-anchor="middle" class="m">SAIBO দেয়াল (−y)</text>
+        <text x="313" y="200" text-anchor="middle" class="m">EPS2 দেয়াল (+y)</text>
+        <text x="26" y="105" text-anchor="middle" class="m" transform="rotate(-90 26 105)">ডকের দিক</text>
+        <text x="612" y="105" text-anchor="middle" class="m" transform="rotate(90 612 105)">এয়ারলকের দিক</text>
+        <rect class="ln" x="40" y="33" width="547" height="144" rx="4"/>
+        <!-- dock -->
+        <rect class="facc" x="49" y="97" width="13" height="13" rx="2"/>
+        <text x="68" y="128" class="a">ডক (শুরু)</text>
+        <!-- wall markers (squares), overhead (ring), deck (filled circle) -->
+        <g class="fcp">
+          <rect x="145" y="29" width="10" height="9"/><rect x="261" y="29" width="10" height="9"/><rect x="287" y="29" width="10" height="9"/>
+          <rect x="353" y="29" width="10" height="9"/><rect x="472" y="29" width="10" height="9"/>
+          <rect x="192" y="172" width="10" height="9"/><rect x="582" y="124" width="9" height="10"/><rect x="36" y="94" width="9" height="10"/>
+          <circle cx="403" cy="111" r="6"/><circle cx="485" cy="104" r="6"/>
+        </g>
+        <circle class="cp" cx="184" cy="84" r="6"/>
+        <g>
+          <text x="150" y="56" text-anchor="middle" class="c">1, 7</text>
+          <text x="266" y="56" text-anchor="middle" class="c">2</text>
+          <text x="292" y="56" text-anchor="middle" class="c">3</text>
+          <text x="358" y="56" text-anchor="middle" class="c">4</text>
+          <text x="477" y="56" text-anchor="middle" class="c">5</text>
+          <text x="198" y="88" class="c">6</text>
+          <text x="403" y="134" text-anchor="middle" class="c">8</text>
+          <text x="197" y="165" text-anchor="middle" class="c">9</text>
+          <text x="485" y="127" text-anchor="middle" class="c">10</text>
+          <text x="566" y="133" text-anchor="middle" class="c">11</text>
+          <text x="52" y="88" class="c">12</text>
+        </g>
+        <!-- axes -->
+        <path class="acc" d="M50 226 h44 m-7 -5 l7 5 l-7 5 M50 226 v26 m-5 -7 l5 7 l5 -7"/>
+        <text x="100" y="230" class="a">x (এয়ারলকের দিকে)</text>
+        <text x="58" y="256" class="a">y</text>
+        <g transform="translate(270 220)">
+          <rect x="0" y="0" width="10" height="9" class="fcp"/><text x="16" y="9" class="m">দেয়ালে</text>
+          <circle cx="104" cy="5" r="5" class="cp"/><text x="115" y="9" class="m">ছাদে</text>
+          <circle cx="236" cy="5" r="5" class="fcp"/><text x="247" y="9" class="m">মেঝেতে</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>স্কেচ ২।</b> ওপর থেকে দেখা Kibo, রুলবুকের মার্কার টেবিল থেকে আঁকা (শুধু x আর y; উচ্চতা টেবিলে আছে)। ১ আর ৭ নম্বর মার্কার একই দেয়ালে, একটা আরেকটার ওপরে।</figcaption>
+  </figure>
+  <details>
+    <summary>মার্কারের টেবিল (রুলবুকের টেবিল ২.২.২-২)</summary>
+    <div class="wrap"><table>
+      <tr><th>মার্কার</th><th>যার গায়ে</th><th>অবস্থান x, y, z (মি)</th><th>দিক x, y, z, w</th></tr>
+      <tr><td>1</td><td>SAIBO</td><td class="n">1.451, −1.001, 0.681</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>2</td><td>RYUTAI</td><td class="n">2.973, −1.001, 0.718</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>3</td><td>MSPR_1</td><td class="n">3.313, −1.001, 0.523</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>4</td><td>MSPR_2</td><td class="n">4.181, −1.001, 0.523</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>5</td><td>RMS_Console</td><td class="n">5.754, −1.001, 0.838</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>6</td><td>EPS1</td><td class="n">1.895, −0.282, −0.208</td><td class="n">0, 0, 0.707, −0.707</td></tr>
+      <tr><td>7</td><td>MELFI1</td><td class="n">1.451, −1.001, 0.372</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>8</td><td>EPS2_2</td><td class="n">4.779, 0.112, 1.884</td><td class="n">−0.707, 0.707, 0, 0</td></tr>
+      <tr><td>9</td><td>EPS2_1</td><td class="n">2.066, 1.046, −0.014</td><td class="n">0, 0.707, −0.707, 0</td></tr>
+      <tr><td>10</td><td>ECLSS_TCS2</td><td class="n">5.851, 0.010, 1.884</td><td class="n">−0.707, 0.707, 0, 0</td></tr>
+      <tr><td>11</td><td>Airlock</td><td class="n">7.195, 0.363, 1.230</td><td class="n">0.5, 0.5, −0.5, −0.5</td></tr>
+      <tr><td>12</td><td>Bay0_Closeout_Panel</td><td class="n">0.000, −0.059, −0.102</td><td class="n">−0.5, 0.5, −0.5, 0.5</td></tr>
+      <tr><td>শুরু</td><td>Docking Station</td><td class="n">0.200, 0.000, 0.000</td><td class="n">0, 0, 0, 1</td></tr>
+    </table></div>
+    <p class="note">রুলবুক অবস্থানগুলো দেয় ডকিং স্টেশনকে মূলবিন্দু ধরে; প্রোগ্রামিং ম্যানুয়াল এই ফ্রেমকে বলে <code>iss_body</code>। কোয়াটারনিয়ন লেখা হয় x, y, z, w ক্রমে।</p>
+  </details>
+
+  <h2 id="checkpoint">৪. চেকপয়েন্ট পার হওয়া</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>ডিগ্রি আর রোল: <a href="rotations.html#angles">স্থানাঙ্ক ও ঘূর্ণনের ৪</a> আর <a href="rotations.html#turns">৬ নম্বর পাঠ</a>।</div>
+  <div class="word"><span class="tag">সহজ কথায়</span>বন্ধুর ছবি তোলার কথা ভাবো। ভালো ছবির জন্য তিনটা জিনিস লাগে: ঠিক দূরত্বে দাঁড়ানো, বন্ধুকে ছবির মাঝখানে রাখা, আর ক্যামেরা সোজা রাখা (কাত না করা)। চেকপয়েন্টেও ঠিক এই তিনটাই দেখা হয়!</div>
+  <p>প্রতিটা চেকপয়েন্টে বিচারক <b>একসঙ্গে তিনটা জিনিস</b> দেখে। প্রতিটা পায় একটা লেভেল: Lv1 (কোনোমতে ভেতরে) থেকে Lv3 (খুব কাছে)।</p>
+  <figure class="sketch">
+    <div class="trio">
+      <div>
+        <h4>① অবস্থান</h4>
+        <svg viewBox="0 0 240 200" role="img" aria-label="চেকপয়েন্টের কেন্দ্র ঘিরে তিনটা বৃত্ত; রোবট মাঝের বৃত্তের ভেতরে">
+          <circle class="cp dash" cx="120" cy="96" r="84"/>
+          <circle class="cp dash" cx="120" cy="96" r="56"/>
+          <circle class="cp" cx="120" cy="96" r="28"/>
+          <path class="cp" d="M114 96 h12 M120 90 v12"/>
+          <text x="130" y="101" class="c" style="font-size:11px">CP</text>
+          <text x="120" y="82" text-anchor="middle" class="m" style="font-size:11px">Lv3</text>
+          <text x="120" y="54" text-anchor="middle" class="m" style="font-size:11px">Lv2</text>
+          <text x="120" y="26" text-anchor="middle" class="m" style="font-size:11px">Lv1</text>
+          <path class="thin dash" d="M120 96 L94 122"/>
+          <text x="112" y="124" class="b" style="font-size:12px">d</text>
+          <circle class="ln fbg" cx="88" cy="128" r="9"/><rect class="facc" x="95" y="124" width="5" height="8" rx="1"/>
+          <text x="120" y="197" text-anchor="middle" class="m">০.১ · ০.২ · ০.৩ মি</text>
+        </svg>
+      </div>
+      <div>
+        <h4>② মার্কার মাঝখানে</h4>
+        <svg viewBox="0 0 240 200" role="img" aria-label="ক্যামেরার দৃষ্টিরেখা আর মার্কারের দিকের মধ্যের কোণ">
+          <path class="thin dash" d="M52 100 L200 15 M52 100 L200 185"/>
+          <text x="204" y="24" class="m">৩০°</text>
+          <circle class="ln fbg" cx="36" cy="100" r="15"/><rect class="facc" x="49" y="94" width="6" height="12" rx="1"/>
+          <path class="acc" d="M56 100 H222 m-8 -5 l8 5 l-8 5"/>
+          <text x="150" y="118" class="a">দৃষ্টিরেখা</text>
+          <path class="ln dash" d="M56 100 L194 70"/>
+          <rect class="fcp" x="192" y="60" width="16" height="16" transform="rotate(-12 200 68)"/>
+          <text x="186" y="52" class="c">মার্কার</text>
+          <path class="ln" d="M126 100 A70 70 0 0 0 124 85"/>
+          <text x="132" y="90" class="b" style="font-size:12px">θ</text>
+          <text x="120" y="194" text-anchor="middle" class="m">θ ≤ ১০° · ২০° · ৩০°</text>
+        </svg>
+      </div>
+      <div>
+        <h4>③ রোল</h4>
+        <svg viewBox="0 0 240 200" role="img" aria-label="ক্যামেরার ছবিতে মার্কারটা লক্ষ্যের রোল থেকে ঘুরে আছে">
+          <rect class="ln fbg" x="30" y="34" width="180" height="110" rx="6"/>
+          <text x="38" y="28" class="m">ক্যামেরার ছবি</text>
+          <rect class="thin dash" x="98" y="67" width="44" height="44"/>
+          <g transform="rotate(20 120 89)"><rect class="fcp" x="100" y="69" width="40" height="40" opacity=".85"/><circle class="fbg" cx="106" cy="75" r="3"/></g>
+          <path class="acc" d="M120 54 A35 35 0 0 1 141 61" /><path class="acc" d="M141 61 l-8 -1 m8 1 l-3 7"/>
+          <text x="150" y="58" class="a">রোল</text>
+          <text x="120" y="168" text-anchor="middle" class="m">দৃষ্টিরেখা বরাবর ঘোরা,</text>
+          <text x="120" y="184" text-anchor="middle" class="m">লক্ষ্য থেকে ≤ ১০° · ২০° · ৩০°</text>
+        </svg>
+      </div>
+    </div>
+    <figcaption><b>স্কেচ ৩।</b> তিনটা শর্ত। ① চেকপয়েন্টের কেন্দ্র থেকে দূরত্ব। ② ক্যামেরা যেদিকে তাক করা আর মার্কার যেখানে আছে, এই দুইয়ের মধ্যের কোণ, যাতে মার্কারটা ছবির মাঝখানের কাছে থাকে। ③ চেকপয়েন্টের দিকের তুলনায় রোবট তার দৃষ্টিরেখা বরাবর কতটা ঘুরে আছে। সংখ্যাগুলো প্রোগ্রামিং ম্যানুয়ালের নমুনা থেকে নেওয়া Lv3 · Lv2 · Lv1-এর সীমা; আসল সীমা তোমার প্রোগ্রাম পড়বে <code>/mission/get_checkpoints</code> থেকে।</figcaption>
+  </figure>
+  <ul>
+    <li><b>সবচেয়ে কম লেভেলটাই গোনা হয়।</b> তিনটাকেই কোনো না কোনো সীমার ভেতরে থাকতে হবে, আর চেকপয়েন্ট পায় সবচেয়ে খারাপটার লেভেল।</li>
+    <li>মার্কার চোখের সামনে রেখে <b>১ সেকেন্ড ধরে রাখো</b>। ওই এক সেকেন্ডে নড়েচড়ে সীমার বাইরে গেলে পার হওয়াটা বাতিল।</li>
+    <li>তোমার প্রোগ্রামকে <code>/event/checkpoint_passed</code> দিয়ে বিচার চাইতে হবে। শুধু পৌঁছে গেলেই হবে না।</li>
+  </ul>
+  <div class="wrap"><table>
+    <tr><th>অবস্থান</th><th>মার্কার মাঝখানে</th><th>রোল</th><th>ফলাফল</th></tr>
+    <tr><td><span class="lv">Lv3</span></td><td><span class="lv l2">Lv2</span></td><td><span class="lv">Lv3</span></td><td>পার হয় <span class="lv l2">Lv2</span>-এ, তিনটার মধ্যে যেটা সবচেয়ে কম</td></tr>
+    <tr><td><span class="lv no">বাইরে</span></td><td><span class="lv">Lv3</span></td><td><span class="lv">Lv3</span></td><td><span class="lv no">কোনো পয়েন্ট নেই</span> একটা শর্তও সীমার বাইরে থাকলে চেকপয়েন্ট বাতিল</td></tr>
+  </table></div>
+  <p class="note">এগুলো রুলবুকেরই উদাহরণ (২.৩.২ অংশ)।</p>
+  <p><b>আরেকটা উদাহরণ, ধাপে ধাপে:</b> রোবট চেকপয়েন্টের কেন্দ্র থেকে ০.১৫ মি দূরে, মার্কারটা ছবির মাঝখান থেকে ৮° সরে, আর রোল মিলছে না ২৫°।</p>
+  <ol class="steps">
+    <li>অবস্থান: ০.১৫ মি, যেটা ০.২-এর মধ্যে কিন্তু ০.১-এর বেশি, তাই <span class="lv l2">Lv2</span>।</li>
+    <li>মাঝখানে রাখা: ৮°, যেটা ১০°-এর মধ্যে, তাই <span class="lv">Lv3</span>।</li>
+    <li>রোল: ২৫°, যেটা ৩০°-এর মধ্যে কিন্তু ২০°-এর বেশি, তাই <span class="lv l1">Lv1</span>।</li>
+    <li>সবচেয়ে কম <span class="lv l1">Lv1</span>, তাই চেকপয়েন্ট পার হলো Lv1-এ। রোলটা ঠিক করলে লেভেল বাড়বে!</li>
+  </ol>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>দূরত্ব ০.০৫ মি, মাঝখান থেকে ১৫°, রোল ৫°। কোন লেভেল?</summary><p>দূরত্ব Lv3, মাঝখানে রাখা Lv2 (১৫° হলো ২০°-এর মধ্যে), রোল Lv3। সবচেয়ে কম Lv2, তাই Lv2।</p></details>
+    <details><summary>রোবট ঠিক জায়গায় পৌঁছাল, কিন্তু <code>/event/checkpoint_passed</code> পাঠাল না। পার হলো?</summary><p>না। বিচার চাইতেই হবে; শুধু পৌঁছালে গোনা হয় না।</p></details>
+  </div>
+
+  <h2 id="scoring">৫. স্কোর</h2>
+  <div class="word"><span class="tag">সহজ কথায়</span>তিনটা জিনিস স্কোর বাড়ায়: কতগুলো চেকপয়েন্ট পার হলে আর কত উঁচু লেভেলে, গোলে পৌঁছালে কি না, আর কত তাড়াতাড়ি শেষ করলে। তাড়াতাড়ি শেষ করলে একটা “গুণক” পাওয়া যায়, যেটা দিয়ে পয়েন্ট গুণ হয়ে বেড়ে যায়।</div>
+  <div class="formula">স্কোর = (Pt_check-এর যোগফল + Pt_goal) × Mag_clear
+    <small>Pt_check: পার হওয়া প্রতিটা চেকপয়েন্টের পয়েন্ট, লেভেল অনুযায়ী · Pt_goal: সময়ের মধ্যে সব চেকপয়েন্ট পার হয়ে গোলে পৌঁছানোর পয়েন্ট · Mag_clear: সময়ের গুণক, সর্বোচ্চ মোটামুটি ২×</small>
+  </div>
+  <figure class="sketch">
+    <svg viewBox="0 0 520 150" role="img" aria-label="রিপোর্টের সময় হাতে যত বেশি সময় থাকে, সময়ের গুণক তত বাড়ে">
+      <path class="ln" d="M60 120 H490 M60 120 V18"/>
+      <path class="acc dash" d="M60 112 C200 104 330 70 480 28"/>
+      <circle class="facc" cx="480" cy="28" r="4"/>
+      <text x="476" y="20" text-anchor="end" class="a">সর্বোচ্চ প্রায় ২×</text>
+      <text x="64" y="104" class="m">১×</text>
+      <text x="275" y="142" text-anchor="middle" class="m">রিপোর্ট পাঠানোর সময় হাতে থাকা সময় →</text>
+      <text x="20" y="70" class="m" transform="rotate(-90 20 70)" text-anchor="middle">Mag_clear</text>
+    </svg>
+    <figcaption><b>স্কেচ ৪।</b> রিপোর্টের সময় হাতে যত বেশি সময় থাকে, গুণক তত বড়। রুলবুক ঠিক বক্ররেখাটা প্রকাশ করেনি, তাই এখানকার আকারটা শুধুই অনুমান।</figcaption>
+  </figure>
+  <ul>
+    <li>আগে চেকপয়েন্টগুলো পার হও আর গোলে পৌঁছাও, তারপর গতি বাড়াও। চেকপয়েন্ট বাদ পড়া তাড়াহুড়োর রান সাবধানী রানের চেয়ে কম স্কোর পায়।</li>
+    <li>উঁচু লেভেলে পার হতে শুধু ঠিক জায়গায় থাকলেই হবে না: ক্যামেরা মার্কারের ঠিক মাঝখানে তাক করো আর রোল মেলাও।</li>
+    <li>কোন লেভেলে কত পয়েন্ট, রুলবুকে তার তালিকা নেই। স্যান্ডবক্সের হিসাব তার নিজের ধরে নেওয়া সংখ্যা দিয়ে করা।</li>
+  </ul>
+
+  <p><b>উদাহরণ</b> (সংখ্যাগুলো বানানো, শুধু বোঝার জন্য): তোমার চেকপয়েন্ট আর গোল মিলিয়ে পয়েন্ট ৫০, আর তাড়াতাড়ি শেষ করায় গুণক ১.৫। তাহলে স্কোর = ৫০ × ১.৫ = ৭৫।</p>
+
+  <h2 id="runs">৬. দশটা রান, একটা গড়</h2>
+  <figure class="sketch">
+    <ol class="flow">
+      <li><b>তুমি একটা প্রোগ্রাম জমা দাও</b>প্রতিবার জমায় সুযোগ একটাই।</li>
+      <li><b>JAXA-র ওয়েব সার্ভার সেটা ১০ বার চালায়</b>প্রতিটা রানে চেকপয়েন্ট আর বাধাবিঘ্ন এলোমেলোভাবে আলাদা।</li>
+      <li><b>তোমার স্কোর হলো গড়</b>১০টা রানের গড় দিয়েই র‍্যাংকিং ঠিক হয়।</li>
+    </ol>
+    <figcaption><b>স্কেচ ৫।</b> ভাগ্য ভালো বা খারাপ রানগুলো গড়ে কাটাকাটি হয়ে যায় (রুলবুক ২.২.৫)। যে প্রোগ্রাম শুধু একটা চেকপয়েন্ট লেআউটে কাজ করে, তার গড় খারাপ আসবে, তাই চেকপয়েন্টগুলো রান চলার সময়েই পড়ে নাও।</figcaption>
+  </figure>
+
+  <p><b>উদাহরণ</b> (বানানো সংখ্যা): দল ক-এর প্রোগ্রাম ৯ বার ৮০ পেল, কিন্তু একবার আটকে গিয়ে ০। গড় = (৯ × ৮০ + ০) ÷ ১০ = ৭২। দল খ-এর প্রোগ্রাম প্রতিবার ৭৫ পেল, গড় ৭৫। একবারের ভুলের জন্য দল ক হেরে গেল! তাই প্রোগ্রাম এমন হতে হবে, যেটা প্রতিবার নির্ভরযোগ্যভাবে চলে।</p>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>৫টা রানে স্কোর ৬০, ৭০, ৮০, ৯০, ১০০ হলে গড় কত?</summary><p>(৬০ + ৭০ + ৮০ + ৯০ + ১০০) ÷ ৫ = ৪০০ ÷ ৫ = ৮০।</p></details>
+  </div>
+
+  <h2 id="dates">৭. তারিখ আর জমা দেওয়া</h2>
+  <ul class="timeline">
+    <li><b>২০ জানুয়ারি ২০২৭, দুপুর ১২:০০ (JST)</b>প্রশ্ন পাঠানোর শেষ সময়। এর পরের প্রশ্নের উত্তর দেরিতে আসতে পারে।</li>
+    <li><b>২০ জানুয়ারি ২০২৭, রাত ১১:৫৯ (JST)</b>প্রোগ্রাম জমা দেওয়ার শেষ মুহূর্ত।</li>
+    <li><b>২১ জানুয়ারি – ১৭ ফেব্রুয়ারি ২০২৭</b>প্রাথমিক রাউন্ড।</li>
+    <li><b>পরে</b>ISS-এ ফাইনাল রাউন্ড। বিস্তারিত পরে জানানো হবে।</li>
+  </ul>
+  <ol>
+    <li>রাউন্ডের আগে ওয়েব সিমুলেটরে <b>“Preliminary”</b> নামে একটা সিমুলেটর যোগ হয়। তোমার প্রোগ্রাম সেটায় চালাও।</li>
+    <li><b>RESULTS</b> পাতায় এমন একটা Preliminary রান বাছো যার স্ট্যাটাস <b>FINISHED</b>, তারপর <b>SUBMIT</b> চাপো।</li>
+    <li>মত বদলালে <b>CANCEL</b> চেপে আরেকটা জমা দাও। শেষ সময় পেরোলে দুটো বোতামই আর কাজ করে না।</li>
+  </ol>
+  <div class="box warn"><p>যে রানের স্ট্যাটাস <b>FAILED</b>, সেটা জমা দেওয়া যায় না। একটাও FINISHED রান না থাকলে অংশই নিতে পারবে না, তাই আগেভাগে পরীক্ষা করে নাও।</p></div>
+
+  <h2 id="final">৮. ISS-এ ফাইনাল রাউন্ড</h2>
+  <ul>
+    <li><b>আগে নিরাপত্তা যাচাই।</b> আসল রোবটের যেন কোনো ক্ষতি না হয়, সেজন্য JAXA তোমার কোড পরীক্ষা করে। খসড়া সোর্স কোড পাঠাতে হয় ইমেইলে, তারপর চূড়ান্ত প্রোগ্রাম আর সোর্স ওয়েবসাইটের মাধ্যমে। প্রতি বছরই কিছু না কিছু সংশোধন লাগে, আর সময় থাকে কম, তাই ওই সময়টা ফাঁকা রেখো।</li>
+    <li><b>রান একবারই।</b> আসল IB2-এ এটা থামানো বা আবার চালানো যায় না। আবার চালানো হয় কেবল তখনই, যদি কক্ষপথে IB2-এ এমন কোনো সমস্যা হয় যেটা তোমার প্রোগ্রামের কারণে নয়, আর হাতে সময়ও থাকে।</li>
+    <li><b>৫ মিনিট,</b> তারপর প্রোগ্রাম বন্ধ হয়ে যায়। IB2 আটকে গেলে, নিজে কোথায় আছে তা গুলিয়ে ফেললে, বা অনেকক্ষণ থেমে থাকলে রান আগেই শেষ হয়ে যায়।</li>
+    <li><b>স্টার্ট তুমি চাপবে না।</b> JAXA তোমার প্রোগ্রাম IB2-এ বসায়, আর গ্রাউন্ডের অপারেটররা সেটা চালু করেন। রানগুলো আগেই রেকর্ড করা হয়, পরে একটা অনুষ্ঠানে বিশেষজ্ঞদের ধারাভাষ্যসহ দেখানো হয়।</li>
+    <li><b>ধাপে ধাপে রানের ক্রম।</b> প্রাথমিক রাউন্ডের র‍্যাংক অনুযায়ী দলগুলো ধাপে ধাপে সুযোগ পায় (যেমন ১ম–৪র্থ, ৫ম–৮ম, ৯ম–১৩তম)। সময় ফুরিয়ে গেলে নিচের ধাপের দলগুলো সুযোগ না-ও পেতে পারে।</li>
+  </ul>
+
+  <h2 id="words">৯. যে শব্দগুলো জানা দরকার</h2>
+  <div class="wrap"><table>
+    <tr><th>শব্দ</th><th>মানে</th></tr>
+    <tr><td>IB2</td><td>Int-Ball2, রোবটটা। প্রাথমিক রাউন্ডে একটা সিমুলেটর, ফাইনালে আসল রোবট।</td></tr>
+    <tr><td>Kibo (JEM)</td><td>ISS-এ জাপানের পরীক্ষাগার মডিউল (Japanese Experiment Module)।</td></tr>
+    <tr><td>Dock Station</td><td>যেখান থেকে IB2 শুরু করে। <i>Release</i> মানে সেটা ছেড়ে বেরোনো; রিলিজ শেষ হলে টাইমার শুরু হয়।</td></tr>
+    <tr><td>Mission Start / Finish</td><td>Start: রিলিজ শেষ, টাইমার চলছে। Finish: সময়সীমা ফুরিয়েছে, বা শেষের রিপোর্ট শুরু হয়েছে। Finish-এর পরে কিছুই স্কোরে যোগ হয় না।</td></tr>
+    <tr><td>CheckPoint</td><td>একটা AR মার্কারের সাপেক্ষে বসানো একটা গোলক, তিন ধাপের মার্জিনসহ।</td></tr>
+    <tr><td>GoalPoint</td><td>চেকপয়েন্টগুলোর পরে IB2 যেখানে যায় আর শেষের রিপোর্ট পাঠায়।</td></tr>
+    <tr><td>AR marker</td><td>ছাপা একটা চৌকো কোড। Kibo-তে এমন ১২টা আছে; চেকপয়েন্টগুলো এদের ঘিরেই বানানো।</td></tr>
+    <tr><td>t, time_max</td><td>রিপোর্টের সময় হাতে থাকা সময়, আর সময়সীমা, দুটোই সেকেন্ডে।</td></tr>
+    <tr><td>Pt_check, Pt_goal, Pt_all</td><td>চেকপয়েন্টের পয়েন্ট, গোলের পয়েন্ট, আর দুটোর যোগফল।</td></tr>
+    <tr><td>Mag_clear</td><td>সময়ের গুণক (সর্বোচ্চ মোটামুটি ২×)। স্কোর = Pt_all × Mag_clear।</td></tr>
+    <tr><td>Microgravity module</td><td>সিমুলেটরের বাধাবিঘ্ন।</td></tr>
+  </table></div>
+
+  <!-- ===================== PART 2 ===================== -->
+  <h2 class="part">দ্বিতীয় ভাগ · প্রোগ্রামিং ম্যানুয়াল</h2>
+  <h2 id="codewords">শুরুর আগে: প্রোগ্রামিংয়ের শব্দগুলো, সহজ করে</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>প্রথম ভাগ। কোনো প্রোগ্রামিং না জানলেও এই অংশটা পড়া যাবে।</div>
+  <p>প্রোগ্রামিং ম্যানুয়ালে অনেক নতুন শব্দ আছে। ভয় পাওয়ার কিছু নেই; বেশিরভাগই রোজকার জিনিসের মতো।</p>
+  <dl class="words">
+    <dt>প্রোগ্রাম</dt><dd>কম্পিউটারের জন্য লেখা ধাপে ধাপে নির্দেশ, রান্নার রেসিপির মতো। Kibo-RPC-তে প্রোগ্রাম লিখতে হয় <b>Python</b> বা <b>C++</b> ভাষায়।</dd>
+    <dt>Ubuntu (Linux)</dt><dd>Windows-এর মতোই একটা অপারেটিং সিস্টেম। Kibo-RPC-র সব টুল এতে চলে; Windows-এর ভেতরেও (WSL দিয়ে) এটা চালানো যায়।</dd>
+    <dt>টার্মিনাল</dt><dd>লিখে লিখে কম্পিউটারকে আদেশ দেওয়ার জানালা। যেমন <code>mkdir krpc</code> লিখে Enter চাপলে <code>krpc</code> নামে একটা ফোল্ডার তৈরি হয়।</dd>
+    <dt>ROS</dt><dd>রোবটের সফটওয়্যারের “ডাকঘর”: রোবটের নানা অংশ (ক্যামেরা, মোটর, তোমার প্রোগ্রাম) এটার মাধ্যমেই একে অন্যকে বার্তা পাঠায়।</dd>
+    <dt>সার্ভিস</dt><dd>প্রশ্ন করে উত্তরের জন্য অপেক্ষা, যেমন শিক্ষককে একটা প্রশ্ন করা। Kibo-RPC-তে: “এই রানের চেকপয়েন্টগুলো কোথায়?”</dd>
+    <dt>অ্যাকশন</dt><dd>সময় লাগে এমন কাজ, যেমন কাউকে দোকানে পাঠানো: মাঝে খোঁজ নেওয়া যায়, দরকার হলে বাতিলও করা যায়। Kibo-RPC-তে: “ওই জায়গায় যাও”।</dd>
+    <dt>টপিক</dt><dd>রেডিওর মতো অনবরত সম্প্রচার: যে খুশি শুনতে পারে। Kibo-RPC-তে: রোবট সবসময় জানিয়ে যায় সে এখন কোথায়।</dd>
+    <dt>JSON</dt><dd>লেবেল দেওয়া তথ্য লেখার একটা নিয়ম, ফর্ম পূরণের মতো: <code>{ "name": "CP 1", "level": 3 }</code> মানে নাম CP 1, লেভেল ৩।</dd>
+    <dt>API</dt><dd>রোবট তোমার প্রোগ্রামকে যে কমান্ডগুলো দেয়, তাদের তালিকা; রিমোট কন্ট্রোলের বোতামগুলোর মতো।</dd>
+    <dt>লগ</dt><dd>প্রোগ্রামের ডায়েরি: চলার সময় কী ঘটল, লিখে রাখে। ভুল খুঁজতে খুব কাজে লাগে।</dd>
+    <dt>টেমপ্লেট</dt><dd>JAXA-র দেওয়া একটা তৈরি প্রোগ্রাম, যার একটা অংশ (USER EDIT AREA) তুমি নিজে লিখবে।</dd>
+  </dl>
+  <figure class="wide" style="max-width:520px">
+    <svg viewBox="0 0 330 130" role="img" aria-label="সার্ভিস প্রশ্ন আর উত্তরের মতো, অ্যাকশন সময় লাগে এমন কাজের মতো, টপিক রেডিওর মতো">
+      <g text-anchor="middle">
+        <rect x="18" y="14" width="74" height="28" rx="8" class="ln" style="fill:var(--soft)"/><text x="55" y="33">প্রশ্ন?</text>
+        <path class="sa" d="M55 46 V58"/><path class="fa" d="M55 64 l-5 -8 h10 z"/>
+        <rect x="18" y="66" width="74" height="28" rx="8" class="ln" style="fill:var(--soft);stroke:var(--accent)"/><text x="55" y="85" style="fill:var(--accent)">উত্তর!</text>
+        <text x="55" y="118" style="fill:var(--accent)">সার্ভিস</text>
+        <text x="165" y="30" class="m">কাজ চলছে…</text>
+        <rect x="128" y="40" width="74" height="14" rx="7" class="ln"/><rect x="128" y="40" width="44" height="14" rx="7" class="fa"/>
+        <text x="165" y="80" class="m">খোঁজ নাও · বাতিল করো</text>
+        <text x="165" y="118" style="fill:var(--accent)">অ্যাকশন</text>
+        <path class="ln" d="M275 92 V40 M262 92 L275 40 L288 92"/><circle cx="275" cy="38" r="4" class="fa"/>
+        <path class="sa" d="M262 30 A16 16 0 0 1 288 30 M254 22 A26 26 0 0 1 296 22"/>
+        <text x="275" y="118" style="fill:var(--accent)">টপিক</text>
+      </g>
+    </svg>
+    <figcaption>সার্ভিস: প্রশ্ন করে উত্তরের অপেক্ষা। অ্যাকশন: সময় লাগে এমন কাজ, মাঝে খোঁজ নেওয়া বা বাতিল করা যায়। টপিক: রেডিওর মতো সম্প্রচার।</figcaption>
+  </figure>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>“রোবট, এই জায়গায় যাও”: এটা সার্ভিস, অ্যাকশন, না টপিক?</summary><p>অ্যাকশন: সময় লাগে, মাঝে খোঁজ নেওয়া আর বাতিল করা যায়।</p></details>
+    <details><summary>রোবট এখন কোথায়, সেটা সবসময় পাওয়া যায় কোথা থেকে?</summary><p>একটা টপিক থেকে (<code>/sensor_fusion/navigation</code>), রেডিওর মতো সবসময় সম্প্রচার হয়।</p></details>
+  </div>
+
+  <h2 id="loop">১০. কাজের চক্র</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#codewords">প্রোগ্রামিংয়ের শব্দগুলো</a>।</div>
+  <figure class="sketch">
+    <ol class="flow">
+      <li><b>প্রস্তুতি</b>Ubuntu সেট আপ করো (লোকাল সিমুলেটরের জন্য Docker-ও)।</li>
+      <li><b>ফাইলগুলো নাও</b>সিমুলেটরের রিসোর্স ডাউনলোড করো।</li>
+      <li><b>লেখো</b>টেমপ্লেট প্রোগ্রামটা বদলাও।</li>
+      <li class="loop"><b>সিমুলেট করো</b>ওয়েব বা লোকাল সিমুলেটরে চালাও।</li>
+      <li class="loop"><b>যাচাই করো</b>লগ আর ফলাফল পড়ো।</li>
+      <li class="loop"><b>ঠিক করো</b>প্রোগ্রাম বদলে আবার চালাও।</li>
+    </ol>
+    <div class="again">↺ ভরসা করার মতো না হওয়া পর্যন্ত ৪ থেকে ৬ নম্বর ধাপ বারবার করো</div>
+    <figcaption><b>স্কেচ ৬।</b> প্রোগ্রাম যেভাবে বানাবে (প্রোগ্রামিং ম্যানুয়াল ১.২)।</figcaption>
+  </figure>
+
+  <h2 id="setup">১১. প্রস্তুতি</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>Ubuntu আর টার্মিনাল কী (<a href="#codewords">শব্দগুলো</a>)। এই অংশটা কম্পিউটার সেট আপ করার; বড় কারও সাহায্য নিলে ভালো।</div>
+  <ul>
+    <li><b>Ubuntu সবসময় লাগবে।</b> শুধু ওয়েব সিমুলেটর ব্যবহার করলেও ফাইল খুলতে আর জমা দেওয়ার প্যাকেজ বানাতে এটা লাগে। Windows 11-এ WSL2-তে Ubuntu ইনস্টল করো: <code>wsl --install -d Ubuntu-24.04</code>, তারপর দেখে নাও <code>wsl --list --verbose</code> সংস্করণ 2 দেখাচ্ছে কি না।</li>
+    <li><b>Docker শুধু লোকাল সিমুলেটরের জন্য।</b> শুধু ওয়েব সিমুলেটর ব্যবহার করলে Docker লাগবে না।</li>
+    <li><b>যে টুলগুলো রাখা ভালো:</b> Git, আর WSL এক্সটেনশনসহ VSCode। Windows-এ ফোল্ডারটা খুলো Ubuntu-র ভেতর থেকে (“Connect to WSL”), Windows-এর দিক থেকে নয়।</li>
+    <li>টুল আর লাইব্রেরির <b>নির্দিষ্ট করে দেওয়া সংস্করণ নিজে থেকে আপডেট কোরো না।</b></li>
+  </ul>
+  <div class="wrap"><table>
+    <tr><th></th><th>ন্যূনতম</th><th>যা থাকা ভালো</th></tr>
+    <tr><td>OS</td><td>Ubuntu 20.04 বা তার পরের</td><td>Ubuntu 24.04 (Windows 11-এ WSL2-তে)</td></tr>
+    <tr><td>CPU</td><td>৪ কোর</td><td>৬ কোর</td></tr>
+    <tr><td>মেমরি</td><td>৮ GB</td><td>১৬ GB</td></tr>
+    <tr><td>খালি জায়গা</td><td>২০ GB</td><td>৪০ GB, SSD-তে</td></tr>
+  </table></div>
+  <p class="note">এগুলো লোকাল সিমুলেটর চালানোর জন্য। সিমুলেটর বানানো GCC 7.5.0, C++14, Python 3.6.9 আর ROS 1 Melodic দিয়ে, তাই এমন কোড লেখো যা এই সংস্করণগুলোতে চলে।</p>
+  <p><a href="https://jaxa.krpc.jp/download" target="_blank" rel="noopener">ডাউনলোড পাতা</a> থেকে <b>KRPC7 Simulator Resources</b> নামিয়ে খুলে নাও:</p>
+  <pre><code>mkdir -p ~/krpc
+tar -xvf krpc7th-simulator.tar.gz -C ~/krpc</code></pre>
+
+  <h2 id="folder">১২. প্রজেক্ট ফোল্ডার</h2>
+  <figure class="sketch">
+<pre><code>krpc7th-simulator/
+├── build.sh, simulation.sh, replay.sh   এগুলো চালাও, বদলিও না
+├── docker/  rootfs/  rviz/              সিমুলেটরের ভেতরের জিনিস, বদলিও না
+├── users/
+│   ├── packing.sh                       জমা দেওয়ার .tar.gz বানায়
+│   └── catkin_ws/src/
+│       ├── <b>krpc_user/</b>                   ★ তোমার কোড এখানে
+│       │   ├── scripts/user_template.py     Python টেমপ্লেট
+│       │   └── src/user_template_node.cpp   C++ টেমপ্লেট
+│       ├── krpc_api_server/             দেওয়া আছে, বদলিও না
+│       └── krpc_ib2_msgs/               দেওয়া আছে, বদলিও না
+└── share/logs/&lt;time&gt;/                  প্রতিটা লোকাল রানের ফলাফল
+    ├── cheat_sheet.json                 সেই রানের চেকপয়েন্ট লেআউট
+    ├── simulation.bag                   রেকর্ডিং (replay.sh দিয়ে চালাও)
+    ├── judge_module_logs/               স্কোরের লগ
+    └── user_programs_logs/              তোমার প্রোগ্রামের আউটপুট</code></pre>
+    <figcaption><b>স্কেচ ৭।</b> খোলার পরে ফোল্ডারটা (প্রোগ্রামিং ম্যানুয়াল ২.৫.২), ছোট করে দেখানো। তোমার বদলানোর জায়গা শুধু <code>users/catkin_ws/src/krpc_user/</code>।</figcaption>
+  </figure>
+  <p>বদলগুলো তৈরি হলে আপলোডের প্যাকেজ বানাও:</p>
+  <pre><code>cd ~/krpc/krpc7th-simulator/users
+./packing.sh YourSourceCode      # YourSourceCode.tar.gz বানায়</code></pre>
+
+  <h2 id="sims">১৩. ওয়েব আর লোকাল সিমুলেটর</h2>
+  <div class="wrap"><table>
+    <tr><th></th><th>ওয়েব সিমুলেটর</th><th>লোকাল সিমুলেটর</th></tr>
+    <tr><td>কী কাজে</td><td>জমা দেওয়ার আগে যাচাই, সবার জন্য একই ব্যবস্থায় বিচার</td><td>কাজ করতে করতে নানা কিছু চেষ্টা আর ডিবাগ করা</td></tr>
+    <tr><td>কোথায় চলে</td><td>JAXA-র সার্ভারে, আসল রোবটের মতো ARM64-এ (একটা Jetson TX2)</td><td>তোমার PC-তে Docker-এ, সাধারণত x86_64</td></tr>
+    <tr><td>অ্যাকাউন্ট</td><td>তোমার দেশ বা অঞ্চলের যোগাযোগকারী তোমাকে নিবন্ধন করলে পাবে</td><td>লাগে না</td></tr>
+    <tr><td>লগ</td><td>ওয়েব ড্যাশবোর্ড থেকে</td><td><code>share/logs/</code>-এ</td></tr>
+  </table></div>
+  <h3>ওয়েব সিমুলেটর</h3>
+  <ol>
+    <li><a href="https://jaxa.krpc.jp/" target="_blank" rel="noopener">Kibo-RPC ওয়েবসাইটে</a> লগইন করে <b>SIMULATION</b> খোলো।</li>
+    <li><code>YourSourceCode.tar.gz</code> টেনে এনে ছাড়ো, <b>Simulator Level</b> আর <b>Version</b> বাছো, একটা মেমো লেখো, তারপর <b>START SIMULATION</b> চাপো।</li>
+    <li>স্ট্যাটাসে <b>Finished</b> লেখা এলে <b>VIEW RESULT</b> চাপো। <b>SIMULATOR VIEWER</b> রানটা আবার দেখায় (যে পাসওয়ার্ড দেখায়, সেটা কপি করে নাও)।</li>
+  </ol>
+  <h3>লোকাল সিমুলেটর</h3>
+  <pre><code>cd ~/krpc/krpc7th-simulator
+bash ./build.sh          # একবারই; আসল রোবটের মতো ARM-এর জন্য বানাতে --arm64 যোগ করো
+bash ./simulation.sh     # একটা রান; http://localhost-এ দেখো, থামাতে Ctrl+C</code></pre>
+  <div class="box warn"><p>তোমার x86_64 PC-তে যে কোড ঠিকঠাক চলে, ARM64-এ সেটা অন্যরকম আচরণ করতে পারে। চূড়ান্ত সংস্করণ সবসময় ওয়েব সিমুলেটরে পরীক্ষা করো।</p></div>
+
+  <h2 id="results">১৪. ফলাফল পড়া</h2>
+  <ul>
+    <li>ওপরে থাকে <b>Final Score, Mission Time, Time Bonus, CheckPoints Passed, Goal Reached</b>।</li>
+    <li><b>CheckPoint Detail</b>-এ প্রতিটা চেকপয়েন্ট PASSED বা FAIL হিসেবে লেখা থাকে, সঙ্গে তার লেভেল, মানে তিন শর্তের মধ্যে যেটা সবচেয়ে কম। ফেল করা চেকপয়েন্টের লেভেলের জায়গায় থাকে "-"; <b>N/A</b> মানে সেই চেকপয়েন্টের বিচারই হয়নি।</li>
+    <li><b>DOWNLOAD LOG FILES</b> থেকে দুটো ফাইল পাবে: ফলাফলের JSON, আর তোমার প্রোগ্রামের নিজের লগ (<code>rospy.loginfo</code> দিয়ে যা প্রিন্ট করেছ)। সিস্টেম আর সেন্সরের লগ দেওয়া হয় না; যা দরকার, লোকাল সিমুলেটরে rosbag দিয়ে রেকর্ড করে নাও।</li>
+  </ul>
+<pre><code>{ "Illegal": false,                      // রানটা কি নিয়মভঙ্গ হিসেবে ধরা হয়েছে?
+  "JudgeReport": {
+    "mission": { "started": true, "finished": true, "duration_sec": 295.33 },
+    "checkpoint_detail": [
+      { "checkpoint_id": 2, "success": true, "level": 3, "reason": "checkpoint validated" } ],
+    "goal": { "success": true, "reason": "goal checkpoint previously passed" },
+    "events": [ { "status": "Mission Start" }, { "status": "Mission Finish" } ] } }</code></pre>
+  <p class="note">প্রোগ্রামিং ম্যানুয়ালের উদাহরণ থেকে ছোট করা (টাইমস্ট্যাম্প বাদ দিয়ে)।</p>
+
+  <h2 id="template">১৫. টেমপ্লেট প্রোগ্রাম যেভাবে চলে</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>সার্ভিস, অ্যাকশন, টপিক আর JSON (<a href="#codewords">শব্দগুলো</a>), আর পোজ ও কোয়াটারনিয়ন (<a href="rotations.html#quaternion">স্থানাঙ্ক ও ঘূর্ণনের ৮ নম্বর পাঠ</a>)।</div>
+  <figure class="sketch">
+    <ol class="flow col">
+      <li><b>চালু হওয়া (<code>__init__</code>)</b>ক্লায়েন্টগুলো বানায়, <code>/ib2_user/start</code>-এ সাবস্ক্রাইব করে, <code>/ib2_user/stop</code> সার্ভ করে আর <code>/ib2_user/ready = True</code> সেট করে। এই তিনটা কখনো সরাবে না।</li>
+      <li><b>শুরুর সংকেত (<code>__callback_start</code>)</b>তোমার প্রোগ্রাম “তৈরি” জানালে তবেই <code>/ib2_user/start</code> আসে। একটা গার্ড-চেক খেয়াল রাখে, যাতে এটা দুবার শুরু না হয়।</li>
+      <li><b>মিশন শুরু</b><code>/event/mission_start</code> কল করো।</li>
+      <li class="loop"><b>USER EDIT AREA: তোমার পরিকল্পনা</b><code>/mission/get_checkpoints</code> থেকে চেকপয়েন্টগুলো নাও। প্রতিটার জন্য: <code>/ctl/command</code> দিয়ে সেখানে যাও, মার্কার মাঝখানে আর স্থির আছে কি না দেখো, তারপর <code>/event/checkpoint_passed</code> দিয়ে বিচার চাও।</li>
+      <li><b>মিশন শেষ</b>গোলে পৌঁছে <code>/event/mission_finished</code> কল করো। এটাই শেষের রিপোর্ট।</li>
+    </ol>
+    <figcaption><b>স্কেচ ৮।</b> টেমপ্লেটের প্রবাহ (প্রোগ্রামিং ম্যানুয়াল ৬.৪)। <code>/ib2_user/stop</code> যেকোনো সময় আসতে পারে: চলমান অ্যাকশন থাকলে বাতিল করো, তারপর উত্তর দাও।</figcaption>
+  </figure>
+<pre><code>def __run_user_flow(self, msg):
+    try:
+        if not self.__notify_mission_start():
+            return
+        # USER EDIT AREA: define route planning and game-specific flow here.
+        # ***********************************************
+        checkpoint_target = self.__resolve_first_checkpoint_target()
+        if not self.__move_to_checkpoint(checkpoint_target):
+            return
+        if not self.__notify_checkpoint_passed(checkpoint_target['checkpoint_id']):
+            return
+        # ***********************************************
+        if not rospy.is_shutdown():
+            self.__notify_mission_finished()
+    except Exception as exc:
+        rospy.logerr('user flow failed: %s', exc)</code></pre>
+  <ul>
+    <li>নমুনাটা শুধু <b>প্রথম</b> চেকপয়েন্টে যায়। তোমার কাজ হলো ভালো একটা ক্রমে সবগুলোতে যাওয়া, আর গোলে গিয়ে শেষ করা।</li>
+    <li>চেকপয়েন্টগুলো আনতে না পারলে টেমপ্লেট মূলবিন্দুতে একটা লক্ষ্য ধরে নেয়, যাতে অন্তত শুরু থেকে শেষ পর্যন্ত চলে। এতে কোনো পয়েন্ট আসে না; এর বদলে আবার চেষ্টা করো, বা গুছিয়ে থামো।</li>
+    <li><code>/mission/get_checkpoints</code> তার <code>message</code>-এ JSON ফেরত দেয়। প্রতিটা চেকপয়েন্টে থাকে <code>checkpoint_id</code>, <code>position</code>, <code>marker_pose</code>, <code>score_bands</code>, আর একটা <code>attitude</code>, যার ভেতরে কোয়াটারনিয়ন, <code>centering_bands</code> আর <code>roll_bands</code>; সঙ্গে থাকে <code>goalpoint_id</code>।</li>
+  </ul>
+<pre><code>{ "checkpoint_count": 8,
+  "checkpoints": [ {
+      "checkpoint_id": 1,
+      "position": [1.442, -0.501, 0.665],
+      "marker_pose": { "position": [1.451, -1.001, 0.6806], "quaternion": [-0.7071, 0, 0, 0.7071] },
+      "score_bands": [ {"radius": 0.1, "level": 3}, {"radius": 0.2, "level": 2}, {"radius": 0.3, "level": 1} ],
+      "attitude": { "quaternion": [0.706, -0.690, 0.123, -0.103],
+                    "centering_bands": [ {"angle": 10, "level": 3}, ... ],
+                    "roll_bands":      [ {"angle": 10, "level": 3}, ... ] } }, ... ],
+  "goalpoint_id": 12 }</code></pre>
+  <p class="note">প্রোগ্রামিং ম্যানুয়ালের নমুনা রেসপন্স থেকে ছোট করা।</p>
+
+  <h2 id="api">১৬. এক নজরে API</h2>
+  <div class="word"><span class="tag">সহজ কথায়</span>নিচের তালিকাটা রিমোট কন্ট্রোলের বোতামের মতো: প্রতিটা নাম রোবটের একটা কাজ। নাম বাঁ দিকের কলামে, ধরন (সার্ভিস, অ্যাকশন, টপিক) মাঝে, আর কী করে তা ডানে।</div>
+  <div class="wrap"><table>
+    <tr><th>নাম</th><th>ধরন</th><th>কী করে</th></tr>
+    <tr><td><code>/mission/get_checkpoints</code></td><td>Service</td><td>এই রানের চেকপয়েন্টগুলো আনে (JSON)</td></tr>
+    <tr><td><code>/event/mission_start</code></td><td>Service</td><td>জানায় যে মিশন শুরু হয়েছে</td></tr>
+    <tr><td><code>/event/checkpoint_passed</code></td><td>Action</td><td>বিচারককে এখনই একটা চেকপয়েন্ট যাচাই করতে বলে (goal: <code>checkpoint_id</code>)</td></tr>
+    <tr><td><code>/event/mission_finished</code></td><td>Service</td><td>মিশন শেষের রিপোর্ট</td></tr>
+    <tr><td><code>/sensor_fusion/navigation</code></td><td>Topic</td><td>রোবট কোথায় আছে: অবস্থান, দিক, বেগ</td></tr>
+    <tr><td><code>/ctl/command</code></td><td>Action</td><td>কোনো পোজে যাওয়া, রোবটের সাপেক্ষে সরা, বা থামা</td></tr>
+    <tr><td><code>/ctl/wrench</code></td><td>Topic</td><td>সরাসরি বল আর টর্ক দিয়ে ঠেলা (অ্যাডভান্সড)</td></tr>
+    <tr><td><code>/ctl/status</code></td><td>Topic</td><td>রোবটের নিয়ন্ত্রণের এখনকার অবস্থা</td></tr>
+    <tr><td><code>/camera_main/image_raw</code></td><td>Topic</td><td>ক্যামেরার ছবি</td></tr>
+    <tr><td><code>/camera_main/camera_info</code></td><td>Topic</td><td>ক্যামেরার সংখ্যাগুলো: <code>K</code> (ফোকাল লেংথ আর কেন্দ্র) আর <code>D</code> (বিকৃতি)</td></tr>
+    <tr><td><code>/ib2_user/start</code></td><td>Topic</td><td>শুরুর সংকেত (আবশ্যিক, টেমপ্লেটে আগেই আছে)</td></tr>
+    <tr><td><code>/ib2_user/stop</code></td><td>Service</td><td>থামার অনুরোধ (আবশ্যিক, টেমপ্লেটে আগেই আছে)</td></tr>
+    <tr><td><code>/ib2_user/ready</code></td><td>Parameter</td><td>প্রোগ্রাম তৈরি হলে true করে দাও (আবশ্যিক)</td></tr>
+  </table></div>
+  <p class="note">সার্ভিস একটা অনুরোধের উত্তর দেয়; অ্যাকশন সময়সাপেক্ষ কাজের জন্য, যেমন চলাফেরা (কানেক্ট করো, goal পাঠাও, ফলের জন্য অপেক্ষা করো); টপিক অনবরত ডেটা পাঠায়। অ্যাকশনে সবসময় একটা টাইমআউট আর বাতিল করার উপায় রাখো।</p>
+
+  <h2 id="move">১৭. রোবট চালানো</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>অ্যাকশন (<a href="#codewords">শব্দগুলো</a>), Kibo-র ফ্রেম আর রোবটের নিজের ফ্রেম (<a href="rotations.html#frame">পাঠ ৩</a>, <a href="rotations.html#body">পাঠ ৫</a>), কোয়াটারনিয়ন (<a href="rotations.html#quaternion">পাঠ ৮</a>)।</div>
+  <div class="word"><span class="tag">সহজ কথায়</span>রোবটকে চালাতে তুমি বলো “এই পোজে যাও” (অবস্থান আর দিক), তারপর অপেক্ষা করো কাজটা ঠিকঠাক হলো কি না। ঠিক না হলে কী করবে, সেটাও প্রোগ্রামে লিখে রাখতে হয়।</div>
+  <p><code>/ctl/command</code>-এ একটা লক্ষ্য পোজ আর ধরনসহ <code>CtlCommandGoal</code> পাঠাও:</p>
+  <div class="wrap"><table>
+    <tr><th>ধরন</th><th>লক্ষ্য</th></tr>
+    <tr><td><code>MOVE_TO_ABSOLUTE_TARGET</code></td><td>Kibo-র ভেতরে একটা অবস্থান আর দিক (<code>frame_id = iss_body</code>)</td></tr>
+    <tr><td><code>MOVE_TO_RELATIVE_TARGET</code></td><td>রোবট এখন যেখানে আছে, তার সাপেক্ষে একটা অবস্থান আর দিক (<code>frame_id = body</code>)</td></tr>
+    <tr><td><code>STOP_MOVING</code></td><td>কিছু না (শূন্য পাঠাও)। রোবট গতি কমিয়ে স্থির হয়ে থাকে।</td></tr>
+  </table></div>
+  <ul>
+    <li>চলা সফল হলে ফল আসে <code>TERMINATE_SUCCESS</code> (0)। নইলে আসে <code>ABORTED</code> (1), <code>TIME_OUT</code> (2), <code>INVALID_NAV</code> (3) বা <code>INVALID_CMD</code> (4)। প্রতিবার এটা যাচাই করো।</li>
+    <li>চলার মাঝপথে পরিকল্পনা বদলাতে <code>cancel_goal()</code> কল করো, আর পরের লক্ষ্য পাঠানোর আগে রোবট সত্যিই থেমেছে কি না, তার জন্য অপেক্ষা করো।</li>
+    <li><code>/ctl/status</code> অবস্থা দেখায়: চলা শেষে সেটা বদলে হয় <code>KEEP_POSE</code> বা <code>STOP_MOVING</code>।</li>
+    <li><code>/ctl/wrench</code> রোবটকে সরাসরি ঠেলে (বল N-এ, টর্ক N·m-এ, রোবটের নিজের ফ্রেমে)। এতে চলা মসৃণ হতে পারে, কিন্তু থামাতে হবে তোমাকেই; <code>/ctl/command</code>-এর সঙ্গে মেশালে অপ্রত্যাশিত কিছু ঘটতে পারে।</li>
+    <li>রুট সাজাও ওড়ার মতো জায়গার ভেতরে, রোবটের আকারের জন্য জায়গা রাখো, আর পৌঁছে বিচার চাওয়ার আগে একটু অপেক্ষা করো।</li>
+  </ul>
+
+  <h2 id="ar">১৮. AR মার্কার পড়া</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>AR মার্কার কী (<a href="robots.html#sense">রোবটের পাতা, অংশ ৩</a>), আর রোবটের নিজের অক্ষ (<a href="rotations.html#body">স্থানাঙ্ক ও ঘূর্ণনের ৫ নম্বর পাঠ</a>)।</div>
+  <div class="word"><span class="tag">সহজ কথায়</span>ক্যামেরার ছবিতে প্রোগ্রাম মার্কারটা খুঁজে বের করে, তার নম্বর পড়ে, আর হিসাব করে মার্কারটা কত দূরে আর কোন দিকে। এর জন্য OpenCV নামে ছবি নিয়ে কাজ করার একটা তৈরি লাইব্রেরি ব্যবহার হয়।</div>
+  <ul>
+    <li><b>মার্কারগুলো:</b> ArUco 4×4 ডিকশনারি, ID ১ থেকে ১২, <b>২ সেমি</b> (০.০২ মি) চওড়া। বাহুর দৈর্ঘ্য দাও মিটারে, কখনো পিক্সেলে নয়।</li>
+    <li><b>ক্যামেরা:</b> <code>/camera_main/camera_info</code> থেকে <code>K</code> আর <code>D</code> নাও। প্রথম মেসেজ না আসা পর্যন্ত এটা ফাঁকা থাকে, তাই ব্যবহারের আগে দেখে নাও। ছবির আকার বদলালে fx, fy, cx আর cy-ও সেই অনুপাতে বদলাও।</li>
+    <li><b>লাইব্রেরি:</b> OpenCV 3.3.1-এর aruco মডিউল।</li>
+  </ul>
+  <figure class="sketch">
+    <ol class="flow">
+      <li><b>ধূসর</b>ক্যামেরার ছবিকে গ্রেস্কেলে বদলাও।</li>
+      <li><b>প্রস্তুতি</b>4×4 ডিকশনারি আর ডিটেক্টরের সেটিংস বানাও।</li>
+      <li><b>খোঁজো</b><code>detect<wbr>Markers</code> প্রতিটা ID আর তার ৪টা কোণের পিক্সেল খুঁজে বের করে।</li>
+      <li><b>পোজ</b>০.০২ মি, K আর D দিয়ে <code>estimate<wbr>Pose<wbr>Single<wbr>Markers</code> চালালে পাবে <code>rvec</code> আর <code>tvec</code>।</li>
+      <li><b>যাচাই</b>কয়েকটা ফ্রেম ধরে দূরত্ব, দিক আর স্থিরতা দেখো।</li>
+    </ol>
+    <figcaption><b>স্কেচ ৯।</b> মার্কার খুঁজে বের করা আর সেটা কোথায় আছে তা হিসাব করা (প্রোগ্রামিং ম্যানুয়াল ৫.১৩.২)।</figcaption>
+  </figure>
+  <figure class="sketch">
+    <svg viewBox="0 0 520 250" role="img" aria-label="Int-Ball2-এর বডির অক্ষ, পাশে OpenCV ক্যামেরার অক্ষ">
+      <text x="110" y="18" text-anchor="middle" class="b">Int-Ball2 (বডি)</text>
+      <circle class="ln fbg" cx="100" cy="120" r="46"/>
+      <rect class="facc" x="142" y="111" width="10" height="18" rx="2"/>
+      <path class="acc" d="M100 120 H210 m-8 -5 l8 5 l-8 5"/>
+      <text x="164" y="108" class="a">X সামনে</text>
+      <path class="acc" d="M100 120 V42 m-5 8 l5 -8 l5 8"/>
+      <text x="108" y="48" class="a">Z ওপরে</text>
+      <circle class="acc" cx="100" cy="120" r="7"/><circle class="facc" cx="100" cy="120" r="2.5"/>
+      <text x="10" y="190" class="a">Y বাঁয়ে (তোমার দিকে)</text>
+      <path class="thin" d="M147 131 v30"/>
+      <text x="152" y="176" class="m">ক্যামেরা, ০.১৪ মি</text>
+      <text x="152" y="192" class="m">কেন্দ্রের সামনে</text>
+      <text x="400" y="18" text-anchor="middle" class="b">ক্যামেরা (OpenCV)</text>
+      <rect class="ln fbg" x="300" y="44" width="200" height="124" rx="6"/>
+      <text x="306" y="38" class="m">ছবি</text>
+      <path class="acc" d="M400 106 H476 m-8 -5 l8 5 l-8 5"/>
+      <text x="458" y="98" class="a">X</text>
+      <path class="acc" d="M400 106 V158 m-5 -8 l5 8 l5 -8"/>
+      <text x="408" y="158" class="a">Y</text>
+      <circle class="acc" cx="400" cy="106" r="7"/><path class="acc" d="M395 101 l10 10 m0 -10 l-10 10" style="stroke-width:1.5"/>
+      <rect class="fcp" x="430" y="60" width="18" height="18"/>
+      <path class="thin dash" d="M400 106 L433 76"/>
+      <text x="300" y="188" class="a">X ডানে · Y নিচে</text>
+      <text x="300" y="204" class="a">Z লেন্স থেকে বাইরে (⊗)</text>
+      <text x="300" y="226" class="m">tvec: মার্কারের কেন্দ্র, মিটারে,</text>
+      <text x="300" y="242" class="m">ক্যামেরার এই অক্ষগুলোতে</text>
+    </svg>
+    <figcaption><b>স্কেচ ১০।</b> দুই সেট অক্ষ। ক্যামেরা তাকিয়ে থাকে রোবটের সামনের দিকে (বডির X)। <code>rvec</code> আর <code>tvec</code> মার্কারকে বর্ণনা করে ক্যামেরার অক্ষে; <code>body</code> বা <code>iss_body</code> ফ্রেমে ব্যবহার করতে প্রোগ্রামিং ম্যানুয়ালে দেওয়া ক্যামেরা বসানোর অবস্থান আর দিক দিয়ে রূপান্তর করো। ছবি সোজা থাকলে (ছবির ওপরের দিক রোবটের ওপরের দিকে), <code>tvec</code> = (t<sub>x</sub>, t<sub>y</sub>, t<sub>z</sub>) হলে বডি ফ্রেমে মার্কারটা থাকে (০.১৪ + t<sub>z</sub>, −t<sub>x</sub>, −t<sub>y</sub>)-এ।</figcaption>
+  </figure>
+  <div class="box warn"><p>ডিকশনারি, মার্কারের ID, বাহুর দৈর্ঘ্য, K বা D ভুল হলে মার্কার হয়তো খুঁজে পাওয়া যাবে, কিন্তু দূরত্ব আর কোণ ভুল আসবে।</p></div>
+
+  <h2 id="safe">১৯. নিরাপদ প্রোগ্রাম লেখা</h2>
+  <div class="word"><span class="tag">সহজ কথায়</span>প্রোগ্রাম যেন কখনো আটকে না যায়, আর কিছু ভুল হলে যেন বুদ্ধি খাটিয়ে সামলায়, যেমন কোনো উত্তর না এলে চিরকাল অপেক্ষা না করে একটা সময় পরে অন্য কিছু করা।</div>
+  <p>প্রোগ্রামিং ম্যানুয়াল এ নিয়ে পুরো একটা অধ্যায় লিখেছে, কারণ প্রোগ্রাম আটকে গেলে রানটাই নষ্ট হয়, আর ISS-এ তার প্রভাব রোবটের ওপরও পড়তে পারে।</p>
+  <ul>
+    <li><b>অসীম লুপ নয়:</b> চেষ্টার সংখ্যা আর সময়ের একটা সীমা রাখো, আর প্রতিটা লুপ থেকে বেরোনোর একাধিক রাস্তা রাখো।</li>
+    <li><b>ব্যর্থতার জন্য তৈরি থাকো:</b> রিটার্ন ভ্যালু যাচাই করো, এক্সেপশন ধরো, টাইমআউট ব্যবহার করো, আর সেন্সরের ডেটা না এলে বা উল্টোপাল্টা এলে সামলাও।</li>
+    <li><b>ঘড়ির দিকে নজর রাখো:</b> প্রতিটা ধাপে কত সময় লাগছে লিখে রাখো, আর মিশনের বাকি সময়ের দিকে চোখ রাখো।</li>
+    <li><b>সাবধানে চলো:</b> আগে লক্ষ্যটা নিশ্চিত করো, ফলাফল সবসময় যাচাই করো, আবার চেষ্টার সংখ্যা সীমিত রাখো, আর পৌঁছে একটু অপেক্ষা করো।</li>
+    <li><b>টাটকা ডেটা ব্যবহার করো:</b> টাইমস্ট্যাম্প দেখে নাও, আর প্রতিটা মান কোন এককে আর কোন ফ্রেমে, তা স্পষ্ট করে লেখো।</li>
+    <li><b>কাজের জিনিস লগ করো:</b> শুরু আর শেষ, পরিকল্পনা, প্রতিটা API কল আর তার ফল, লক্ষ্য আর আসল পোজ, ভুল, আবার চেষ্টা আর সময়ের হিসাব, ঠিক লেভেলে (ERROR, WARN, INFO, DEBUG)।</li>
+  </ul>
+  <div class="wrap"><table>
+    <tr><th>যখন এটা ঘটে</th><th>তখন এটা করো</th></tr>
+    <tr><td>কোনো সার্ভিস পাওয়া যাচ্ছে না</td><td><code>wait_for_service()</code> দিয়ে অপেক্ষা করো, আর বেশি দেরি হলে থামো</td></tr>
+    <tr><td>কোনো অ্যাকশন সার্ভার পাওয়া যাচ্ছে না</td><td><code>wait_for_server()</code> দিয়ে অপেক্ষা করো; সেটা না আসা পর্যন্ত শুরু কোরো না</td></tr>
+    <tr><td>চলা ব্যর্থ হলো</td><td>চেকপয়েন্টের বিচার চেয়ো না; কারণটা লগ করো</td></tr>
+    <tr><td>অ্যাকশনের সময় শেষ</td><td><code>cancel_goal()</code> কল করো, আর নিশ্চিত হও যে থেমেছে</td></tr>
+    <tr><td><code>checkpoint_passed</code> ব্যর্থ হলো</td><td>ফলটা লগ করো; একই অনুরোধ বারবার পাঠাতে থেকো না</td></tr>
+    <tr><td>ক্যামেরার ছবি বা camera_info আসছে না</td><td>টাইমআউটের পরে সেটা লগ করে ক্যামেরার ধাপটা বাদ দাও</td></tr>
+    <tr><td><code>/ib2_user/stop</code> এল</td><td>চলমান সব অ্যাকশন বাতিল করো, নিরাপদে শেষ করো, তারপর উত্তর দাও</td></tr>
+  </table></div>
+  <p class="note">প্রোগ্রামিং ম্যানুয়ালের ৫ নম্বর অধ্যায় আর ৬.৫ অংশ থেকে।</p>
+
+  <!-- ===================== PART 3 ===================== -->
+  <h2 class="part">তৃতীয় ভাগ</h2>
+  <h2 id="sandbox">২০. স্যান্ডবক্সে অনুশীলন</h2>
+  <p>নিয়ম পড়া শেষ? শেখার পথের পরের ধাপ <a href="manual.html">স্যান্ডবক্স চালানো</a>; তারপর <a href="index.html">স্যান্ডবক্সে</a> নিজে চেষ্টা করো। নিচের টেবিলে আছে কোন নিয়ম স্যান্ডবক্সের কোথায় অনুশীলন করা যায়।</p>
+  <div class="wrap"><table>
+    <tr><th>নিয়মে যা আছে</th><th><a href="index.html">স্যান্ডবক্সে</a> যেভাবে করে দেখবে</th></tr>
+    <tr><td>তিনটা শর্ত, সবচেয়ে কম লেভেলটাই গোনা হয়</td><td>রুট ট্যাবের মিশনের তালিকায় প্রতিটা চেকপয়েন্টের লেভেল দেখা যায়; <b>▶ চালাও</b> লগে লিখে দেয় প্রতিটায় কী মিলছে না</td></tr>
+    <tr><td>কঠিনতার লেভেল (৬ থেকে ১২টা চেকপয়েন্ট)</td><td>মিশনের তালিকার ওপরে <b>লেভেল</b> বাছলে এলোমেলো নতুন লেআউট তৈরি হয়; এই রানে কোন কোন মার্কারের চেকপয়েন্ট নেই, তাও বলে দেয়</td></tr>
+    <tr><td>ক্যামেরায় মার্কার মাঝখানে</td><td><b>ক্যামেরা</b> ভিউতে ১০°, ২০° আর ৩০°-এর বৃত্ত আঁকা থাকে</td></tr>
+    <tr><td>দৃষ্টিরেখা বরাবর রোল</td><td>⟲ আর ⟳ বোতাম (চালানোর সময় <kbd>Q</kbd> / <kbd>E</kbd>)</td></tr>
+    <tr><td>AR মার্কার পড়া</td><td>ক্যামেরা ভিউ আসল 4×4 মার্কার পড়ে আর <code>rvec</code> ও <code>tvec</code> দেখায়; রোবটকে কাছে থাকতে হয়</td></tr>
+    <tr><td>টেমপ্লেট প্রোগ্রাম</td><td><b>কোড</b> ট্যাব তোমার রুটকে Python বা C++-এ লিখে দেয়; AR পড়ার কোডটা লিখতে হবে তোমাকেই</td></tr>
+    <tr><td>সময়ের বোনাস</td><td>মিশনের তালিকা তোমার স্কোরের আন্দাজ দেয়, আর স্ট্যাটাস বার ৫ মিনিটের সীমার তুলনায় সময় দেখায়</td></tr>
+  </table></div>
+  <div class="box try"><p>স্যান্ডবক্স অনুশীলনের জায়গা, সিমুলেটর নয়। এতে মাইক্রোগ্র্যাভিটির বাধাবিঘ্ন নেই; এর ক্যামেরার সংখ্যা, প্রতি লেভেলের পয়েন্ট আর প্রতিটা কঠিনতার লেভেলে চেকপয়েন্টের সংখ্যা (৬, ৮, ১০, ১২) ধরে নেওয়া; আর নতুন লেআউট না বানানো পর্যন্ত এর চেকপয়েন্টগুলো একই জায়গায় থাকে। আসল খেলায় প্রতি রানে সেগুলো বদলায়, তাই তোমার প্রোগ্রামকে সেগুলো <code>/mission/get_checkpoints</code> থেকে পড়তেই হবে।</p></div>
+
+  <footer>
+    JAXA-র ৭ম Kibo-RPC রুলবুক (v1.1) আর প্রোগ্রামিং ম্যানুয়ালের (v1.0) অনানুষ্ঠানিক সারাংশ, শিক্ষার্থীদের সুবিধার জন্য লেখা। স্কেচগুলো সহজ করে আঁকা, JAXA-র ছবি নয়। এটা JAXA বা UNOOSA-র সঙ্গে যুক্ত নয়, তাদের অনুমোদিতও নয়। কোনো সন্দেহ হলে <a href="#official">অফিশিয়াল ডকুমেন্টগুলোই</a> ঠিক।<br>
+    <a href="LICENSE.txt" target="_blank" rel="noopener">লাইসেন্স</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">ihashib-এর তৈরি</a>
+  </footer>
+</div>
+<div class="en" lang="en">
+  <h1>Kibo-RPC 7 rules guide</h1>
+  <details class="intro">
+    <summary>About this page<small>Learning path · how to read it · contents</small></summary>
+    <p class="lead">Plain-language summaries of JAXA's Rulebook and Programming Manual for the 7th Kibo Robot Programming Challenge, with sketches. They help you get started; the official documents have the final word.</p>
+
+    <nav class="path" aria-label="Learning path"><b>Learning path: one step at a time</b><a href="robots.html"><i>1</i>Meet the robot</a><span class="arr">→</span><a href="rotations.html"><i>2</i>Where and which way</a><span class="arr">→</span><span class="here" aria-current="step"><i>3</i>The game's rules</span><span class="arr">→</span><a href="manual.html"><i>4</i>Using the sandbox</a><span class="arr">→</span><a href="index.html"><i>5</i>Practise</a></nav>
+    <div class="need"><span class="tag">Read this first</span>The <a href="robots.html">robots page</a>, and lessons 1 to 6 of <a href="rotations.html">Coordinates and rotations</a> (positions, degrees and roll).</div>
+    <div class="try"><span class="tag">How to read this page</span>If you're new, just read <b>Part 1</b> (1 to 9): that's the whole game. When you start writing your program, read <b>Part 2</b>; it begins by explaining the programming words you'll need. Every part starts by saying what to read first.</div>
+
+    <nav class="toc" aria-label="Contents">
+      <b>Part 1 · The Rulebook</b>
+      <ol>
+        <li><a href="#en-challenge">The challenge in one minute</a></li>
+        <li><a href="#en-game">How a game runs</a></li>
+        <li><a href="#en-given">What you're told, and what you aren't</a></li>
+        <li><a href="#en-checkpoint">Passing a checkpoint</a></li>
+        <li><a href="#en-scoring">Scoring</a></li>
+        <li><a href="#en-runs">Ten runs, one average</a></li>
+        <li><a href="#en-dates">Dates and submitting</a></li>
+        <li><a href="#en-final">The final round on the ISS</a></li>
+        <li><a href="#en-words">Words to know</a></li>
+      </ol>
+      <b>Part 2 · The Programming Manual</b>
+      <p style="margin:2px 0 0 6px"><a href="#en-codewords">Before you start: programming words, made simple</a></p>
+      <ol start="10">
+        <li><a href="#en-loop">The development loop</a></li>
+        <li><a href="#en-setup">Setting up</a></li>
+        <li><a href="#en-folder">The project folder</a></li>
+        <li><a href="#en-sims">Web and local simulators</a></li>
+        <li><a href="#en-results">Reading your results</a></li>
+        <li><a href="#en-template">How the template program runs</a></li>
+        <li><a href="#en-api">The API at a glance</a></li>
+        <li><a href="#en-move">Moving the robot</a></li>
+        <li><a href="#en-ar">Reading AR markers</a></li>
+        <li><a href="#en-safe">Writing a safe program</a></li>
+      </ol>
+      <b>Part 3</b>
+      <ol start="20">
+        <li><a href="#en-sandbox">Practising in the sandbox</a></li>
+      </ol>
+    </nav>
+  </details>
+  <details class="intro" id="en-official">
+    <summary>Official documents<small>JAXA's rulebook and manual (PDF)</small></summary>
+    <p>Read these from JAXA. The summaries below follow Rulebook version 1.1 (October 15, 2026) and Programming Manual version 1.0 (October 5, 2026).</p>
+    <div class="docs">
+      <a class="doc" href="https://jaxa.krpc.jp/static/2881600683dab1897ef65741461f8618/7thKibo-RPC_Rulebook.pdf" target="_blank" rel="noopener"><b>Rulebook (PDF)</b><small>The game, checkpoints, scoring, dates and the final round. v1.1, Oct 15, 2026, 2.85 MB.</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/static/b60d4a181401f2875ca8d8371f6c0c5a/ProgrammingManual.pdf" target="_blank" rel="noopener"><b>Programming Manual (PDF)</b><small>Setup, simulators, the template program and the Game API. v1.0, Oct 5, 2026, 7.01 MB.</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/static/6fae6038e074dda360f3e390675dad8f/7thKibo-RPC_BeginnerCourseRulebook.pdf" target="_blank" rel="noopener"><b>Beginner Course Rulebook (PDF)</b><small>The rules for the beginner course. Not summarised here.</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/static/ed119ca818940fcb2fe4bc4ed03f2303/The%207th%20Kibo-RPC_Guidebook.pdf" target="_blank" rel="noopener"><b>Guidebook (PDF)</b><small>How to enter the challenge. Who can take part is in part 1.</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/download" target="_blank" rel="noopener"><b>Download page</b><small>Always has the newest versions, the sample source code and the simulator resources.</small></a>
+      <a class="doc" href="https://jaxa.krpc.jp/" target="_blank" rel="noopener"><b>Kibo-RPC website</b><small>News, the FAQ, tutorial videos and the login for the web simulator.</small></a>
+    </div>
+    <p class="note">If a PDF link stops working, JAXA has published a newer version: get it from the download page, and check for rule changes.</p>
+  </details>
+
+  <!-- ===================== PART 1 ===================== -->
+  <h2 class="part">Part 1 · The Rulebook</h2>
+  <h2 id="en-challenge">1. The challenge in one minute</h2>
+  <div class="word"><span class="tag">In simple words</span>You and your team write a program. The program tells a robot on the space station where to go and what to look at. The team whose robot does the job most accurately and quickly wins.</div>
+  <p>You write a program for <b>Int-Ball2</b> (IB2), a small free-flying camera robot that JAXA operates inside <b>Kibo</b>, Japan's module on the International Space Station. It flies around Kibo so astronauts spend less time holding cameras. <a href="robots.html">Meet Int-Ball2 and Astrobee in 3D →</a></p>
+  <ul>
+    <li><b>The story:</b> the pressure inside Kibo is dropping. IB2 visits the <b>checkpoints</b> where a leak is suspected and reads the <b>AR marker</b> at each one to find the cause.</li>
+    <li><b>Preliminary round:</b> held in each country or region. Your program runs in JAXA's web simulator. Some regions add their own judging rules, so check your local Kibo-RPC page.</li>
+    <li><b>Final round:</b> the winning teams' programs run on the real Int-Ball2 inside Kibo, in orbit.</li>
+  </ul>
+
+  <h3>Who can take part</h3>
+  <ul>
+    <li><b>Regular Course</b> (the main competition): any student, from school all the way to university and graduate school. Teams have 3 to 8 members.</li>
+    <li><b>Beginner Course</b> (new for the 7th edition): everyone on the team is junior high school age or younger (up to about age 15) and new to programming. It has fewer checkpoints and doesn't count the robot's orientation (roll and so on), so it's easier. There are prizes, but winners don't get to run their program on the ISS.</li>
+    <li>Teams of high school students or younger give a guardian's or teacher's details. Rules can differ a little by country, so check your local organiser's announcements.</li>
+  </ul>
+  <p class="note">From the 7th Kibo-RPC Guidebook, sections 3.1, 3.2 and 3.4.</p>
+
+  <h2 id="en-game">2. How a game runs</h2>
+  <div class="word"><span class="tag">In simple words</span>The robot leaves its "home" (the dock), goes to a few places and points its camera at the marker at each one, then goes to the last place and says "job done". All within 5 minutes.</div>
+  <figure class="sketch">
+    <ol class="flow">
+      <li><b>Undock</b>IB2 leaves the Dock Station by itself. The 5-minute timer starts.</li>
+      <li><b>Get the checkpoints</b>Read their positions and attitudes, which are given to your program automatically.</li>
+      <li><b>Fly a good route</b>Visit the checkpoints in an efficient order.</li>
+      <li><b>Read each AR marker</b>Hold the required position and attitude at each checkpoint.</li>
+      <li><b>Goal and report</b>Reach the Goal CheckPoint and send the mission completion report.</li>
+    </ol>
+    <figcaption><b>Sketch 1.</b> The game in five steps (Rulebook 2.2.1 and 2.2.3). The report must be sent within the 5 minutes.</figcaption>
+  </figure>
+  <ul>
+    <li>The timer starts when undocking is complete and stops at the mission completion report. If the report doesn't happen within the time limit, you get no points for it.</li>
+    <li>Anything IB2 does after the mission finishes doesn't count.</li>
+  </ul>
+
+  <h2 id="en-given">3. What you're told, and what you aren't</h2>
+  <div class="wrap"><table>
+    <tr><th>Known before the run</th><th>Random each run</th><th>Never given to you</th></tr>
+    <tr>
+      <td>The start point (the Dock Station)<br>The position and attitude for the completion report<br>How many checkpoints there are<br>Where the checkpoints can be (per difficulty level)<br>Every AR marker's position and ID<br>The goal point</td>
+      <td>Each checkpoint's position and attitude, set by an angle and a distance from its AR marker</td>
+      <td>The checkpoint pattern before the run starts (your program asks for it when the run starts)<br>The disturbance pattern of the microgravity module</td>
+    </tr>
+  </table></div>
+  <ul>
+    <li>There are <b>6 to 12 checkpoints</b>; harder levels have more. You choose the level when you start a web simulation: Easy, Normal, Hard or Very Hard. The documents don't say how many checkpoints each level has, and which markers get one changes from run to run.</li>
+    <li>Each checkpoint is a <b>sphere</b> placed relative to its AR marker.</li>
+    <li>A <b>microgravity module</b> disturbs the robot in the simulator only, so IB2 won't always be exactly where you sent it.</li>
+  </ul>
+
+  <div class="word"><span class="tag">New words</span><dl>
+    <dt>checkpoint</dt><dd>A place the robot must go to, like a bus stop. Each one is an invisible ball-shaped space (a sphere) in front of an AR marker.</dd>
+    <dt>goal checkpoint</dt><dd>The last place the robot must reach.</dd>
+    <dt>level</dt><dd>How well a checkpoint was passed: Lv1 is OK, Lv3 is best.</dd>
+    <dt>simulator</dt><dd>A copy of the real robot and station inside a computer that behaves like the real thing, a bit like a video game. The preliminary round is run on it.</dd>
+  </dl></div>
+  <p>Places are written as three numbers (x, y, z), and orientations as quaternions. If those are new to you, look at the <a href="rotations.html">Coordinates and rotations</a> page first.</p>
+  <h3>How does the robot know where everything is?</h3>
+  <p>Each thing it needs comes from a different place:</p>
+  <div class="docs" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))">
+    <div class="doc"><b>The AR markers</b><small><i>Before the run, from the Rulebook.</i> Every marker's position, attitude and ID is in the Rulebook's table (below), so you can write them into your program.</small></div>
+    <div class="doc"><b>The checkpoints</b><small><i>When the run starts, from <code>/mission/get_checkpoints</code>.</i> They're random each run, so your program asks for them: each one's position, its marker's pose, the attitude to hold, the level limits, and which one is the goal.</small></div>
+    <div class="doc"><b>The robot itself</b><small><i>All the time, from <code>/sensor_fusion/navigation</code>.</i> IB2's own position, attitude and speed in Kibo.</small></div>
+    <div class="doc"><b>The marker in view</b><small><i>At each checkpoint, from the camera.</i> Reading the marker tells you where it is relative to the robot, so you can centre it before asking the judge.</small></div>
+  </div>
+  <p class="note">The Rulebook only says the checkpoint positions and attitudes are "provided automatically"; the Programming Manual explains the API calls (sections 6.3.1 and 6.3.2). The 7th Kibo-RPC uses Int-Ball2, not NASA's Astrobee, which flew in earlier editions.</p>
+
+  <h3>Where the markers are</h3>
+  <figure class="sketch">
+    <div class="wrap">
+      <svg class="map" viewBox="0 0 640 262" role="img" aria-label="Top view of Kibo with the 12 AR markers and the dock">
+        <text x="313" y="20" text-anchor="middle" class="m">SAIBO wall (−y)</text>
+        <text x="313" y="200" text-anchor="middle" class="m">EPS2 wall (+y)</text>
+        <text x="26" y="105" text-anchor="middle" class="m" transform="rotate(-90 26 105)">Dock end</text>
+        <text x="612" y="105" text-anchor="middle" class="m" transform="rotate(90 612 105)">Airlock end</text>
+        <rect class="ln" x="40" y="33" width="547" height="144" rx="4"/>
+        <!-- dock -->
+        <rect class="facc" x="49" y="97" width="13" height="13" rx="2"/>
+        <text x="68" y="128" class="a">Dock (start)</text>
+        <!-- wall markers (squares), overhead (ring), deck (filled circle) -->
+        <g class="fcp">
+          <rect x="145" y="29" width="10" height="9"/><rect x="261" y="29" width="10" height="9"/><rect x="287" y="29" width="10" height="9"/>
+          <rect x="353" y="29" width="10" height="9"/><rect x="472" y="29" width="10" height="9"/>
+          <rect x="192" y="172" width="10" height="9"/><rect x="582" y="124" width="9" height="10"/><rect x="36" y="94" width="9" height="10"/>
+          <circle cx="403" cy="111" r="6"/><circle cx="485" cy="104" r="6"/>
+        </g>
+        <circle class="cp" cx="184" cy="84" r="6"/>
+        <g>
+          <text x="150" y="56" text-anchor="middle" class="c">1, 7</text>
+          <text x="266" y="56" text-anchor="middle" class="c">2</text>
+          <text x="292" y="56" text-anchor="middle" class="c">3</text>
+          <text x="358" y="56" text-anchor="middle" class="c">4</text>
+          <text x="477" y="56" text-anchor="middle" class="c">5</text>
+          <text x="198" y="88" class="c">6</text>
+          <text x="403" y="134" text-anchor="middle" class="c">8</text>
+          <text x="197" y="165" text-anchor="middle" class="c">9</text>
+          <text x="485" y="127" text-anchor="middle" class="c">10</text>
+          <text x="566" y="133" text-anchor="middle" class="c">11</text>
+          <text x="52" y="88" class="c">12</text>
+        </g>
+        <!-- axes -->
+        <path class="acc" d="M50 226 h44 m-7 -5 l7 5 l-7 5 M50 226 v26 m-5 -7 l5 7 l5 -7"/>
+        <text x="100" y="230" class="a">x (toward the airlock)</text>
+        <text x="58" y="256" class="a">y</text>
+        <g transform="translate(270 220)">
+          <rect x="0" y="0" width="10" height="9" class="fcp"/><text x="16" y="9" class="m">on a wall</text>
+          <circle cx="104" cy="5" r="5" class="cp"/><text x="115" y="9" class="m">on the overhead</text>
+          <circle cx="236" cy="5" r="5" class="fcp"/><text x="247" y="9" class="m">on the deck</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>Sketch 2.</b> Kibo seen from overhead, drawn from the Rulebook's marker table (x and y only; heights are in the table). Markers 1 and 7 are on the same wall, one above the other.</figcaption>
+  </figure>
+  <details>
+    <summary>The marker table (Rulebook table 2.2.2-2)</summary>
+    <div class="wrap"><table>
+      <tr><th>Marker</th><th>Target</th><th>Position x, y, z (m)</th><th>Attitude x, y, z, w</th></tr>
+      <tr><td>1</td><td>SAIBO</td><td class="n">1.451, −1.001, 0.681</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>2</td><td>RYUTAI</td><td class="n">2.973, −1.001, 0.718</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>3</td><td>MSPR_1</td><td class="n">3.313, −1.001, 0.523</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>4</td><td>MSPR_2</td><td class="n">4.181, −1.001, 0.523</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>5</td><td>RMS_Console</td><td class="n">5.754, −1.001, 0.838</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>6</td><td>EPS1</td><td class="n">1.895, −0.282, −0.208</td><td class="n">0, 0, 0.707, −0.707</td></tr>
+      <tr><td>7</td><td>MELFI1</td><td class="n">1.451, −1.001, 0.372</td><td class="n">−0.707, 0, 0, 0.707</td></tr>
+      <tr><td>8</td><td>EPS2_2</td><td class="n">4.779, 0.112, 1.884</td><td class="n">−0.707, 0.707, 0, 0</td></tr>
+      <tr><td>9</td><td>EPS2_1</td><td class="n">2.066, 1.046, −0.014</td><td class="n">0, 0.707, −0.707, 0</td></tr>
+      <tr><td>10</td><td>ECLSS_TCS2</td><td class="n">5.851, 0.010, 1.884</td><td class="n">−0.707, 0.707, 0, 0</td></tr>
+      <tr><td>11</td><td>Airlock</td><td class="n">7.195, 0.363, 1.230</td><td class="n">0.5, 0.5, −0.5, −0.5</td></tr>
+      <tr><td>12</td><td>Bay0_Closeout_Panel</td><td class="n">0.000, −0.059, −0.102</td><td class="n">−0.5, 0.5, −0.5, 0.5</td></tr>
+      <tr><td>Start</td><td>Docking Station</td><td class="n">0.200, 0.000, 0.000</td><td class="n">0, 0, 0, 1</td></tr>
+    </table></div>
+    <p class="note">The Rulebook gives positions with the docking station as the origin; the Programming Manual calls this frame <code>iss_body</code>. Quaternions are written x, y, z, w.</p>
+  </details>
+
+  <h2 id="en-checkpoint">4. Passing a checkpoint</h2>
+  <div class="need"><span class="tag">Read this first</span>Degrees and roll: lessons <a href="rotations.html#angles">4</a> and <a href="rotations.html#turns">6</a> of Coordinates and rotations.</div>
+  <div class="word"><span class="tag">In simple words</span>Think of taking a photo of a friend. A good photo needs three things: standing at the right distance, keeping your friend in the middle of the picture, and holding the camera straight (not tilted). A checkpoint checks exactly these three!</div>
+  <p>At each checkpoint the judge looks at <b>three things at once</b>. Each one gets a level from Lv1 (just inside) to Lv3 (very close).</p>
+  <figure class="sketch">
+    <div class="trio">
+      <div>
+        <h4>① Position</h4>
+        <svg viewBox="0 0 240 200" role="img" aria-label="Three rings around the checkpoint centre; the robot is inside the middle ring">
+          <circle class="cp dash" cx="120" cy="96" r="84"/>
+          <circle class="cp dash" cx="120" cy="96" r="56"/>
+          <circle class="cp" cx="120" cy="96" r="28"/>
+          <path class="cp" d="M114 96 h12 M120 90 v12"/>
+          <text x="130" y="101" class="c" style="font-size:11px">CP</text>
+          <text x="120" y="82" text-anchor="middle" class="m" style="font-size:11px">Lv3</text>
+          <text x="120" y="54" text-anchor="middle" class="m" style="font-size:11px">Lv2</text>
+          <text x="120" y="26" text-anchor="middle" class="m" style="font-size:11px">Lv1</text>
+          <path class="thin dash" d="M120 96 L94 122"/>
+          <text x="112" y="124" class="b" style="font-size:12px">d</text>
+          <circle class="ln fbg" cx="88" cy="128" r="9"/><rect class="facc" x="95" y="124" width="5" height="8" rx="1"/>
+          <text x="120" y="197" text-anchor="middle" class="m">0.1 · 0.2 · 0.3 m</text>
+        </svg>
+      </div>
+      <div>
+        <h4>② Marker centred</h4>
+        <svg viewBox="0 0 240 200" role="img" aria-label="The angle between the camera line of sight and the direction to the marker">
+          <path class="thin dash" d="M52 100 L200 15 M52 100 L200 185"/>
+          <text x="204" y="24" class="m">30°</text>
+          <circle class="ln fbg" cx="36" cy="100" r="15"/><rect class="facc" x="49" y="94" width="6" height="12" rx="1"/>
+          <path class="acc" d="M56 100 H222 m-8 -5 l8 5 l-8 5"/>
+          <text x="150" y="118" class="a">line of sight</text>
+          <path class="ln dash" d="M56 100 L194 70"/>
+          <rect class="fcp" x="192" y="60" width="16" height="16" transform="rotate(-12 200 68)"/>
+          <text x="186" y="52" class="c">marker</text>
+          <path class="ln" d="M126 100 A70 70 0 0 0 124 85"/>
+          <text x="132" y="90" class="b" style="font-size:12px">θ</text>
+          <text x="120" y="194" text-anchor="middle" class="m">θ ≤ 10° · 20° · 30°</text>
+        </svg>
+      </div>
+      <div>
+        <h4>③ Roll</h4>
+        <svg viewBox="0 0 240 200" role="img" aria-label="The camera picture with the marker turned away from the target roll">
+          <rect class="ln fbg" x="30" y="34" width="180" height="110" rx="6"/>
+          <text x="38" y="28" class="m">camera picture</text>
+          <rect class="thin dash" x="98" y="67" width="44" height="44"/>
+          <g transform="rotate(20 120 89)"><rect class="fcp" x="100" y="69" width="40" height="40" opacity=".85"/><circle class="fbg" cx="106" cy="75" r="3"/></g>
+          <path class="acc" d="M120 54 A35 35 0 0 1 141 61" /><path class="acc" d="M141 61 l-8 -1 m8 1 l-3 7"/>
+          <text x="150" y="58" class="a">roll</text>
+          <text x="120" y="168" text-anchor="middle" class="m">turn about the line of sight,</text>
+          <text x="120" y="184" text-anchor="middle" class="m">≤ 10° · 20° · 30° from the target</text>
+        </svg>
+      </div>
+    </div>
+    <figcaption><b>Sketch 3.</b> The three conditions. ① Distance from the checkpoint centre. ② The angle between where the camera points and where the marker is, so the marker sits near the middle of the picture. ③ How far the robot is turned about its line of sight compared with the checkpoint's attitude. The numbers are the Lv3 · Lv2 · Lv1 limits from the sample in the Programming Manual; your program reads the real limits from <code>/mission/get_checkpoints</code>.</figcaption>
+  </figure>
+  <ul>
+    <li><b>The lowest level counts.</b> All three must be inside a band, and the checkpoint scores the level of the worst one.</li>
+    <li><b>Hold it for 1 second</b> with the marker in view. Wobbling out of a band during that second fails the pass.</li>
+    <li>Your program must ask for the judgement with <code>/event/checkpoint_passed</code>. Just arriving doesn't count.</li>
+  </ul>
+  <div class="wrap"><table>
+    <tr><th>Position</th><th>Marker centred</th><th>Roll</th><th>Result</th></tr>
+    <tr><td><span class="lv">Lv3</span></td><td><span class="lv l2">Lv2</span></td><td><span class="lv">Lv3</span></td><td>Passes at <span class="lv l2">Lv2</span>, the lowest of the three</td></tr>
+    <tr><td><span class="lv no">out</span></td><td><span class="lv">Lv3</span></td><td><span class="lv">Lv3</span></td><td><span class="lv no">no points</span> One condition outside its band fails the checkpoint</td></tr>
+  </table></div>
+  <p class="note">These are the Rulebook's own examples (section 2.3.2).</p>
+  <p><b>One more example, step by step:</b> the robot is 0.15 m from the checkpoint's centre, the marker is 8° from the middle of the picture, and the roll is 25° off.</p>
+  <ol class="steps">
+    <li>Position: 0.15 m is within 0.2 but more than 0.1, so <span class="lv l2">Lv2</span>.</li>
+    <li>Centring: 8° is within 10°, so <span class="lv">Lv3</span>.</li>
+    <li>Roll: 25° is within 30° but more than 20°, so <span class="lv l1">Lv1</span>.</li>
+    <li>The lowest is <span class="lv l1">Lv1</span>, so the checkpoint passes at Lv1. Fix the roll and the level goes up!</li>
+  </ol>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>Distance 0.05 m, 15° from the middle, roll 5°. Which level?</summary><p>Distance Lv3, centring Lv2 (15° is within 20°), roll Lv3. The lowest is Lv2, so Lv2.</p></details>
+    <details><summary>The robot reaches the right spot but never sends <code>/event/checkpoint_passed</code>. Does it pass?</summary><p>No. Your program must ask to be judged; just arriving doesn't count.</p></details>
+  </div>
+
+  <h2 id="en-scoring">5. Scoring</h2>
+  <div class="word"><span class="tag">In simple words</span>Three things raise your score: how many checkpoints you pass and at what level, whether you reach the goal, and how quickly you finish. Finishing quickly earns a "multiplier" that your points are multiplied by.</div>
+  <div class="formula">Score = (Pt_check total + Pt_goal) × Mag_clear
+    <small>Pt_check: points for each checkpoint passed, by level · Pt_goal: for passing every checkpoint and reaching the goal in time · Mag_clear: the time multiplier, up to about 2×</small>
+  </div>
+  <figure class="sketch">
+    <svg viewBox="0 0 520 150" role="img" aria-label="The time multiplier grows with the time left at the report">
+      <path class="ln" d="M60 120 H490 M60 120 V18"/>
+      <path class="acc dash" d="M60 112 C200 104 330 70 480 28"/>
+      <circle class="facc" cx="480" cy="28" r="4"/>
+      <text x="476" y="20" text-anchor="end" class="a">up to about 2×</text>
+      <text x="64" y="104" class="m">1×</text>
+      <text x="275" y="142" text-anchor="middle" class="m">time left when you send the report →</text>
+      <text x="20" y="70" class="m" transform="rotate(-90 20 70)" text-anchor="middle">Mag_clear</text>
+    </svg>
+    <figcaption><b>Sketch 4.</b> More time left at the report gives a bigger multiplier. The Rulebook doesn't publish the exact curve, so the shape here is only a guess.</figcaption>
+  </figure>
+  <ul>
+    <li>Pass the checkpoints and reach the goal first, then get faster. A quick run that misses checkpoints scores less than a careful one.</li>
+    <li>To pass at a high level you need more than the right position: aim the camera at the middle of the marker and match the roll.</li>
+    <li>The Rulebook doesn't list how many points each level is worth. The sandbox's estimate uses its own assumed numbers.</li>
+  </ul>
+
+  <p><b>Example</b> (made-up numbers, just to show the idea): your checkpoints and goal earn 50 points, and finishing quickly gives a multiplier of 1.5. Then your score = 50 × 1.5 = 75.</p>
+
+  <h2 id="en-runs">6. Ten runs, one average</h2>
+  <figure class="sketch">
+    <ol class="flow">
+      <li><b>You submit one program</b>Only one chance per submission.</li>
+      <li><b>JAXA's web server runs it 10 times</b>Each run has different random checkpoints and disturbances.</li>
+      <li><b>Your score is the average</b>The average of the 10 runs sets your ranking.</li>
+    </ol>
+    <figcaption><b>Sketch 5.</b> Lucky or unlucky runs even out (Rulebook 2.2.5). A program that only works for one checkpoint layout will average badly, so read the checkpoints at run time.</figcaption>
+  </figure>
+
+  <p><b>Example</b> (made-up numbers): team A's program scores 80 nine times, but gets stuck once and scores 0. Average = (9 × 80 + 0) ÷ 10 = 72. Team B's program scores 75 every time: average 75. Team A loses because of one mistake! So your program needs to work reliably, every time.</p>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>Five runs score 60, 70, 80, 90 and 100. What's the average?</summary><p>(60 + 70 + 80 + 90 + 100) ÷ 5 = 400 ÷ 5 = 80.</p></details>
+  </div>
+
+  <h2 id="en-dates">7. Dates and submitting</h2>
+  <ul class="timeline">
+    <li><b>January 20, 2027, 12:00 JST</b>Deadline for questions. Later questions may get a late answer.</li>
+    <li><b>January 20, 2027, 23:59 JST</b>Last moment to submit your program.</li>
+    <li><b>January 21 – February 17, 2027</b>The preliminary round.</li>
+    <li><b>Later</b>The final round on the ISS. Details are announced later.</li>
+  </ul>
+  <ol>
+    <li>Before the round, the web simulator gets a <b>"Preliminary"</b> simulator. Run your program in it.</li>
+    <li>On the <b>RESULTS</b> screen, pick a Preliminary run whose status is <b>FINISHED</b> and press <b>SUBMIT</b>.</li>
+    <li>To change your mind, press <b>CANCEL</b> and submit another one. Both buttons stop working at the deadline.</li>
+  </ol>
+  <div class="box warn"><p>A run with the status <b>FAILED</b> can't be submitted. If you have no FINISHED run, you can't take part, so test early.</p></div>
+
+  <h2 id="en-final">8. The final round on the ISS</h2>
+  <ul>
+    <li><b>Safety review first.</b> JAXA checks your code so it can't harm the real robot. You send the draft source code by email, then the final program and source through the website. Corrections are needed every year and there's little time, so keep your schedule free.</li>
+    <li><b>One run only.</b> On the real IB2 it can't be stopped or re-run. A re-run happens only if IB2 has a problem in orbit that wasn't caused by your program, and there's time left.</li>
+    <li><b>5 minutes,</b> then the program shuts down. The run also ends early if IB2 gets stuck, loses track of where it is, or stops for a long time.</li>
+    <li><b>You don't press start.</b> JAXA installs your program on IB2 and ground operators start it. The runs are recorded beforehand and shown later at an event with expert commentary.</li>
+    <li><b>Run order by tier.</b> Teams go in tiers by preliminary rank (for example 1st–4th, 5th–8th, 9th–13th). Lower tiers may not get a turn if time runs out.</li>
+  </ul>
+
+  <h2 id="en-words">9. Words to know</h2>
+  <div class="wrap"><table>
+    <tr><th>Word</th><th>Meaning</th></tr>
+    <tr><td>IB2</td><td>Int-Ball2, the robot. A simulator in the preliminary round, the real robot in the final.</td></tr>
+    <tr><td>Kibo (JEM)</td><td>The Japanese Experiment Module on the ISS.</td></tr>
+    <tr><td>Dock Station</td><td>Where IB2 starts. <i>Release</i> means leaving it; the timer starts when release is complete.</td></tr>
+    <tr><td>Mission Start / Finish</td><td>Start: release is complete and the timer runs. Finish: the time limit ends or the completion report starts. Nothing after Finish scores.</td></tr>
+    <tr><td>CheckPoint</td><td>A sphere placed relative to an AR marker, with three margin levels.</td></tr>
+    <tr><td>GoalPoint</td><td>Where IB2 goes after the checkpoints and sends the completion report.</td></tr>
+    <tr><td>AR marker</td><td>A printed square code. Kibo has 12 of them; checkpoints are built around them.</td></tr>
+    <tr><td>t, time_max</td><td>The time left at the report, and the time limit, in seconds.</td></tr>
+    <tr><td>Pt_check, Pt_goal, Pt_all</td><td>Checkpoint points, goal points, and their sum.</td></tr>
+    <tr><td>Mag_clear</td><td>The time multiplier (up to about 2×). Score = Pt_all × Mag_clear.</td></tr>
+    <tr><td>Microgravity module</td><td>The disturbance in the simulator.</td></tr>
+  </table></div>
+
+  <!-- ===================== PART 2 ===================== -->
+  <h2 class="part">Part 2 · The Programming Manual</h2>
+  <h2 id="en-codewords">Before you start: programming words, made simple</h2>
+  <div class="need"><span class="tag">Read this first</span>Part 1. You can read this part even if you've never programmed.</div>
+  <p>The Programming Manual uses lots of new words. Don't worry: most of them are like everyday things.</p>
+  <dl class="words">
+    <dt>program</dt><dd>Step-by-step instructions for a computer, like a recipe. Kibo-RPC programs are written in <b>Python</b> or <b>C++</b>.</dd>
+    <dt>Ubuntu (Linux)</dt><dd>An operating system, like Windows. All the Kibo-RPC tools run on it; you can also run it inside Windows (with WSL).</dd>
+    <dt>terminal</dt><dd>A window where you type commands for the computer. For example, typing <code>mkdir krpc</code> and pressing Enter makes a folder called <code>krpc</code>.</dd>
+    <dt>ROS</dt><dd>The robot software's "post office": the robot's parts (camera, motors, your program) send each other messages through it.</dd>
+    <dt>service</dt><dd>Ask a question and wait for the answer, like asking a teacher. For example, "where are this run's checkpoints?"</dd>
+    <dt>action</dt><dd>A job that takes time, like sending someone to the shop: you can check how it's going, and cancel it if you need to. For example, "go to this place".</dd>
+    <dt>topic</dt><dd>A broadcast that never stops, like the radio: anyone can listen. For example, the robot always announces where it is now.</dd>
+    <dt>JSON</dt><dd>A way of writing labelled information, like filling in a form: <code>{ "name": "CP 1", "level": 3 }</code> means the name is CP 1 and the level is 3.</dd>
+    <dt>API</dt><dd>The list of commands the robot gives your program, like the buttons on a remote control.</dd>
+    <dt>log</dt><dd>The program's diary: it writes down what happened while it ran. Very useful for finding mistakes.</dd>
+    <dt>template</dt><dd>A ready-made program from JAXA with one part (the USER EDIT AREA) for you to write.</dd>
+  </dl>
+  <figure class="wide" style="max-width:520px">
+    <svg viewBox="0 0 330 130" role="img" aria-label="A service is like a question and answer, an action like a job that takes time, a topic like a radio">
+      <g text-anchor="middle">
+        <rect x="18" y="14" width="74" height="28" rx="8" class="ln" style="fill:var(--soft)"/><text x="55" y="33">question?</text>
+        <path class="sa" d="M55 46 V58"/><path class="fa" d="M55 64 l-5 -8 h10 z"/>
+        <rect x="18" y="66" width="74" height="28" rx="8" class="ln" style="fill:var(--soft);stroke:var(--accent)"/><text x="55" y="85" style="fill:var(--accent)">answer!</text>
+        <text x="55" y="118" style="fill:var(--accent)">service</text>
+        <text x="165" y="30" class="m">working on it…</text>
+        <rect x="128" y="40" width="74" height="14" rx="7" class="ln"/><rect x="128" y="40" width="44" height="14" rx="7" class="fa"/>
+        <text x="165" y="80" class="m">check in · cancel</text>
+        <text x="165" y="118" style="fill:var(--accent)">action</text>
+        <path class="ln" d="M275 92 V40 M262 92 L275 40 L288 92"/><circle cx="275" cy="38" r="4" class="fa"/>
+        <path class="sa" d="M262 30 A16 16 0 0 1 288 30 M254 22 A26 26 0 0 1 296 22"/>
+        <text x="275" y="118" style="fill:var(--accent)">topic</text>
+      </g>
+    </svg>
+    <figcaption>A service: ask a question and wait for the answer. An action: a job that takes time; you can check on it or cancel it. A topic: a broadcast, like the radio.</figcaption>
+  </figure>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>"Robot, go to this place": is that a service, an action or a topic?</summary><p>An action: it takes time, and you can check on it or cancel it.</p></details>
+    <details><summary>Where can your program always find out where the robot is now?</summary><p>From a topic (<code>/sensor_fusion/navigation</code>), broadcast all the time like the radio.</p></details>
+  </div>
+
+  <h2 id="en-loop">10. The development loop</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-codewords">The programming words</a>.</div>
+  <figure class="sketch">
+    <ol class="flow">
+      <li><b>Prepare</b>Set up Ubuntu (and Docker for the local simulator).</li>
+      <li><b>Get the files</b>Download the simulator resources.</li>
+      <li><b>Write</b>Edit the template program.</li>
+      <li class="loop"><b>Simulate</b>Run it in the web or local simulator.</li>
+      <li class="loop"><b>Check</b>Read the logs and the results.</li>
+      <li class="loop"><b>Fix</b>Change the program and go again.</li>
+    </ol>
+    <div class="again">↺ repeat steps 4 to 6 until it's reliable</div>
+    <figcaption><b>Sketch 6.</b> How you build a program (Programming Manual 1.2).</figcaption>
+  </figure>
+
+  <h2 id="en-setup">11. Setting up</h2>
+  <div class="need"><span class="tag">Read this first</span>What Ubuntu and the terminal are (<a href="#en-codewords">the words</a>). This part is about setting up a computer; it's a good idea to get help from someone older.</div>
+  <ul>
+    <li><b>You always need Ubuntu.</b> Even with only the web simulator, you need it to unpack the files and build the submission package. On Windows 11, install Ubuntu in WSL2: <code>wsl --install -d Ubuntu-24.04</code>, then check that <code>wsl --list --verbose</code> shows version 2.</li>
+    <li><b>Docker only for the local simulator.</b> If you only use the web simulator, skip Docker.</li>
+    <li><b>Recommended tools:</b> Git, and VSCode with the WSL extension. On Windows, open the folder inside Ubuntu ("Connect to WSL"), not from the Windows side.</li>
+    <li><b>Don't update the fixed versions</b> of tools and libraries on your own.</li>
+  </ul>
+  <div class="wrap"><table>
+    <tr><th></th><th>Minimum</th><th>Recommended</th></tr>
+    <tr><td>OS</td><td>Ubuntu 20.04 or later</td><td>Ubuntu 24.04 (on WSL2 for Windows 11)</td></tr>
+    <tr><td>CPU</td><td>4 cores</td><td>6 cores</td></tr>
+    <tr><td>Memory</td><td>8 GB</td><td>16 GB</td></tr>
+    <tr><td>Free storage</td><td>20 GB</td><td>40 GB, on an SSD</td></tr>
+  </table></div>
+  <p class="note">These are for running the local simulator. The simulator is built on GCC 7.5.0, C++14, Python 3.6.9 and ROS 1 Melodic, so write code that works with those versions.</p>
+  <p>Download <b>KRPC7 Simulator Resources</b> from the <a href="https://jaxa.krpc.jp/download" target="_blank" rel="noopener">download page</a> and unpack it:</p>
+  <pre><code>mkdir -p ~/krpc
+tar -xvf krpc7th-simulator.tar.gz -C ~/krpc</code></pre>
+
+  <h2 id="en-folder">12. The project folder</h2>
+  <figure class="sketch">
+<pre><code>krpc7th-simulator/
+├── build.sh, simulation.sh, replay.sh   run these, don't edit
+├── docker/  rootfs/  rviz/              simulator insides, don't edit
+├── users/
+│   ├── packing.sh                       makes your submission .tar.gz
+│   └── catkin_ws/src/
+│       ├── <b>krpc_user/</b>                   ★ YOUR CODE GOES HERE
+│       │   ├── scripts/user_template.py     Python template
+│       │   └── src/user_template_node.cpp   C++ template
+│       ├── krpc_api_server/             provided, don't edit
+│       └── krpc_ib2_msgs/               provided, don't edit
+└── share/logs/&lt;time&gt;/                  results of each local run
+    ├── cheat_sheet.json                 the checkpoint layout of that run
+    ├── simulation.bag                   recording (play it with replay.sh)
+    ├── judge_module_logs/               scoring logs
+    └── user_programs_logs/              your program's output</code></pre>
+    <figcaption><b>Sketch 7.</b> The folder after unpacking (Programming Manual 2.5.2), shortened. Only <code>users/catkin_ws/src/krpc_user/</code> is yours to edit.</figcaption>
+  </figure>
+  <p>When your changes are ready, make the package you upload:</p>
+  <pre><code>cd ~/krpc/krpc7th-simulator/users
+./packing.sh YourSourceCode      # makes YourSourceCode.tar.gz</code></pre>
+
+  <h2 id="en-sims">13. Web and local simulators</h2>
+  <div class="wrap"><table>
+    <tr><th></th><th>Web simulator</th><th>Local simulator</th></tr>
+    <tr><td>Use it for</td><td>Checks before submitting, judged in the same setup as everyone</td><td>Trying things and debugging while you develop</td></tr>
+    <tr><td>Runs on</td><td>JAXA's server, on ARM64 like the real robot (a Jetson TX2)</td><td>Your PC in Docker, usually x86_64</td></tr>
+    <tr><td>Account</td><td>Issued when your country or region's contact registers you</td><td>Not needed</td></tr>
+    <tr><td>Logs</td><td>From the web dashboard</td><td>In <code>share/logs/</code></td></tr>
+  </table></div>
+  <h3>Web simulator</h3>
+  <ol>
+    <li>Log in on the <a href="https://jaxa.krpc.jp/" target="_blank" rel="noopener">Kibo-RPC website</a> and open <b>SIMULATION</b>.</li>
+    <li>Drop in <code>YourSourceCode.tar.gz</code>, choose the <b>Simulator Level</b> and <b>Version</b>, add a memo, and press <b>START SIMULATION</b>.</li>
+    <li>When the status says <b>Finished</b>, press <b>VIEW RESULT</b>. <b>SIMULATOR VIEWER</b> replays the run (copy the password it shows).</li>
+  </ol>
+  <h3>Local simulator</h3>
+  <pre><code>cd ~/krpc/krpc7th-simulator
+bash ./build.sh          # once; add --arm64 to build for ARM like the real robot
+bash ./simulation.sh     # one run; watch it at http://localhost, stop with Ctrl+C</code></pre>
+  <div class="box warn"><p>Code that works on your x86_64 PC may behave differently on ARM64. Always test the final version in the web simulator.</p></div>
+
+  <h2 id="en-results">14. Reading your results</h2>
+  <ul>
+    <li><b>Final Score, Mission Time, Time Bonus, CheckPoints Passed, Goal Reached</b> at the top.</li>
+    <li><b>CheckPoint Detail</b> lists each checkpoint as PASSED or FAIL with its level, the lowest of the three conditions. A failed checkpoint shows "-" for its level; <b>N/A</b> means that checkpoint wasn't judged.</li>
+    <li><b>DOWNLOAD LOG FILES</b> gives two files: the result JSON and your program's own log (what you printed with <code>rospy.loginfo</code>). System and sensor logs aren't provided; record what you need with rosbag on the local simulator.</li>
+  </ul>
+<pre><code>{ "Illegal": false,                      // was the run treated as a violation?
+  "JudgeReport": {
+    "mission": { "started": true, "finished": true, "duration_sec": 295.33 },
+    "checkpoint_detail": [
+      { "checkpoint_id": 2, "success": true, "level": 3, "reason": "checkpoint validated" } ],
+    "goal": { "success": true, "reason": "goal checkpoint previously passed" },
+    "events": [ { "status": "Mission Start" }, { "status": "Mission Finish" } ] } }</code></pre>
+  <p class="note">Shortened from the example in the Programming Manual (timestamps removed).</p>
+
+  <h2 id="en-template">15. How the template program runs</h2>
+  <div class="need"><span class="tag">Read this first</span>Services, actions, topics and JSON (<a href="#en-codewords">the words</a>), and poses and quaternions (<a href="rotations.html#quaternion">lesson 8 of Coordinates and rotations</a>).</div>
+  <figure class="sketch">
+    <ol class="flow col">
+      <li><b>Start-up (<code>__init__</code>)</b>Creates the clients, subscribes to <code>/ib2_user/start</code>, serves <code>/ib2_user/stop</code> and sets <code>/ib2_user/ready = True</code>. Never remove these three.</li>
+      <li><b>The start signal (<code>__callback_start</code>)</b><code>/ib2_user/start</code> only arrives once your program says it's ready. A guard stops it starting twice.</li>
+      <li><b>Mission start</b>Call <code>/event/mission_start</code>.</li>
+      <li class="loop"><b>USER EDIT AREA: your plan</b>Get the checkpoints from <code>/mission/get_checkpoints</code>. For each one: move with <code>/ctl/command</code>, check that the marker is centred and steady, then ask <code>/event/checkpoint_passed</code>.</li>
+      <li><b>Mission finished</b>Call <code>/event/mission_finished</code> at the goal. This is the completion report.</li>
+    </ol>
+    <figcaption><b>Sketch 8.</b> The template's flow (Programming Manual 6.4). <code>/ib2_user/stop</code> can arrive at any time: cancel any running action, then reply.</figcaption>
+  </figure>
+<pre><code>def __run_user_flow(self, msg):
+    try:
+        if not self.__notify_mission_start():
+            return
+        # USER EDIT AREA: define route planning and game-specific flow here.
+        # ***********************************************
+        checkpoint_target = self.__resolve_first_checkpoint_target()
+        if not self.__move_to_checkpoint(checkpoint_target):
+            return
+        if not self.__notify_checkpoint_passed(checkpoint_target['checkpoint_id']):
+            return
+        # ***********************************************
+        if not rospy.is_shutdown():
+            self.__notify_mission_finished()
+    except Exception as exc:
+        rospy.logerr('user flow failed: %s', exc)</code></pre>
+  <ul>
+    <li>The sample only visits the <b>first</b> checkpoint. Your job is to visit them all, in a good order, and finish at the goal.</li>
+    <li>If getting the checkpoints fails, the template falls back to a target at the origin so it can still run end to end. That earns nothing; replace it with a retry or a clean stop.</li>
+    <li><code>/mission/get_checkpoints</code> returns JSON in its <code>message</code>. Each checkpoint has its <code>checkpoint_id</code>, <code>position</code>, <code>marker_pose</code>, <code>score_bands</code> and an <code>attitude</code> with its quaternion, <code>centering_bands</code> and <code>roll_bands</code>, plus the <code>goalpoint_id</code>.</li>
+  </ul>
+<pre><code>{ "checkpoint_count": 8,
+  "checkpoints": [ {
+      "checkpoint_id": 1,
+      "position": [1.442, -0.501, 0.665],
+      "marker_pose": { "position": [1.451, -1.001, 0.6806], "quaternion": [-0.7071, 0, 0, 0.7071] },
+      "score_bands": [ {"radius": 0.1, "level": 3}, {"radius": 0.2, "level": 2}, {"radius": 0.3, "level": 1} ],
+      "attitude": { "quaternion": [0.706, -0.690, 0.123, -0.103],
+                    "centering_bands": [ {"angle": 10, "level": 3}, ... ],
+                    "roll_bands":      [ {"angle": 10, "level": 3}, ... ] } }, ... ],
+  "goalpoint_id": 12 }</code></pre>
+  <p class="note">Shortened from the Programming Manual's example response.</p>
+
+  <h2 id="en-api">16. The API at a glance</h2>
+  <div class="word"><span class="tag">In simple words</span>This table is like the buttons on a remote control: each name is one thing the robot can do. The name is on the left, its kind (service, action, topic) in the middle, and what it does on the right.</div>
+  <div class="wrap"><table>
+    <tr><th>Name</th><th>Kind</th><th>What it does</th></tr>
+    <tr><td><code>/mission/get_checkpoints</code></td><td>Service</td><td>Gets the checkpoints for this run (JSON)</td></tr>
+    <tr><td><code>/event/mission_start</code></td><td>Service</td><td>Says the mission has started</td></tr>
+    <tr><td><code>/event/checkpoint_passed</code></td><td>Action</td><td>Asks the judge to check a checkpoint now (goal: <code>checkpoint_id</code>)</td></tr>
+    <tr><td><code>/event/mission_finished</code></td><td>Service</td><td>The mission completion report</td></tr>
+    <tr><td><code>/sensor_fusion/navigation</code></td><td>Topic</td><td>Where the robot is: position, attitude, velocity</td></tr>
+    <tr><td><code>/ctl/command</code></td><td>Action</td><td>Move to a pose, move relative to the robot, or stop</td></tr>
+    <tr><td><code>/ctl/wrench</code></td><td>Topic</td><td>Push with a force and torque directly (advanced)</td></tr>
+    <tr><td><code>/ctl/status</code></td><td>Topic</td><td>The robot's current control state</td></tr>
+    <tr><td><code>/camera_main/image_raw</code></td><td>Topic</td><td>The camera picture</td></tr>
+    <tr><td><code>/camera_main/camera_info</code></td><td>Topic</td><td>The camera's numbers: <code>K</code> (focal length and centre) and <code>D</code> (distortion)</td></tr>
+    <tr><td><code>/ib2_user/start</code></td><td>Topic</td><td>The start signal (required, already in the template)</td></tr>
+    <tr><td><code>/ib2_user/stop</code></td><td>Service</td><td>A stop request (required, already in the template)</td></tr>
+    <tr><td><code>/ib2_user/ready</code></td><td>Parameter</td><td>Set to true when your program is ready (required)</td></tr>
+  </table></div>
+  <p class="note">Services answer a request; actions are for slow jobs like moving (connect, send a goal, wait for the result); topics stream data. Always give actions a timeout and a way to cancel.</p>
+
+  <h2 id="en-move">17. Moving the robot</h2>
+  <div class="need"><span class="tag">Read this first</span>Actions (<a href="#en-codewords">the words</a>), Kibo's frame and the robot's own frame (<a href="rotations.html#frame">lesson 3</a>, <a href="rotations.html#body">lesson 5</a>), and quaternions (<a href="rotations.html#quaternion">lesson 8</a>).</div>
+  <div class="word"><span class="tag">In simple words</span>To move the robot you say "go to this pose" (a position and an orientation), then wait to see whether it worked. Your program also has to say what to do if it didn't.</div>
+  <p>Send a <code>CtlCommandGoal</code> with a target pose and a type to <code>/ctl/command</code>:</p>
+  <div class="wrap"><table>
+    <tr><th>Type</th><th>Target</th></tr>
+    <tr><td><code>MOVE_TO_ABSOLUTE_TARGET</code></td><td>A position and attitude in Kibo (<code>frame_id = iss_body</code>)</td></tr>
+    <tr><td><code>MOVE_TO_RELATIVE_TARGET</code></td><td>A position and attitude relative to the robot now (<code>frame_id = body</code>)</td></tr>
+    <tr><td><code>STOP_MOVING</code></td><td>None (send zeros). The robot slows down and holds still.</td></tr>
+  </table></div>
+  <ul>
+    <li>The result is <code>TERMINATE_SUCCESS</code> (0) when the move worked. Otherwise it's <code>ABORTED</code> (1), <code>TIME_OUT</code> (2), <code>INVALID_NAV</code> (3) or <code>INVALID_CMD</code> (4). Check it every time.</li>
+    <li>To change plans mid-move, call <code>cancel_goal()</code> and wait until it has really stopped before sending the next target.</li>
+    <li><code>/ctl/status</code> shows the state: after a move it changes to <code>KEEP_POSE</code> or <code>STOP_MOVING</code>.</li>
+    <li><code>/ctl/wrench</code> pushes the robot directly (force in N, torque in N·m, in the robot's own frame). It can be smoother but you must stop it yourself; mixing it with <code>/ctl/command</code> can surprise you.</li>
+    <li>Plan the route inside the flyable area, leave room for the robot's size, and wait a moment after arriving before you judge.</li>
+  </ul>
+
+  <h2 id="en-ar">18. Reading AR markers</h2>
+  <div class="need"><span class="tag">Read this first</span>What an AR marker is (<a href="robots.html#sense">the robots page, part 3</a>), and the robot's own axes (<a href="rotations.html#body">lesson 5 of Coordinates and rotations</a>).</div>
+  <div class="word"><span class="tag">In simple words</span>The program finds the marker in the camera picture, reads its number, and works out how far away it is and which way it faces. It uses OpenCV, a ready-made library for working with pictures.</div>
+  <ul>
+    <li><b>The markers:</b> ArUco 4×4 dictionary, IDs 1 to 12, <b>2 cm</b> (0.02 m) wide. Give the side length in metres, never in pixels.</li>
+    <li><b>The camera:</b> use <code>K</code> and <code>D</code> from <code>/camera_main/camera_info</code>. It's empty until the first message arrives, so check before using it. If you resize the picture, scale fx, fy, cx and cy too.</li>
+    <li><b>The library:</b> OpenCV 3.3.1's aruco module.</li>
+  </ul>
+  <figure class="sketch">
+    <ol class="flow">
+      <li><b>Grey</b>Convert the camera picture to greyscale.</li>
+      <li><b>Set up</b>Make the 4×4 dictionary and the detector settings.</li>
+      <li><b>Detect</b><code>detect<wbr>Markers</code> finds each ID and its 4 corner pixels.</li>
+      <li><b>Pose</b><code>estimate<wbr>Pose<wbr>Single<wbr>Markers</code> with 0.02 m, K and D gives <code>rvec</code> and <code>tvec</code>.</li>
+      <li><b>Check</b>Distance, attitude and steadiness over a few frames.</li>
+    </ol>
+    <figcaption><b>Sketch 9.</b> Detecting a marker and working out where it is (Programming Manual 5.13.2).</figcaption>
+  </figure>
+  <figure class="sketch">
+    <svg viewBox="0 0 520 250" role="img" aria-label="Int-Ball2 body axes beside the OpenCV camera axes">
+      <text x="110" y="18" text-anchor="middle" class="b">Int-Ball2 (body)</text>
+      <circle class="ln fbg" cx="100" cy="120" r="46"/>
+      <rect class="facc" x="142" y="111" width="10" height="18" rx="2"/>
+      <path class="acc" d="M100 120 H210 m-8 -5 l8 5 l-8 5"/>
+      <text x="164" y="108" class="a">X front</text>
+      <path class="acc" d="M100 120 V42 m-5 8 l5 -8 l5 8"/>
+      <text x="108" y="48" class="a">Z top</text>
+      <circle class="acc" cx="100" cy="120" r="7"/><circle class="facc" cx="100" cy="120" r="2.5"/>
+      <text x="10" y="190" class="a">Y left (toward you)</text>
+      <path class="thin" d="M147 131 v30"/>
+      <text x="152" y="176" class="m">camera, 0.14 m</text>
+      <text x="152" y="192" class="m">ahead of the centre</text>
+      <text x="400" y="18" text-anchor="middle" class="b">Camera (OpenCV)</text>
+      <rect class="ln fbg" x="300" y="44" width="200" height="124" rx="6"/>
+      <text x="306" y="38" class="m">the picture</text>
+      <path class="acc" d="M400 106 H476 m-8 -5 l8 5 l-8 5"/>
+      <text x="458" y="98" class="a">X</text>
+      <path class="acc" d="M400 106 V158 m-5 -8 l5 8 l5 -8"/>
+      <text x="408" y="158" class="a">Y</text>
+      <circle class="acc" cx="400" cy="106" r="7"/><path class="acc" d="M395 101 l10 10 m0 -10 l-10 10" style="stroke-width:1.5"/>
+      <rect class="fcp" x="430" y="60" width="18" height="18"/>
+      <path class="thin dash" d="M400 106 L433 76"/>
+      <text x="300" y="188" class="a">X right · Y down</text>
+      <text x="300" y="204" class="a">Z out of the lens (⊗)</text>
+      <text x="300" y="226" class="m">tvec: the marker's centre, in metres,</text>
+      <text x="300" y="242" class="m">in these camera axes</text>
+    </svg>
+    <figcaption><b>Sketch 10.</b> Two sets of axes. The camera looks out of the robot's front (body X). <code>rvec</code> and <code>tvec</code> describe the marker in the camera's axes; to use them in the <code>body</code> or <code>iss_body</code> frame, convert with the camera's mounting position and attitude from the Programming Manual. With the picture upright (its top toward the robot's top), a marker at <code>tvec</code> = (t<sub>x</sub>, t<sub>y</sub>, t<sub>z</sub>) is at (0.14 + t<sub>z</sub>, −t<sub>x</sub>, −t<sub>y</sub>) in the body frame.</figcaption>
+  </figure>
+  <div class="box warn"><p>If the dictionary, the marker ID, the side length, K or D is wrong, the marker may still be found, but the distance and angle will be wrong.</p></div>
+
+  <h2 id="en-safe">19. Writing a safe program</h2>
+  <div class="word"><span class="tag">In simple words</span>Your program must never get stuck, and when something goes wrong it should cope sensibly: for example, if no answer comes, don't wait forever; after a while, do something else.</div>
+  <p>The Programming Manual spends a whole chapter on this because a stuck program loses the run, and on the ISS it could affect the robot.</p>
+  <ul>
+    <li><b>No endless loops:</b> cap the number of tries and the time, and give every loop more than one way out.</li>
+    <li><b>Expect failures:</b> check return values, catch exceptions, use timeouts, and handle missing or odd sensor data.</li>
+    <li><b>Watch the clock:</b> note how long each step takes and keep an eye on the time left in the mission.</li>
+    <li><b>Move carefully:</b> confirm the target first, always check the result, limit retries, and wait after arriving.</li>
+    <li><b>Use fresh data:</b> check timestamps and say which units and frame each value is in.</li>
+    <li><b>Log useful things:</b> start and end, the plan, each API call and its result, target and actual poses, errors, retries and timings, at the right level (ERROR, WARN, INFO, DEBUG).</li>
+  </ul>
+  <div class="wrap"><table>
+    <tr><th>When this happens</th><th>Do this</th></tr>
+    <tr><td>A service isn't available</td><td>Wait with <code>wait_for_service()</code>, and stop if it takes too long</td></tr>
+    <tr><td>An action server isn't available</td><td>Wait with <code>wait_for_server()</code>; don't start until it's there</td></tr>
+    <tr><td>A move fails</td><td>Don't ask for the checkpoint; log why</td></tr>
+    <tr><td>An action times out</td><td>Call <code>cancel_goal()</code> and make sure it stopped</td></tr>
+    <tr><td><code>checkpoint_passed</code> fails</td><td>Log the result; don't send the same request forever</td></tr>
+    <tr><td>No camera picture or camera_info</td><td>After a timeout, log it and skip the camera step</td></tr>
+    <tr><td><code>/ib2_user/stop</code> arrives</td><td>Cancel every running action, finish safely, then reply</td></tr>
+  </table></div>
+  <p class="note">From the Programming Manual, chapter 5 and section 6.5.</p>
+
+  <!-- ===================== PART 3 ===================== -->
+  <h2 class="part">Part 3</h2>
+  <h2 id="en-sandbox">20. Practising in the sandbox</h2>
+  <p>Finished the rules? The next step on the learning path is <a href="manual.html">Using the sandbox</a>; then try it yourself in the <a href="index.html">sandbox</a>. The table shows where in the sandbox you can practise each rule.</p>
+  <div class="wrap"><table>
+    <tr><th>In the rules</th><th>Try it in the <a href="index.html">sandbox</a></th></tr>
+    <tr><td>Three conditions, lowest level counts</td><td>The Mission list in the Route tab shows each checkpoint's level; <b>Play</b> logs what's off at each one</td></tr>
+    <tr><td>Difficulty levels (6 to 12 checkpoints)</td><td>The <b>Level</b> picker above the Mission list draws a new random layout; it also names the markers that have no checkpoint this run</td></tr>
+    <tr><td>Marker centred in the camera</td><td>The <b>Camera</b> view draws the 10°, 20° and 30° rings</td></tr>
+    <tr><td>Roll about the line of sight</td><td>The ⟲ and ⟳ buttons (<kbd>Q</kbd> / <kbd>E</kbd> when driving)</td></tr>
+    <tr><td>Reading AR markers</td><td>The Camera view reads real 4×4 markers and shows <code>rvec</code> and <code>tvec</code>; the robot has to be close</td></tr>
+    <tr><td>The template program</td><td>The <b>Code</b> tab writes your route as Python or C++; the AR-reading code is yours to write</td></tr>
+    <tr><td>The time bonus</td><td>The Mission list estimates your score, and the status bar shows the time against the 5-minute limit</td></tr>
+  </table></div>
+  <div class="box try"><p>The sandbox is practice, not the simulator. It has no microgravity disturbance; its camera numbers, points per level and checkpoints per difficulty level (6, 8, 10, 12) are assumed; and its checkpoints stay put until you draw a new layout. In the real game they change every run, so your program must read them from <code>/mission/get_checkpoints</code>.</p></div>
+
+  <footer>
+    Unofficial summaries of JAXA's 7th Kibo-RPC Rulebook (v1.1) and Programming Manual (v1.0), written to help students. The sketches are simplified drawings, not JAXA figures. Not affiliated with or endorsed by JAXA or UNOOSA. When in doubt, the <a href="#en-official">official documents</a> are right.<br>
+    <a href="LICENSE.txt" target="_blank" rel="noopener">License</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">Developed by ihashib</a>
+  </footer>
+</div>
+</main>
+</body>
+</html>

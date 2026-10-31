@@ -1,0 +1,804 @@
+{
+  "name": "7th Kibo-RPC layout (Int-Ball2, sample checkpoints)",
+  "robot": {
+    "name": "Int-Ball2",
+    "size": 0.2,
+    "shape": "sphere"
+  },
+  "settings": {
+    "clearance": 0.1,
+    "standoff": 0.5,
+    "speed": 0.1,
+    "turnRate": 30,
+    "gridRes": 0.05,
+    "snap": 0.01,
+    "aimTolerance": 10,
+    "rangeTolerance": 0.1,
+    "poseTolerance": 0.1
+  },
+  "kiz": [
+    {
+      "name": "Kibo (approx.)",
+      "min": [
+        0,
+        -1.001,
+        -0.208
+      ],
+      "max": [
+        7.195,
+        1.046,
+        1.884
+      ]
+    }
+  ],
+  "koz": [],
+  "oasis": [],
+  "targets": [
+    {
+      "id": "ar1",
+      "name": "AR1 SAIBO",
+      "pos": [
+        1.451,
+        -1.001,
+        0.681
+      ],
+      "q": [
+        -0.707,
+        0,
+        0,
+        0.707
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar2",
+      "name": "AR2 RYUTAI",
+      "pos": [
+        2.973,
+        -1.001,
+        0.718
+      ],
+      "q": [
+        -0.707,
+        0,
+        0,
+        0.707
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar3",
+      "name": "AR3 MSPR_1",
+      "pos": [
+        3.313,
+        -1.001,
+        0.523
+      ],
+      "q": [
+        -0.707,
+        0,
+        0,
+        0.707
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar4",
+      "name": "AR4 MSPR_2",
+      "pos": [
+        4.181,
+        -1.001,
+        0.523
+      ],
+      "q": [
+        -0.707,
+        0,
+        0,
+        0.707
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar5",
+      "name": "AR5 RMS Console",
+      "pos": [
+        5.754,
+        -1.001,
+        0.838
+      ],
+      "q": [
+        -0.707,
+        0,
+        0,
+        0.707
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar6",
+      "name": "AR6 EPS1",
+      "pos": [
+        1.895,
+        -0.282,
+        -0.208
+      ],
+      "q": [
+        0,
+        0,
+        0.707,
+        -0.707
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar7",
+      "name": "AR7 MELFI1",
+      "pos": [
+        1.451,
+        -1.001,
+        0.372
+      ],
+      "q": [
+        -0.707,
+        0,
+        0,
+        0.707
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar8",
+      "name": "AR8 EPS2_2",
+      "pos": [
+        4.779,
+        0.112,
+        1.884
+      ],
+      "q": [
+        -0.707,
+        0.707,
+        0,
+        0
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar9",
+      "name": "AR9 EPS2_1",
+      "pos": [
+        2.066,
+        1.046,
+        -0.014
+      ],
+      "q": [
+        0,
+        0.707,
+        -0.707,
+        0
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar10",
+      "name": "AR10 ECLSS_TCS2",
+      "pos": [
+        5.851,
+        0.01,
+        1.884
+      ],
+      "q": [
+        -0.707,
+        0.707,
+        0,
+        0
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar11",
+      "name": "AR11 Airlock",
+      "pos": [
+        7.195,
+        0.363,
+        1.23
+      ],
+      "q": [
+        0.5,
+        0.5,
+        -0.5,
+        -0.5
+      ],
+      "size": 0.02
+    },
+    {
+      "id": "ar12",
+      "name": "AR12 Bay 0 panel",
+      "pos": [
+        0,
+        -0.059,
+        -0.102
+      ],
+      "q": [
+        -0.5,
+        0.5,
+        -0.5,
+        0.5
+      ],
+      "size": 0.02
+    }
+  ],
+  "start": {
+    "name": "Dock",
+    "pos": [
+      0.2,
+      0,
+      0
+    ],
+    "q": [
+      0,
+      0,
+      0,
+      1
+    ]
+  },
+  "sides": {
+    "-x": "Dock end",
+    "+x": "Airlock end",
+    "-y": "SAIBO wall",
+    "+y": "EPS2 wall",
+    "-z": "Overhead",
+    "+z": "Deck"
+  },
+  "poses": [],
+  "checkpoints": [
+    {
+      "id": 1,
+      "name": "CP 1",
+      "pos": [
+        1.4421152111823452,
+        -0.5013235815457989,
+        0.6649623093633403
+      ],
+      "q": [
+        0.705928907230986,
+        -0.689998801417597,
+        0.12254331978784033,
+        -0.10270913665940805
+      ],
+      "marker": [
+        1.451,
+        -1.001,
+        0.6806
+      ],
+      "scoreBands": [
+        {
+          "radius": 0.1,
+          "level": 3
+        },
+        {
+          "radius": 0.2,
+          "level": 2
+        },
+        {
+          "radius": 0.3,
+          "level": 1
+        }
+      ],
+      "centeringBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ],
+      "rollBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "CP 4",
+      "pos": [
+        4.0802,
+        -0.4642,
+        0.5104
+      ],
+      "q": [
+        -0.312418,
+        0.245508,
+        -0.589473,
+        0.703308
+      ],
+      "marker": [
+        4.181,
+        -1.001,
+        0.523
+      ],
+      "scoreBands": [
+        {
+          "radius": 0.1,
+          "level": 3
+        },
+        {
+          "radius": 0.2,
+          "level": 2
+        },
+        {
+          "radius": 0.3,
+          "level": 1
+        }
+      ],
+      "centeringBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ],
+      "rollBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "CP 5",
+      "pos": [
+        5.666,
+        -0.44,
+        0.9551
+      ],
+      "q": [
+        -0.106153,
+        0.220959,
+        -0.612602,
+        0.751417
+      ],
+      "marker": [
+        5.754,
+        -1.001,
+        0.838
+      ],
+      "scoreBands": [
+        {
+          "radius": 0.1,
+          "level": 3
+        },
+        {
+          "radius": 0.2,
+          "level": 2
+        },
+        {
+          "radius": 0.3,
+          "level": 1
+        }
+      ],
+      "centeringBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ],
+      "rollBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "CP 6",
+      "pos": [
+        1.7307,
+        -0.2167,
+        0.3145
+      ],
+      "q": [
+        -0.402285,
+        0.546056,
+        0.22997,
+        0.697928
+      ],
+      "marker": [
+        1.895,
+        -0.282,
+        -0.208
+      ],
+      "scoreBands": [
+        {
+          "radius": 0.1,
+          "level": 3
+        },
+        {
+          "radius": 0.2,
+          "level": 2
+        },
+        {
+          "radius": 0.3,
+          "level": 1
+        }
+      ],
+      "centeringBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ],
+      "rollBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "CP 8",
+      "pos": [
+        4.7532,
+        0.1382,
+        1.4047
+      ],
+      "q": [
+        0.06003,
+        -0.687611,
+        0.019377,
+        0.723334
+      ],
+      "marker": [
+        4.779,
+        0.112,
+        1.884
+      ],
+      "scoreBands": [
+        {
+          "radius": 0.1,
+          "level": 3
+        },
+        {
+          "radius": 0.2,
+          "level": 2
+        },
+        {
+          "radius": 0.3,
+          "level": 1
+        }
+      ],
+      "centeringBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ],
+      "rollBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "CP 10",
+      "pos": [
+        5.9142,
+        0.1346,
+        1.3261
+      ],
+      "q": [
+        0.398408,
+        -0.680114,
+        0.303982,
+        0.53508
+      ],
+      "marker": [
+        5.851,
+        0.01,
+        1.884
+      ],
+      "scoreBands": [
+        {
+          "radius": 0.1,
+          "level": 3
+        },
+        {
+          "radius": 0.2,
+          "level": 2
+        },
+        {
+          "radius": 0.3,
+          "level": 1
+        }
+      ],
+      "centeringBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ],
+      "rollBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "CP 11",
+      "pos": [
+        6.6779,
+        0.3966,
+        1.3034
+      ],
+      "q": [
+        -0.561175,
+        0.076253,
+        0.012972,
+        0.824075
+      ],
+      "marker": [
+        7.195,
+        0.363,
+        1.23
+      ],
+      "scoreBands": [
+        {
+          "radius": 0.1,
+          "level": 3
+        },
+        {
+          "radius": 0.2,
+          "level": 2
+        },
+        {
+          "radius": 0.3,
+          "level": 1
+        }
+      ],
+      "centeringBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ],
+      "rollBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "CP 12",
+      "pos": [
+        0.5118,
+        -0.2028,
+        -0.108
+      ],
+      "q": [
+        0.135406,
+        0.975217,
+        0.174008,
+        0.018374
+      ],
+      "marker": [
+        0,
+        -0.059,
+        -0.102
+      ],
+      "scoreBands": [
+        {
+          "radius": 0.1,
+          "level": 3
+        },
+        {
+          "radius": 0.2,
+          "level": 2
+        },
+        {
+          "radius": 0.3,
+          "level": 1
+        }
+      ],
+      "centeringBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ],
+      "rollBands": [
+        {
+          "angle": 10,
+          "level": 3
+        },
+        {
+          "angle": 20,
+          "level": 2
+        },
+        {
+          "angle": 30,
+          "level": 1
+        }
+      ]
+    }
+  ],
+  "goal": 12,
+  "mission": [],
+  "camera": {
+    "width": 1280,
+    "height": 720,
+    "fx": 900,
+    "fy": 900,
+    "cx": 640,
+    "cy": 360,
+    "D": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "offset": [
+      0.14,
+      0,
+      0
+    ],
+    "dictionary": "DICT_4X4_50",
+    "minPerimeterRate": 0.03,
+    "maxViewAngle": 75,
+    "maxDistance": 1
+  },
+  "scoring": {
+    "timeLimit": 300,
+    "points": [
+      0,
+      5,
+      7.5,
+      10
+    ],
+    "goalPoints": 30,
+    "checkTime": 3
+  },
+  "export": {
+    "prefix": "//",
+    "header": "// KIBO RPC 7 Nav Sandbox route for: {world} (inspired by Kibo-RPC; check every value in the simulator)\n// Paste into the mission flow of src/user_template_node.cpp, after mission_start.\n// Checkpoints change every run: a real program reads them from /mission/get_checkpoints.\n// Needs <actionlib/client/simple_action_client.h>, <ib2_msgs/CtlCommandAction.h> and\n// <krpc_ib2_msgs/CheckpointPassedAction.h>. If your template already has these Action clients, use\n// them instead, and make your /ib2_user/stop handler cancel their goals.\nactionlib::SimpleActionClient<ib2_msgs::CtlCommandAction> move_client(\"/ctl/command\", true);\nactionlib::SimpleActionClient<krpc_ib2_msgs::CheckpointPassedAction> cp_client(\"/event/checkpoint_passed\", true);\nmove_client.waitForServer(ros::Duration(10.0));\ncp_client.waitForServer(ros::Duration(10.0));\nauto move_to = [&](double x, double y, double z, double qx, double qy, double qz, double qw) {\n  ib2_msgs::CtlCommandGoal goal;\n  goal.target.header.frame_id = \"iss_body\";\n  goal.target.header.stamp = ros::Time::now();\n  goal.target.pose.position.x = x;\n  goal.target.pose.position.y = y;\n  goal.target.pose.position.z = z;\n  goal.target.pose.orientation.x = qx;\n  goal.target.pose.orientation.y = qy;\n  goal.target.pose.orientation.z = qz;\n  goal.target.pose.orientation.w = qw;\n  goal.type.type = ib2_msgs::CtlStatusType::MOVE_TO_ABSOLUTE_TARGET;\n  move_client.sendGoal(goal);\n  if (!move_client.waitForResult(ros::Duration(60.0))) { move_client.cancelGoal(); return false; }\n  return move_client.getResult()->type == ib2_msgs::CtlCommandResult::TERMINATE_SUCCESS;\n};\nauto pass_checkpoint = [&](int id) {\n  ros::Duration(1.0).sleep();  // let it settle before the judge looks\n  krpc_ib2_msgs::CheckpointPassedGoal goal;\n  goal.checkpoint_id = id;\n  cp_client.sendGoal(goal);\n  if (!cp_client.waitForResult(ros::Duration(10.0))) { cp_client.cancelGoal(); return false; }\n  bool ok = cp_client.getResult()->success;\n  ROS_INFO(\"checkpoint %d passed: %s\", id, ok ? \"yes\" : \"no\");\n  return ok;\n};",
+    "comment": "// {i}. {name}",
+    "line": "if (!move_to({x}, {y}, {z}, {qx}, {qy}, {qz}, {qw})) ROS_WARN(\"move {i} did not finish\");",
+    "pass": "pass_checkpoint({cp});",
+    "footer": "// Then call /event/mission_finished (the template does this after the flow)."
+  },
+  "exportPython": {
+    "prefix": "            #",
+    "header": "            # KIBO RPC 7 Nav Sandbox route for: {world} (inspired by Kibo-RPC; check every value in the simulator)\n            # Paste between the USER EDIT AREA markers in __run_user_flow() (scripts/user_template.py).\n            # Checkpoints change every run: a real program reads them from /mission/get_checkpoints.\n            def move_to(x, y, z, qx, qy, qz, qw, timeout=60.0):\n                if not self.__command.wait_for_server(rospy.Duration(10.0)):\n                    return False\n                target = PoseStamped()\n                target.header.frame_id = 'iss_body'\n                target.header.stamp = rospy.Time.now()\n                p, o = target.pose.position, target.pose.orientation\n                p.x, p.y, p.z = x, y, z\n                o.x, o.y, o.z, o.w = qx, qy, qz, qw\n                goal = CtlCommandGoal(target=target, type=CtlStatusType(type=CtlStatusType.MOVE_TO_ABSOLUTE_TARGET))\n                self.__action_active = True  # so /ib2_user/stop cancels it\n                try:\n                    self.__command.send_goal(goal)\n                    if not self.__command.wait_for_result(rospy.Duration(timeout)):\n                        self.__command.cancel_goal()\n                        return False\n                    return self.__command.get_result().type == CtlCommandResult.TERMINATE_SUCCESS\n                finally:\n                    self.__action_active = False\n",
+    "comment": "            # {i}. {name}",
+    "line": "            if not move_to({x}, {y}, {z}, {qx}, {qy}, {qz}, {qw}):\n                rospy.logwarn('move {i} did not finish')",
+    "pass": "            rospy.sleep(1.0)  # let it settle before the judge looks\n            self.__notify_checkpoint_passed({cp})",
+    "footer": "            # The template calls /event/mission_finished after this block."
+  }
+}

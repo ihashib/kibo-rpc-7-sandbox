@@ -1,0 +1,1442 @@
+<!doctype html>
+<!-- KIBO RPC 7 Nav Sandbox by ihashib · https://ihashib.github.io -->
+<html lang="bn" data-lang-reload>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>স্থানাঙ্ক ও ঘূর্ণন</title>
+  <meta name="title-en" content="Coordinates and rotations">
+  <meta name="description" content="Kibo-RPC-র শিক্ষার্থীদের জন্য Kibo-র স্থানাঙ্ক ব্যবস্থা, অয়লার কোণ আর কোয়াটারনিয়ন হাতে-কলমে বোঝার একটি সিমুলেটর।">
+  <link rel="stylesheet" href="vendor/fonts.css">
+  <script src="lang.js"></script>
+  <style>
+    /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
+    html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
+    html[data-lang="bn"] body { line-height: 1.75; }
+    html[data-lang="bn"] .bn ol:not(.flow):not(.steps):not(.goals) { list-style-type: bengali; }
+    html[data-lang="bn"] .bn ol.flow > li::before { content: counter(step, bengali); }
+    html[data-lang="bn"] .bn h2.part { letter-spacing: 0; text-transform: none; font-size: 14px; }
+    nav.tabs .langsw { flex: none; margin-left: auto; align-self: center; padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; color: var(--fg); font-size: 13.5px; font-weight: 600; }
+    nav.tabs .langsw:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 480px) { nav.tabs .langsw { flex: none; min-height: 32px; padding: 0 9px; margin: 0 0 0 4px; border-radius: 999px; font-size: 12.5px; } }
+    /* Phones and tablets: the language button sits above the tabs, top right, so the six tabs keep the row. */
+    @media (max-width: 860px) { main { position: relative; } nav.tabs .langsw { position: absolute; top: 1px; right: 16px; margin: 0; min-height: 0; padding: 1px 10px; font-size: 12.5px; line-height: 1.5; } }
+    @media (max-width: 380px) { html[data-lang="en"] nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    :root { color-scheme: dark; --bg: #0d1016; --fg: #e6e9f0; --muted: #9aa3b5; --border: #2c3342; --code: #161a23; --accent: #86a2ff; --soft: #141924; --ok: #3ccf9f; --warn: #f0b54a; --view: #1a2030; --ax: #ff6b6f; --ay: #4cc782; --az: #7d9bff; --turn: #f0c040; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+    nav.tabs { display: flex; gap: 2px; margin: 0 0 18px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+    nav.tabs a { flex: none; padding: 8px 14px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; font-size: 15px; text-decoration: none; white-space: nowrap; }
+    nav.tabs a:hover { color: var(--fg); }
+    nav.tabs a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
+    nav.tabs a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    nav.tabs a:active { color: var(--fg); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    /* Phones: the tabs share the row and are full-height touch targets (44px). */
+    @media (max-width: 480px) { nav.tabs { gap: 0; } nav.tabs a { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; box-sizing: border-box; padding: 0 6px; font-size: 14px; border-radius: 8px 8px 0 0; } }
+    @media (max-width: 400px) { nav.tabs a { padding: 0 3px; font-size: 13px; min-width: 44px; flex-shrink: 0; } }
+    @media (max-width: 340px) { nav.tabs { margin-left: -8px; margin-right: -8px; } nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    /* Phones and tablets: shorter tab names so all six fit (the full name stays as the link's accessible name). */
+    nav.tabs .ts { display: none; }
+    @media (max-width: 860px) { nav.tabs .tl { display: none; } nav.tabs .ts { display: inline; } }
+    h1 { font-size: 28px; margin: 0 0 4px; }
+    h2 { font-size: 21px; margin: 44px 0 8px; }
+    h3 { font-size: 15px; margin: 16px 0 6px; }
+    p.lead { color: var(--muted); margin: 0 0 16px; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 4px 0; }
+    a { color: var(--accent); }
+    code { font-family: ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; font-size: 0.9em; background: var(--code); border-radius: 4px; padding: 0 3px; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 15px; }
+    th, td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    td.n { font-family: ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; font-size: 14px; white-space: nowrap; }
+    .wrap { overflow-x: auto; }
+    .note { color: var(--muted); font-size: 14.5px; }
+    .x { color: var(--ax); font-weight: 700; } .y { color: var(--ay); font-weight: 700; } .z { color: var(--az); font-weight: 700; } .t { color: var(--turn); font-weight: 700; }
+    .btn { font: 600 14px system-ui, "Noto Sans Bengali", sans-serif; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--fg); padding: 5px 11px; min-height: 34px; cursor: pointer; }
+    .btn:hover { border-color: var(--accent); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+    /* Simulator */
+    .sim { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; margin: 12px 0; }
+    .stage { position: relative; height: 470px; border: 1px solid var(--border); border-radius: 12px; background: radial-gradient(circle at 50% 40%, var(--soft), var(--view)); overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+    .stage.drag { cursor: grabbing; }
+    .stage canvas { display: block; width: 100%; height: 100%; }
+    .lbl { position: absolute; left: 0; top: 0; font: 600 12px/1.2 system-ui, "Noto Sans Bengali", sans-serif; white-space: nowrap; pointer-events: none; padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--bg) 78%, transparent); transform: translate(-50%, -50%); }
+    .lbl.w { color: var(--muted); font-weight: 600; }
+    .lbl.b { font-size: 12.5px; font-weight: 800; }
+    .lbl.hide { display: none; }
+    .stage .tools { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: 70%; }
+    .stage .tools label { display: flex; align-items: center; gap: 4px; font-size: 12.5px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 2px 8px; cursor: pointer; }
+    .stage .hint { position: absolute; left: 10px; bottom: 8px; font-size: 12.5px; color: var(--muted); pointer-events: none; }
+    .stage .fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; text-align: center; padding: 20px; color: var(--muted); }
+    .stage.nogl .fallback { display: flex; }
+    .stage.nogl .tools, .stage.nogl .hint { display: none; }
+    .panel { border: 1px solid var(--border); border-radius: 12px; padding: 4px 14px 12px; background: var(--soft); }
+    .panel h3 { display: flex; align-items: baseline; gap: 8px; }
+    .panel h3 small { font-weight: 400; color: var(--muted); font-size: 12.5px; }
+    .slider { display: grid; grid-template-columns: 62px 1fr 64px; gap: 8px; align-items: center; margin: 2px 0; font-size: 14px; }
+    .slider input[type=range] { width: 100%; accent-color: var(--accent); }
+    input[type=number] { font: 14px ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; width: 100%; background: var(--bg); color: var(--fg); border: 1px solid var(--border); border-radius: 6px; padding: 4px 6px; min-height: 32px; }
+    .quat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .quat label { font: 700 12.5px system-ui, "Noto Sans Bengali", sans-serif; color: var(--muted); display: grid; gap: 2px; }
+    .read { font-size: 14px; margin: 6px 0 0; }
+    .read b { font-weight: 600; }
+    .read div { margin: 2px 0; }
+    .msg { min-height: 1.6em; font-size: 14.5px; margin: 6px 0 0; color: var(--fg); }
+    .msg:empty { display: none; }
+    .msg { border-left: 3px solid var(--turn); padding: 4px 10px; background: var(--bg); border-radius: 0 6px 6px 0; }
+
+    /* Lessons */
+    .lesson { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 18px; align-items: start; }
+    .lesson svg { width: 100%; height: auto; display: block; }
+    figure { margin: 0; border: 1px dashed var(--border); border-radius: 12px; padding: 10px; background: var(--soft); }
+    figure figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    svg text { fill: var(--fg); font: 600 12.5px system-ui, "Noto Sans Bengali", sans-serif; }
+    svg text.m { fill: var(--muted); font-weight: 400; font-size: 11.5px; }
+    svg .ln { stroke: var(--fg); fill: none; stroke-width: 1.6; stroke-linecap: round; }
+    svg .sx { stroke: var(--ax); fill: none; stroke-width: 2.6; stroke-linecap: round; } svg .fx { fill: var(--ax); }
+    svg .sy { stroke: var(--ay); fill: none; stroke-width: 2.6; stroke-linecap: round; } svg .fy { fill: var(--ay); }
+    svg .sz { stroke: var(--az); fill: none; stroke-width: 2.6; stroke-linecap: round; } svg .fz { fill: var(--az); }
+    svg .st { stroke: var(--turn); fill: none; stroke-width: 2.2; stroke-linecap: round; } svg .ft { fill: var(--turn); }
+    svg .ball { fill: var(--bg); stroke: var(--fg); stroke-width: 1.6; }
+    .formula { font: 600 16px/1.6 ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; text-align: center; padding: 10px; border: 1.5px solid var(--fg); border-radius: 10px; background: var(--bg); margin: 10px 0; overflow-wrap: anywhere; }
+    .box { border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 10px 14px; margin: 12px 0; background: var(--soft); }
+    .box.warn { border-left-color: var(--warn); }
+    .box > :first-child { margin-top: 0; } .box > :last-child { margin-bottom: 0; }
+    ol.goals { list-style: none; padding: 0; display: grid; gap: 8px; }
+    ol.goals li { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; background: var(--soft); margin: 0; }
+    ol.goals .tick { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); color: transparent; font: 800 14px/20px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; }
+    ol.goals li.done { border-color: var(--ok); }
+    ol.goals li.done .tick { background: var(--ok); border-color: var(--ok); color: var(--bg); }
+    ol.goals small { display: block; color: var(--muted); }
+    footer { margin-top: 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+    @media (max-width: 820px) {
+      .sim { grid-template-columns: 1fr; }
+      .stage { height: 360px; }
+      .lesson { grid-template-columns: 1fr; }
+      .lesson figure { max-width: 340px; }
+    }
+    /* Learning helpers (the four learning pages): the path through them, what to read first, new words, things to
+       try, quick self-checks and the deeper detail for older students. */
+    .path { display: flex; flex-wrap: wrap; gap: 6px 4px; align-items: center; margin: 6px 0 20px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--soft, #141924); font-size: 14px; }
+    .path > b { flex: 1 0 100%; color: var(--muted); font-size: 13px; font-weight: 600; }
+    .path a, .path .here { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px; border: 1px solid var(--border); color: var(--fg); text-decoration: none; }
+    .path a:hover { border-color: var(--accent); }
+    .path .here { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); font-weight: 700; }
+    .path i { font-style: normal; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--fg); font-size: 12px; font-weight: 700; }
+    .path .here i { background: var(--accent); color: var(--bg); }
+    .path .arr { color: var(--muted); }
+    /* The page's intro, learning path and contents sit folded in a bar under the title, so the page opens on its content. */
+    details.intro { margin: 10px 0 18px; }
+    details.intro + details.intro { margin-top: -10px; }
+    details.intro > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; min-height: 44px; box-sizing: border-box; padding: 6px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--soft, #141924); cursor: pointer; list-style: none; font-weight: 700; }
+    details.intro > summary::-webkit-details-marker { display: none; }
+    details.intro > summary::before { content: '\25B8'; color: var(--muted); }
+    details.intro[open] > summary::before { content: '\25BE'; }
+    details.intro > summary:hover { border-color: var(--accent); }
+    details.intro > summary small { color: var(--muted); font-size: 13px; font-weight: 400; }
+    details.intro[open] > summary { margin-bottom: 14px; }
+    .need, .word, .try, .check { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin: 14px 0; background: var(--soft, #141924); }
+    .need { border-left: 4px solid var(--warn, #f0b54a); }
+    .word { border-left: 4px solid var(--accent); }
+    .try { border-left: 4px solid var(--ok, #3ccf9f); }
+    .check { border-left: 4px solid #f07ad8; }
+    .need > :last-child, .word > :last-child, .try > :last-child, .check > :last-child { margin-bottom: 0; }
+    .tag { display: block; font-size: 12.5px; font-weight: 700; margin: 0 0 4px; }
+    .need .tag { color: var(--warn, #f0b54a); } .word .tag { color: var(--accent); } .try .tag { color: var(--ok, #3ccf9f); } .check .tag { color: #f07ad8; }
+    .word dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; }
+    .word dt { font-weight: 700; } .word dd { margin: 0; }
+    .check details { border-top: 1px dashed var(--border); padding: 6px 0; }
+    .check details:first-of-type { border-top: 0; }
+    .check summary { cursor: pointer; font-weight: 600; }
+    .check summary::marker { color: #f07ad8; }
+    .check details[open] summary { color: #f07ad8; }
+    .check details > p { margin: 6px 0 2px; }
+    details.deeper { border: 1px dashed var(--border); border-radius: 10px; padding: 8px 14px; margin: 14px 0; }
+    details.deeper > summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+    details.deeper[open] > summary { margin-bottom: 6px; color: var(--fg); }
+    .steps { counter-reset: s; list-style: none; padding: 0; }
+    .steps > li { counter-increment: s; position: relative; padding-left: 34px; margin: 8px 0; }
+    .steps > li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--bg); font: 700 13px/24px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; }
+    html[data-lang="bn"] .bn .steps > li::before { content: counter(s, bengali); }
+    nav.mini { border: 1px solid var(--border); border-radius: 10px; padding: 8px 16px; margin: 0 0 8px; }
+    nav.mini ol { margin: 4px 0; columns: 2 230px; }
+    dl.words { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+    dl.words dt { font-weight: 700; } dl.words dd { margin: 0; }
+    figure.wide { max-width: 640px; margin: 12px auto; }
+    @media (max-width: 560px) { dl.words, .word dl { grid-template-columns: 1fr; gap: 0; } dl.words dd, .word dd { margin-bottom: 8px; } }
+    svg .ff { fill: var(--fg); } svg .fa { fill: var(--accent); } svg .fm { fill: var(--muted); }
+    svg .sa { stroke: var(--accent); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    svg .sm { stroke: var(--muted); fill: none; stroke-width: 1.2; stroke-linecap: round; }
+    svg .dsh { stroke-dasharray: 5 4; }
+    .lesson { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; align-items: start; }
+    .lesson figure, figure.wide { margin: 0; border: 1px dashed var(--border); border-radius: 12px; padding: 10px; background: var(--soft, #141924); }
+    figure.wide { margin: 12px auto; }
+    .lesson figure svg, figure.wide svg { width: 100%; height: auto; display: block; max-width: none; margin: 0; }
+    .lesson figure figcaption, figure.wide figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    @media (max-width: 820px) { .lesson { grid-template-columns: 1fr; } .lesson figure { max-width: 360px; } }
+    svg .ball { fill: var(--bg); stroke: var(--fg); stroke-width: 1.6; }
+    figure.shot { margin: 12px 0; }
+    .shotbox { position: relative; }
+    .shotbox img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; }
+    .pin { position: absolute; transform: translate(-50%, -50%); width: 24px; height: 24px; border-radius: 50%; background: #f0b54a; color: #111; font: 700 13px/24px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; box-shadow: 0 0 0 2px #111, 0 2px 6px rgba(0, 0, 0, .6); pointer-events: none; }
+    figure.shot figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    ol.steps.pins { columns: 2 320px; column-gap: 24px; }
+    ol.steps.pins > li { break-inside: avoid; }
+    ol.steps.pins > li::before { background: #f0b54a; color: #111; }
+    @media (max-width: 560px) { .pin { width: 18px; height: 18px; font-size: 10.5px; line-height: 18px; } }
+  </style>
+</head>
+<body>
+<main>
+  <nav class="tabs" aria-label="পাতাগুলো" data-aria-bn="পাতাগুলো" data-aria-en="Pages"><a href="index.html"><span class="bn">স্যান্ডবক্স</span><span class="en">Sandbox</span></a><a href="robots.html" aria-label="রোবটগুলো" data-aria-bn="রোবটগুলো" data-aria-en="The robots"><span class="tl"><span class="bn">রোবটগুলো</span><span class="en">The robots</span></span><span class="ts"><span class="bn">রোবট</span><span class="en">Robots</span></span></a><a href="rotations.html" aria-current="page" aria-label="স্থানাঙ্ক ও ঘূর্ণন" data-aria-bn="স্থানাঙ্ক ও ঘূর্ণন" data-aria-en="Coordinates and rotations"><span class="tl"><span class="bn">স্থানাঙ্ক ও ঘূর্ণন</span><span class="en">Coordinates &amp; rotations</span></span><span class="ts"><span class="bn">ঘূর্ণন</span><span class="en">Rotations</span></span></a><a href="learn.html" aria-label="নিয়মের গাইড" data-aria-bn="নিয়মের গাইড" data-aria-en="Rules guide"><span class="tl"><span class="bn">নিয়মের গাইড</span><span class="en">Rules guide</span></span><span class="ts"><span class="bn">নিয়ম</span><span class="en">Rules</span></span></a><a href="manual.html" aria-label="ব্যবহারবিধি" data-aria-bn="ব্যবহারবিধি" data-aria-en="How to use"><span class="tl"><span class="bn">ব্যবহারবিধি</span><span class="en">How to use</span></span><span class="ts"><span class="bn">সাহায্য</span><span class="en">Help</span></span></a><a class="langsw bn" href="?lang=en" data-setlang="en" lang="en" title="Read this site in English"><span class="tl">English</span><span class="ts">EN</span></a><a class="langsw en" href="?lang=bn" data-setlang="bn" lang="bn" title="সাইটটি বাংলায় পড়ো"><span class="tl">বাংলা</span><span class="ts">বাং</span></a></nav>
+<div class="bn">
+  <h1>স্থানাঙ্ক ও ঘূর্ণন</h1>
+  <details class="intro">
+    <summary>এই পাতা সম্পর্কে<small>শেখার পথ · সূচিপত্র</small></summary>
+    <p class="lead">রোবটকে কোথাও পাঠাতে দুটো জিনিস বলতে হয়: <b>কোথায়</b> যাবে (অবস্থান), আর সেখানে <b>কোন দিকে মুখ করে</b> থাকবে (দিক)। এই পাতায় একদম গোড়া থেকে শিখব, ধাপে ধাপে। আগে কিছু না জানলেও চলবে; যোগ-বিয়োগ পারলেই যথেষ্ট।</p>
+
+    <nav class="path" aria-label="শেখার পথ"><b>শেখার পথ: ধাপে ধাপে এগোও</b><a href="robots.html"><i>১</i>রোবটকে চেনো</a><span class="arr">→</span><span class="here" aria-current="step"><i>২</i>কোথায় আর কোন দিকে</span><span class="arr">→</span><a href="learn.html"><i>৩</i>খেলার নিয়ম</a><span class="arr">→</span><a href="manual.html"><i>৪</i>স্যান্ডবক্স চালানো</a><span class="arr">→</span><a href="index.html"><i>৫</i>অনুশীলন</a></nav>
+
+    <nav class="mini" aria-label="এই পাতায়">
+      <b>এই পাতায় যা শিখবে</b>
+      <ol>
+        <li><a href="#position">সংখ্যা দিয়ে জায়গা বোঝানো</a></li>
+        <li><a href="#xyz">তিন দিক: x, y আর z</a></li>
+        <li><a href="#frame">Kibo-র ভেতরের দিকগুলো</a></li>
+        <li><a href="#angles">কোণ আর ডিগ্রি</a></li>
+        <li><a href="#body">রোবটের নিজের সামনে, বাঁ আর ওপর</a></li>
+        <li><a href="#turns">তিন রকম ঘোরা: রোল, পিচ, ইয়</a></li>
+        <li><a href="#euler">অয়লার কোণ</a></li>
+        <li><a href="#quaternion">কোয়াটারনিয়ন</a></li>
+        <li><a href="#kiborpc">Kibo-RPC-তে কোথায় লাগে</a></li>
+        <li><a href="#words">শব্দকোষ</a></li>
+      </ol>
+    </nav>
+  </details>
+
+  <!-- ===================== 1 ===================== -->
+  <h2 id="position">১. সংখ্যা দিয়ে জায়গা বোঝানো</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>কিছুই না। শুধু যোগ-বিয়োগ।</div>
+  <div class="lesson">
+    <div>
+      <p>বন্ধুকে যদি বলো “বলটা ওখানে”, সে বুঝবে না কোথায়। কিন্তু যদি বলো “দরজা থেকে ২ পা সামনে”, সে ঠিক খুঁজে পাবে। রোবটের বেলাতেও তাই: জায়গা বোঝাতে লাগে একটা <b>শুরুর বিন্দু</b>, আর সেখান থেকে <b>কত দূর</b>, সেই সংখ্যা।</p>
+      <ul>
+        <li>শুরুর বিন্দুতে সংখ্যা <b>০</b>। এর নাম <b>মূলবিন্দু</b>।</li>
+        <li>সামনের দিকে গেলে সংখ্যা <b>+</b> (যোগ)।</li>
+        <li>উল্টো দিকে গেলে সংখ্যা <b>−</b> (বিয়োগ)। −২ মানে উল্টো দিকে ২।</li>
+      </ul>
+      <p>রোবটের দূরত্ব মাপা হয় <b>মিটারে</b> (মি)। হিসাবে প্রায়ই দশমিক আসে: ০.৫ মি মানে আধা মিটার (৫০ সেমি), আর ০.১ মি মানে ১০ সেমি, মোটামুটি তোমার হাতের তালু যতটা চওড়া, ততটা।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 300 100" role="img" aria-label="একটা সংখ্যারেখা: মাঝে ০, ডানে যোগ, বাঁয়ে বিয়োগ; রোবট আছে +২-এ">
+        <text x="286" y="18" text-anchor="end" class="m">সামনে (+) →</text><text x="14" y="18" class="m">← পেছনে (−)</text>
+        <path class="ln" d="M16 58 H284"/><path class="ff" d="M290 58 l-9 -5 v10 z"/><path class="ff" d="M10 58 l9 -5 v10 z"/>
+        <path class="ln" d="M30 53 v10 M70 53 v10 M110 53 v10 M150 50 v16 M190 53 v10 M230 53 v10 M270 53 v10"/>
+        <g text-anchor="middle"><text x="30" y="84" class="m">−৩</text><text x="70" y="84" class="m">−২</text><text x="110" y="84" class="m">−১</text><text x="150" y="84">০</text><text x="190" y="84" class="m">+১</text><text x="230" y="84" class="m">+২</text><text x="270" y="84" class="m">+৩</text></g>
+        <text x="150" y="42" text-anchor="middle" class="m">মূলবিন্দু</text>
+        <circle cx="230" cy="58" r="9" class="fa"/><text x="230" y="40" text-anchor="middle" style="fill:var(--accent)">রোবট</text>
+      </svg>
+      <figcaption>সংখ্যারেখা। রোবট আছে +২-এ: শুরু থেকে ২ মিটার সামনে।</figcaption>
+    </figure>
+  </div>
+  <div class="word"><span class="tag">নতুন শব্দ</span><dl>
+    <dt>মূলবিন্দু</dt><dd>যেখান থেকে মাপা শুরু হয়; সেখানে সব সংখ্যা ০।</dd>
+    <dt>মিটার (মি)</dt><dd>দৈর্ঘ্যের একক। ১ মিটার = ১০০ সেন্টিমিটার (সেমি), মোটামুটি বড় করে এক পা ফেলার মতো।</dd>
+  </dl></div>
+  <div class="try"><span class="tag">নিজে করে দেখো</span>মেঝেতে একটা দাগ দাও; ওটাই ০। এবার ২ পা সামনে যাও, তারপর ৩ পা পেছনে। এখন তুমি কোথায়? (−১-এ: শুরুর জায়গা থেকে ১ পা পেছনে।)</div>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>রোবট ০ থেকে +১.৫ মি গেল, তারপর −২ মি। শেষে কোথায়?</summary><p>১.৫ − ২ = −০.৫। মানে শুরুর বিন্দু থেকে উল্টো দিকে আধা মিটার।</p></details>
+    <details><summary>০.৩ মি কত সেন্টিমিটার?</summary><p>৩০ সেমি। (১ মি = ১০০ সেমি, তাই ০.৩ মি = ৩০ সেমি।)</p></details>
+  </div>
+
+  <!-- ===================== 2 ===================== -->
+  <h2 id="xyz">২. তিন দিক: x, y আর z</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#position">১ নম্বর পাঠ</a>: মূলবিন্দু আর + / − সংখ্যা।</div>
+  <p>একটা সোজা রাস্তায় জায়গা বোঝাতে একটা সংখ্যাই যথেষ্ট। কিন্তু খেলার মাঠে লাগে দুটো: কতটা সামনে, আর কতটা পাশে। আর একটা ঘরের ভেতরে (বা মহাকাশ স্টেশনে, যেখানে রোবট ভেসে বেড়ায়) লাগে তিনটা: সামনে-পেছনে, পাশে, আর ওপরে-নিচে।</p>
+  <p>এই তিনটা দিকের নাম <span class="x">x</span>, <span class="y">y</span> আর <span class="z">z</span>। প্রতিটা দিক বরাবর একটা সোজা রেখা কল্পনা করো; এই রেখাগুলোকে বলে <b>অক্ষ</b>। তিনটা সংখ্যা একসঙ্গে বন্ধনীর ভেতরে লেখা হয়: (x, y, z)। এগুলোই জায়গাটার <b>স্থানাঙ্ক</b>।</p>
+  <div class="lesson">
+    <div>
+      <p><b>উদাহরণ:</b> (৩, ২, ১) মানে মূলবিন্দু থেকে:</p>
+      <ol class="steps">
+        <li><span class="x">x</span> বরাবর ৩ মিটার,</li>
+        <li>তারপর <span class="y">y</span> বরাবর ২ মিটার,</li>
+        <li>তারপর <span class="z">z</span> বরাবর ১ মিটার।</li>
+      </ol>
+      <p>জায়গার বেলায় কোন দিকে আগে যাচ্ছ, তাতে কিছু আসে-যায় না: যেকোনো ক্রমে গেলেও শেষে একই বিন্দুতে পৌঁছাবে। (মনে রেখো, ঘোরার বেলায় কিন্তু এটা খাটে না! <a href="#euler">৭ নম্বর পাঠে</a> দেখবে।)</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 260 210" role="img" aria-label="একটা ঘরের কোণে তিনটা অক্ষ, আর (৩, ২, ১) বিন্দুতে যাওয়ার পথ">
+        <path class="sx" d="M60 170 H222"/><path class="fx" d="M230 170 l-10 -6 v12 z"/><text x="232" y="190" style="fill:var(--ax)">x</text>
+        <path class="sy" d="M60 170 L148 104"/><path class="fy" d="M156 98 l-11 1 l6 9 z"/><text x="160" y="96" style="fill:var(--ay)">y</text>
+        <path class="sz" d="M60 170 V40"/><path class="fz" d="M60 32 l-6 10 h12 z"/><text x="70" y="38" style="fill:var(--az)">z</text>
+        <circle cx="60" cy="170" r="4" class="ff"/><text x="52" y="190" text-anchor="middle" class="m">(০, ০, ০)</text>
+        <path class="sa dsh" d="M60 170 H150 L186 143 V113"/>
+        <text x="104" y="164" text-anchor="middle" class="m">৩</text><text x="176" y="166" class="m">২</text><text x="192" y="132" class="m">১</text>
+        <circle cx="186" cy="113" r="7" class="fa"/><text x="196" y="106" style="fill:var(--accent)">(৩, ২, ১)</text>
+      </svg>
+      <figcaption>তিনটা অক্ষ একটা কোণ থেকে বেরিয়েছে, ঘরের কোণের মতো। ড্যাশ দেওয়া পথ: ৩, তারপর ২, তারপর ১।</figcaption>
+    </figure>
+  </div>
+  <div class="word"><span class="tag">নতুন শব্দ</span><dl>
+    <dt>অক্ষ</dt><dd>যে সোজা রেখা বরাবর মাপা হয়: x অক্ষ, y অক্ষ, z অক্ষ।</dd>
+    <dt>স্থানাঙ্ক</dt><dd>জায়গা বোঝানোর সংখ্যাগুলো, যেমন (৩, ২, ১)।</dd>
+  </dl></div>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>(০, ০, ০) কোথায়?</summary><p>ঠিক মূলবিন্দুতে, যেখান থেকে মাপা শুরু।</p></details>
+    <details><summary>(২, −১, ০)-তে যেতে y বরাবর কোন দিকে যাবে?</summary><p>উল্টো দিকে ১ মিটার, কারণ y-এর সংখ্যাটা মাইনাস। আর z = ০, তাই ওপর-নিচে যেতে হবে না।</p></details>
+  </div>
+
+  <!-- ===================== 3 ===================== -->
+  <h2 id="frame">৩. Kibo-র ভেতরের দিকগুলো</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#xyz">২ নম্বর পাঠ</a>: x, y, z। Kibo কী, না জানলে আগে <a href="robots.html">রোবটের পাতা</a>টা দেখে নাও।</div>
+  <div class="lesson">
+    <div>
+      <p>Kibo হলো আন্তর্জাতিক মহাকাশ স্টেশনে জাপানের মডিউল: লম্বা নলের মতো একটা ঘর, ভেতরটা মোটামুটি একটা বাসের সমান। এর এক মাথায় রোবটের ডকিং স্টেশন, অন্য মাথায় এয়ারলক (বাইরে জিনিস পাঠানোর দরজা)।</p>
+      <p>Kibo-RPC-তে সব জায়গা মাপা হয় মিটারে, ডকিং স্টেশনের প্রায় গা ঘেঁষে থাকা একটা মূলবিন্দু থেকে। দিকগুলো এরকম:</p>
+      <ul>
+        <li><span class="x">+x</span>: লম্বালম্বি, <b>এয়ারলকের দিকে</b> (−x হলো ডকের দিক)।</li>
+        <li><span class="y">+y</span>: <b>EPS2 দেয়ালের</b> দিকে (−y হলো উল্টো দিকের SAIBO দেয়াল)।</li>
+        <li><span class="z">+z</span>: <b>মেঝের</b> দিকে (−z হলো ছাদ)।</li>
+      </ul>
+      <p>খেয়াল করো: এখানে <span class="z">+z</span> নিচের দিকে, মেঝের দিকে! অঙ্ক বইয়ের ছবিতে z সাধারণত ওপরে আঁকা থাকে, কিন্তু Kibo-RPC-তে এভাবেই ঠিক করা হয়েছে। এটা ভুলে গেলে রোবট উল্টো দিকে চলে যাবে।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 190" role="img" aria-label="EPS2 দেয়াল থেকে দেখা Kibo-র অক্ষ">
+        <rect x="20" y="40" width="200" height="110" rx="6" class="ln" style="stroke:var(--border)"/>
+        <text x="120" y="32" text-anchor="middle" class="m">ছাদ (−z)</text>
+        <text x="120" y="166" text-anchor="middle" class="m">মেঝে (+z)</text>
+        <path class="sx" d="M70 95 H150"/><path class="fx" d="M158 95 l-10 -6 v12 z"/><text x="162" y="99" style="fill:var(--ax)">+x</text>
+        <path class="sz" d="M70 95 V138"/><path class="fz" d="M70 146 l-6 -10 h12 z"/><text x="78" y="146" style="fill:var(--az)">+z</text>
+        <circle cx="70" cy="95" r="8" class="sy"/><circle cx="70" cy="95" r="2.6" class="fy"/><text x="40" y="80" style="fill:var(--ay)">+y</text>
+        <text x="26" y="58" class="m">ডকের দিক</text><text x="214" y="58" text-anchor="end" class="m">এয়ারলকের দিক</text>
+        <text x="120" y="184" text-anchor="middle" class="m">EPS2 দেয়াল থেকে দেখা: +y তোমার দিকে</text>
+      </svg>
+      <figcaption>পাশ থেকে Kibo, স্যান্ডবক্সের পাশের ভিউয়ের মতো। বিন্দুওয়ালা বৃত্ত মানে তীরটা পাতা থেকে বেরিয়ে তোমার দিকে আসছে।</figcaption>
+    </figure>
+  </div>
+  <p><b>উদাহরণ:</b> AR মার্কার ৪ আছে (4.18, −1.00, 0.52)-এ। মানে মূলবিন্দু থেকে এয়ারলকের দিকে ৪.১৮ মি, SAIBO দেয়ালের দিকে ১ মি (কারণ y মাইনাস), আর মেঝের দিকে ০.৫২ মি।</p>
+  <p>মহাকাশে আসলে ওপর-নিচ বলে কিছু নেই; সবকিছু ভেসে থাকে। Kibo-র “মেঝে” আর “ছাদ” শুধু ভেতরের যন্ত্রপাতি সাজানোর সুবিধার জন্য দেওয়া নাম। মূলবিন্দু আর এই তিনটা দিক মিলিয়ে মাপার ব্যবস্থাটাকে বলে <b>ফ্রেম</b>; Kibo-RPC এর নাম দিয়েছে <code>iss_body</code>।</p>
+  <div class="word"><span class="tag">নতুন শব্দ</span><dl>
+    <dt>ফ্রেম</dt><dd>মাপার একটা ব্যবস্থা: একটা মূলবিন্দু আর তিনটা দিক। যেমন “ক্লাসরুমের ফ্রেম”: দরজা থেকে মাপা, সামনে বোর্ডের দিকে x।</dd>
+    <dt><code>iss_body</code></dt><dd>Kibo-RPC-তে Kibo-র ফ্রেমের নাম; এটা কখনো নড়ে না।</dd>
+  </dl></div>
+  <details class="deeper"><summary>আরও গভীরে: ডান হাতের নিয়ম</summary>
+    <p>অক্ষ তিনটা <b>ডানহাতি</b>: ডান হাতের বুড়ো আঙুল <span class="x">x</span> বরাবর আর তর্জনী <span class="y">y</span> বরাবর রাখো; মধ্যমা (আঙুলটা বাঁকিয়ে) দেখাবে <span class="z">z</span>-এর দিক। JAXA-র ছবিগুলো দেখে স্যান্ডবক্স আর এই পাতা +z-কে মেঝে ধরেছে: প্রতিটা মার্কারের “ওপর” দিক −z বরাবর।</p>
+  </details>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>(১, ০, ০) বিন্দুটা মূলবিন্দু থেকে কোন দিকে?</summary><p>এয়ারলকের দিকে ১ মিটার (+x)।</p></details>
+    <details><summary>একটা জিনিসের z = −০.৫। সেটা মেঝের কাছে, না ছাদের কাছে?</summary><p>ছাদের দিকে, কারণ −z হলো ছাদ।</p></details>
+  </div>
+
+  <!-- ===================== 4 ===================== -->
+  <h2 id="angles">৪. কোণ আর ডিগ্রি</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>কিছুই না।</div>
+  <div class="lesson">
+    <div>
+      <p>রোবট কতটা ঘুরল, তা মাপা হয় <b>ডিগ্রিতে</b> (°)।</p>
+      <ul>
+        <li>পুরো এক পাক ঘুরলে <b>৩৬০°</b>: আবার আগের দিকে মুখ।</li>
+        <li>অর্ধেক পাক <b>১৮০°</b>: একদম পেছন ফিরে।</li>
+        <li>এক-চতুর্থাংশ পাক <b>৯০°</b>: সোজা থেকে ডানে বা বাঁয়ে মুখ ফেরানো।</li>
+      </ul>
+      <p>ঘড়ির বড় কাঁটা ১২ থেকে ৩-এ যেতে ঘোরে ৯০°, আর ১২ থেকে ৬-এ যেতে ১৮০°।</p>
+      <p>কোন দিকে ঘুরছে, তা বোঝাতে + আর − চিহ্ন দেওয়া হয়: + মানে এক দিকে, − মানে উল্টো দিকে। তাই −৯০° আর +২৭০° ঘুরলে শেষে একই দিকে মুখ থাকে: এক দিকে চার ভাগের এক পাক, বা উল্টো দিকে চার ভাগের তিন পাক।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 200" role="img" aria-label="একটা বৃত্তে ০°, ৯০°, ১৮০° আর ২৭০°; এক-চতুর্থাংশ রং করা">
+        <path d="M120 100 L200 100 A80 80 0 0 0 120 20 Z" style="fill:var(--accent);opacity:.22"/>
+        <circle cx="120" cy="100" r="80" class="ln" style="stroke:var(--border)"/>
+        <path class="ln" d="M120 100 H200 M120 100 V20 M120 100 H40 M120 100 V180"/>
+        <path class="sa" d="M160 100 A40 40 0 0 0 120 60"/><path class="fa" d="M120 60 l9 -5 l0 10 z"/>
+        <text x="206" y="104" class="m">০°</text><text x="120" y="14" text-anchor="middle" class="m">৯০°</text><text x="34" y="104" text-anchor="end" class="m">১৮০°</text><text x="120" y="196" text-anchor="middle" class="m">২৭০°</text>
+        <text x="150" y="88" style="fill:var(--accent)">৯০°</text>
+      </svg>
+      <figcaption>এক পাক = ৩৬০°। রং করা অংশটা ৯০°, মানে চার ভাগের এক পাক।</figcaption>
+    </figure>
+  </div>
+  <div class="try"><span class="tag">নিজে করে দেখো</span>দাঁড়িয়ে ৯০° ঘোরো, তারপর আরও ৯০°। এখন তুমি পেছন ফিরে আছ: মোট ১৮০°। আরও ১৮০° ঘুরলে? আবার আগের মতো: ৩৬০° = এক পাক।</div>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>৪৫° কত পাক?</summary><p>আট ভাগের এক পাক (৩৬০ ÷ ৮ = ৪৫)।</p></details>
+    <details><summary>৭২০° ঘুরলে রোবট কোন দিকে মুখ করে থাকবে?</summary><p>যেদিকে ছিল, সেদিকেই। ৭২০° = দুই পাক।</p></details>
+  </div>
+
+  <!-- ===================== 5 ===================== -->
+  <h2 id="body">৫. রোবটের নিজের সামনে, বাঁ আর ওপর</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#frame">৩ নম্বর পাঠ</a> (Kibo-র দিক) আর <a href="#angles">৪ নম্বর পাঠ</a> (ডিগ্রি)।</div>
+  <div class="lesson">
+    <div>
+      <p>Kibo-র দিকগুলো কখনো বদলায় না। কিন্তু রোবট ঘোরে, আর তার সঙ্গে ঘোরে তার নিজের “সামনে”, “বাঁ” আর “ওপর”। ঠিক তোমার মতো: তুমি যেদিকেই ঘোরো, তোমার নাক সবসময় তোমার “সামনে”।</p>
+      <p>তাই কেউ যদি বলে “বাঁয়ে যাও”, আগে জানতে হবে কার বাঁ: ঘরের, না রোবটের নিজের? মুখোমুখি দাঁড়ানো দুজনের বাঁ দিক একদম উল্টো (ছবিটা দেখো)।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 260 160" role="img" aria-label="ওপর থেকে দেখা মুখোমুখি দুজন; একজনের বাঁ দিক ওপরে, অন্যজনের নিচে">
+        <circle cx="70" cy="80" r="24" class="ball"/><path class="ff" d="M97 80 l-8 -6 v12 z"/><text x="70" y="85" text-anchor="middle">ক</text>
+        <circle cx="190" cy="80" r="24" class="ball"/><path class="ff" d="M163 80 l8 -6 v12 z"/><text x="190" y="85" text-anchor="middle">খ</text>
+        <path class="sa" d="M70 54 V22"/><path class="fa" d="M70 14 l-6 10 h12 z"/><text x="80" y="24" style="fill:var(--accent)">ক-এর বাঁ</text>
+        <path class="sa" d="M190 106 V138"/><path class="fa" d="M190 146 l-6 -10 h12 z"/><text x="180" y="144" text-anchor="end" style="fill:var(--accent)">খ-এর বাঁ</text>
+        <text x="130" y="76" text-anchor="middle" class="m">মুখোমুখি</text>
+      </svg>
+      <figcaption>ওপর থেকে দেখা: ক আর খ মুখোমুখি। দুজনের “বাঁ” দুই উল্টো দিকে।</figcaption>
+    </figure>
+  </div>
+  <div class="lesson">
+    <div>
+      <p>রোবটেরও নিজের তিনটা অক্ষ আছে, যেগুলো রোবটের সঙ্গে সঙ্গে ঘোরে। এদের লেখা হয় বড় হাতের অক্ষরে:</p>
+      <ul>
+        <li><span class="x">X</span>: রোবটের <b>সামনে</b>, যেদিকে ক্যামেরা তাকায়।</li>
+        <li><span class="y">Y</span>: রোবটের <b>বাঁ দিক</b>।</li>
+        <li><span class="z">Z</span>: রোবটের <b>ওপরের দিক</b>।</li>
+      </ul>
+      <p>রোবটের এই ফ্রেমের নাম <code>body</code> (বডি, মানে শরীর)। রোবট যখন একদম না ঘুরে থাকে, তখন দুই ফ্রেম মিলে যায়: ক্যামেরা তাকায় এয়ারলকের দিকে (+x), আর রোবটের ওপরের দিক থাকে মেঝের দিকে (+z)। হ্যাঁ, তখন রোবট উল্টো হয়ে থাকে! মহাকাশে এতে কোনো সমস্যা নেই।</p>
+      <div class="row"><button class="btn" data-demo="body">দেখাও: নিজের অক্ষ বরাবর ঘোরা</button></div>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 170" role="img" aria-label="রোবটের বডির অক্ষ">
+        <circle cx="110" cy="92" r="42" class="ball"/>
+        <rect x="148" y="84" width="9" height="16" rx="2" style="fill:var(--accent)"/>
+        <path class="sx" d="M110 92 H206"/><path class="fx" d="M214 92 l-10 -6 v12 z"/><text x="176" y="82" style="fill:var(--ax)">X সামনে</text>
+        <path class="sz" d="M110 92 V22"/><path class="fz" d="M110 14 l-6 10 h12 z"/><text x="118" y="24" style="fill:var(--az)">Z ওপরে</text>
+        <circle cx="110" cy="92" r="8" class="sy"/><circle cx="110" cy="92" r="2.6" class="fy"/><text x="40" y="152" style="fill:var(--ay)">Y বাঁয়ে (তোমার দিকে)</text>
+        <text x="160" y="118" class="m">ক্যামেরা</text>
+      </svg>
+      <figcaption>রোবটের বডি ফ্রেম, রোবটের বাঁ পাশ থেকে দেখা।</figcaption>
+    </figure>
+  </div>
+  <details class="deeper"><summary>আরও গভীরে: <code>/ctl/command</code> কোন ফ্রেমে লক্ষ্য নেয়?</summary>
+    <p>দুই ফ্রেমেই: <code>MOVE_TO_ABSOLUTE_TARGET</code> নেয় <code>iss_body</code>-তে (Kibo-র ফ্রেম), আর <code>MOVE_TO_RELATIVE_TARGET</code> নেয় <code>body</code>-তে (রোবটের ফ্রেম)। তাই রিলেটিভ চলায় “১ মি সামনে” মানে “রোবটের X বরাবর ১ মি”, রোবট যেদিকেই মুখ করে থাকুক।</p>
+  </details>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>রোবট এয়ারলকের দিকে মুখ করে আছে। সে “সামনে ১ মি” গেল। Kibo-র কোন দিকে গেল?</summary><p>+x দিকে: এয়ারলকের দিকে ১ মিটার।</p></details>
+    <details><summary>এবার রোবট EPS2 দেয়ালের দিকে মুখ ফেরাল। এখন “সামনে ১ মি” গেলে?</summary><p>+y দিকে: EPS2 দেয়ালের দিকে ১ মিটার। আদেশ একই, কিন্তু রোবট ঘুরে আছে বলে অন্য দিকে গেল।</p></details>
+  </div>
+
+  <!-- ===================== 6 ===================== -->
+  <h2 id="turns">৬. তিন রকম ঘোরা: রোল, পিচ, ইয়</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#angles">৪ নম্বর পাঠ</a> (ডিগ্রি) আর <a href="#body">৫ নম্বর পাঠ</a> (রোবটের X, Y, Z)।</div>
+  <p>তোমার মাথা তিনভাবে ঘোরাতে পারো। এখনই করে দেখো:</p>
+  <figure class="wide" style="max-width:460px">
+    <svg viewBox="0 0 330 150" role="img" aria-label="তিনটা মাথা: ডানে-বাঁয়ে নাড়ানো ইয়, ওপর-নিচে নাড়ানো পিচ, আর কাত করা রোল">
+      <g transform="translate(55 0)">
+        <circle cx="0" cy="62" r="26" class="ball"/><circle cx="-9" cy="57" r="2.6" class="ff"/><circle cx="9" cy="57" r="2.6" class="ff"/><path class="ln" d="M-8 72 q8 6 16 0"/>
+        <path class="sz" d="M-40 70 A40 12 0 0 0 40 70"/><path class="fz" d="M-44 66 l10 -1 l-5 9 z"/><path class="fz" d="M44 66 l-10 -1 l5 9 z"/>
+        <text y="114" text-anchor="middle" style="fill:var(--az)">ইয়</text><text y="132" text-anchor="middle" class="m">“না” বলার মতো</text>
+      </g>
+      <g transform="translate(165 0)">
+        <circle cx="0" cy="62" r="26" class="ball"/><circle cx="-9" cy="57" r="2.6" class="ff"/><circle cx="9" cy="57" r="2.6" class="ff"/><path class="ln" d="M-8 72 q8 6 16 0"/>
+        <path class="sy" d="M36 36 A14 26 0 0 1 36 88"/><path class="fy" d="M33 30 l-2 10 l9 -3 z"/><path class="fy" d="M33 94 l-2 -10 l9 3 z"/>
+        <text y="114" text-anchor="middle" style="fill:var(--ay)">পিচ</text><text y="132" text-anchor="middle" class="m">“হ্যাঁ” বলার মতো</text>
+      </g>
+      <g transform="translate(275 0)">
+        <g transform="rotate(-18 0 62)"><circle cx="0" cy="62" r="26" class="ball"/><circle cx="-9" cy="57" r="2.6" class="ff"/><circle cx="9" cy="57" r="2.6" class="ff"/><path class="ln" d="M-8 72 q8 6 16 0"/></g>
+        <path class="sx" d="M-26 22 A34 34 0 0 1 26 22"/><path class="fx" d="M-31 27 l3 -10 l7 7 z"/><path class="fx" d="M31 27 l-3 -10 l-7 7 z"/>
+        <text y="114" text-anchor="middle" style="fill:var(--ax)">রোল</text><text y="132" text-anchor="middle" class="m">কাঁধের দিকে কাত</text>
+      </g>
+    </svg>
+    <figcaption>তিন রকম ঘোরা, মাথা দিয়ে।</figcaption>
+  </figure>
+  <div class="lesson">
+    <div>
+      <ul>
+        <li><b class="z">ইয় (yaw)</b>: “না” বলার মতো ডানে-বাঁয়ে মাথা নাড়ানো। রোবট ঘোরে তার <span class="z">Z</span> অক্ষ (ওপর-নিচের রেখা) বরাবর, ক্যামেরা ডানে-বাঁয়ে সরে।</li>
+        <li><b class="y">পিচ (pitch)</b>: “হ্যাঁ” বলার মতো ওপর-নিচে মাথা নাড়ানো। রোবট ঘোরে তার <span class="y">Y</span> অক্ষ (বাঁ-ডানের রেখা) বরাবর, ক্যামেরা ওপরে-নিচে তাকায়।</li>
+        <li><b class="x">রোল (roll)</b>: কাঁধের দিকে মাথা কাত করা। রোবট ঘোরে তার <span class="x">X</span> অক্ষ (সামনে-পেছনের রেখা) বরাবর। তুমি একই দিকে তাকিয়ে থাকো, শুধু দেখা ছবিটা কাত হয়ে যায়।</li>
+      </ul>
+      <p>নামগুলো এসেছে উড়োজাহাজ থেকে: রোল মানে এক ডানা নামিয়ে কাত হওয়া, পিচ মানে নাক ওপরে-নিচে, ইয় মানে নাক বাঁয়ে-ডানে।</p>
+      <p><b>Kibo-RPC-তে রোল খুব জরুরি।</b> চেকপয়েন্টে ক্যামেরার ছবিতে মার্কারটা কতটা কাত হয়ে আছে, বিচারক সেটা মাপে। রোবট ঠিক জায়গায় থাকলেও রোল না মিললে লেভেল কমে যায়।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 170" role="img" aria-label="রোল, পিচ আর ইয়">
+        <g transform="translate(40 70)"><circle r="24" class="ball"/><path class="sx" d="M-30 0 H32"/><path class="st" d="M10 -30 A12 30 0 0 1 10 30"/><path class="ft" d="M10 30 l-6 -9 l9 1 z"/><text y="52" text-anchor="middle" style="fill:var(--ax)">রোল</text><text y="66" text-anchor="middle" class="m">X বরাবর</text></g>
+        <g transform="translate(120 70)"><circle r="24" class="ball"/><circle r="5" class="sy"/><path class="st" d="M-30 -10 A30 30 0 0 1 22 -22"/><path class="ft" d="M22 -22 l-10 -2 l5 9 z"/><text y="52" text-anchor="middle" style="fill:var(--ay)">পিচ</text><text y="66" text-anchor="middle" class="m">Y বরাবর</text></g>
+        <g transform="translate(200 70)"><circle r="24" class="ball"/><path class="sz" d="M0 30 V-32"/><path class="st" d="M-30 -14 A30 10 0 0 0 30 -14"/><path class="ft" d="M30 -14 l-10 -4 l3 9 z"/><text y="52" text-anchor="middle" style="fill:var(--az)">ইয়</text><text y="66" text-anchor="middle" class="m">Z বরাবর</text></g>
+      </svg>
+      <figcaption>প্রতিটা ঘোরা একটা অক্ষ বরাবর। হলুদ তীর দেখায় কোন দিকে ঘোরে।</figcaption>
+    </figure>
+  </div>
+  <div class="try"><span class="tag">নিজে করে দেখো</span>একটা বই হাতে নাও, মলাট তোমার দিকে। বইটাকে আগে রোল করো (কাত), তারপর পিচ (ওপর-নিচ), তারপর ইয় (ডানে-বাঁয়ে)। প্রতিবার কোন রেখা বরাবর ঘুরছে, খেয়াল করো।</div>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>কোন ঘোরায় ক্যামেরা যেদিকে তাকিয়ে আছে, সেই দিক বদলায় না?</summary><p>রোল। রোল করলে ক্যামেরা একই দিকে তাকিয়ে থাকে, শুধু ছবিটা কাত হয়।</p></details>
+    <details><summary>ক্যামেরা দিয়ে ছাদের দিকে তাকাতে কোন ঘোরা লাগবে?</summary><p>পিচ: “হ্যাঁ” বলার মতো মাথা নাড়ানো। কোন দিকে নাড়াতে হবে, তা নির্ভর করে রোবটের ওপরের দিক তখন কোথায় আছে তার ওপর (শুরুতে সেটা মেঝের দিকে!)।</p></details>
+  </div>
+
+  <h2 id="try">এবার নিজে ঘুরিয়ে দেখো</h2>
+  <p>নিচের সিমুলেটরে <b>রোল</b>, <b>পিচ</b> আর <b>ইয়</b>-এর স্লাইডার টেনে দেখো রোবট কীভাবে ঘোরে। <span class="x">X</span>, <span class="y">Y</span>, <span class="z">Z</span>-এর − / + বোতাম চাপলে রোবট নিজের অক্ষ বরাবর ১৫° করে ঘোরে। তিনটা রঙিন তীর রোবটের নিজের অক্ষ: <span class="x">লাল X</span> (ক্যামেরা), <span class="y">সবুজ Y</span>, <span class="z">নীল Z</span>। কোয়াটারনিয়নের সংখ্যাগুলো এখনই বুঝতে হবে না; সেগুলো <a href="#quaternion">৮ নম্বর পাঠে</a> আসছে।</p>
+</div>
+<div class="en" lang="en">
+  <h1>Coordinates and rotations</h1>
+  <details class="intro">
+    <summary>About this page<small>Learning path · contents</small></summary>
+    <p class="lead">To send the robot somewhere you have to say two things: <b>where</b> it should go (its position) and <b>which way it should face</b> there (its orientation). This page starts from the very beginning and goes one step at a time. You don't need to know anything first; adding and subtracting is enough.</p>
+
+    <nav class="path" aria-label="Learning path"><b>Learning path: one step at a time</b><a href="robots.html"><i>1</i>Meet the robot</a><span class="arr">→</span><span class="here" aria-current="step"><i>2</i>Where and which way</span><span class="arr">→</span><a href="learn.html"><i>3</i>The game's rules</a><span class="arr">→</span><a href="manual.html"><i>4</i>Using the sandbox</a><span class="arr">→</span><a href="index.html"><i>5</i>Practise</a></nav>
+
+    <nav class="mini" aria-label="On this page">
+      <b>What you'll learn here</b>
+      <ol>
+        <li><a href="#en-position">Saying where with numbers</a></li>
+        <li><a href="#en-xyz">Three directions: x, y and z</a></li>
+        <li><a href="#en-frame">The directions inside Kibo</a></li>
+        <li><a href="#en-angles">Angles and degrees</a></li>
+        <li><a href="#en-body">The robot's own front, left and top</a></li>
+        <li><a href="#en-turns">Three kinds of turn: roll, pitch, yaw</a></li>
+        <li><a href="#en-euler">Euler angles</a></li>
+        <li><a href="#en-quaternion">Quaternions</a></li>
+        <li><a href="#en-kiborpc">Where Kibo-RPC uses them</a></li>
+        <li><a href="#en-words">Word list</a></li>
+      </ol>
+    </nav>
+  </details>
+
+  <!-- ===================== 1 ===================== -->
+  <h2 id="en-position">1. Saying where with numbers</h2>
+  <div class="need"><span class="tag">Read this first</span>Nothing. Just adding and subtracting.</div>
+  <div class="lesson">
+    <div>
+      <p>If you tell a friend "the ball is over there", they won't know where. But if you say "2 steps forward from the door", they'll find it. It's the same for a robot: to say where something is, you need a <b>starting point</b> and a number for <b>how far</b> from it.</p>
+      <ul>
+        <li>At the starting point the number is <b>0</b>. It's called the <b>origin</b>.</li>
+        <li>Going forward, the numbers are <b>+</b> (plus).</li>
+        <li>Going the other way, they are <b>−</b> (minus). −2 means 2 the other way.</li>
+      </ul>
+      <p>The robot's distances are in <b>metres</b> (m). You'll often see decimals: 0.5 m is half a metre (50 cm), and 0.1 m is 10 cm, about as wide as the palm of your hand.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 300 100" role="img" aria-label="A number line: 0 in the middle, plus to the right, minus to the left; the robot is at +2">
+        <text x="286" y="18" text-anchor="end" class="m">forward (+) →</text><text x="14" y="18" class="m">← back (−)</text>
+        <path class="ln" d="M16 58 H284"/><path class="ff" d="M290 58 l-9 -5 v10 z"/><path class="ff" d="M10 58 l9 -5 v10 z"/>
+        <path class="ln" d="M30 53 v10 M70 53 v10 M110 53 v10 M150 50 v16 M190 53 v10 M230 53 v10 M270 53 v10"/>
+        <g text-anchor="middle"><text x="30" y="84" class="m">−3</text><text x="70" y="84" class="m">−2</text><text x="110" y="84" class="m">−1</text><text x="150" y="84">0</text><text x="190" y="84" class="m">+1</text><text x="230" y="84" class="m">+2</text><text x="270" y="84" class="m">+3</text></g>
+        <text x="150" y="42" text-anchor="middle" class="m">origin</text>
+        <circle cx="230" cy="58" r="9" class="fa"/><text x="230" y="40" text-anchor="middle" style="fill:var(--accent)">robot</text>
+      </svg>
+      <figcaption>A number line. The robot is at +2: 2 metres forward from the start.</figcaption>
+    </figure>
+  </div>
+  <div class="word"><span class="tag">New words</span><dl>
+    <dt>origin</dt><dd>Where measuring starts; every number there is 0.</dd>
+    <dt>metre (m)</dt><dd>A unit of length. 1 metre = 100 centimetres (cm), about one big step.</dd>
+  </dl></div>
+  <div class="try"><span class="tag">Try it yourself</span>Put a mark on the floor; that's 0. Walk 2 steps forward, then 3 steps back. Where are you now? (At −1: one step behind where you started.)</div>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>The robot goes +1.5 m from 0, then −2 m. Where does it end up?</summary><p>1.5 − 2 = −0.5. That's half a metre the other way from the start.</p></details>
+    <details><summary>How many centimetres is 0.3 m?</summary><p>30 cm. (1 m = 100 cm, so 0.3 m = 30 cm.)</p></details>
+  </div>
+
+  <!-- ===================== 2 ===================== -->
+  <h2 id="en-xyz">2. Three directions: x, y and z</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-position">Lesson 1</a>: the origin and + / − numbers.</div>
+  <p>On a straight road, one number is enough to say where you are. On a playing field you need two: how far forward, and how far to the side. Inside a room (or a space station, where the robot floats around) you need three: forward and back, side to side, and up and down.</p>
+  <p>These three directions are called <span class="x">x</span>, <span class="y">y</span> and <span class="z">z</span>. Imagine a straight line along each one; these lines are the <b>axes</b>. The three numbers are written together in brackets: (x, y, z). They are the place's <b>coordinates</b>.</p>
+  <div class="lesson">
+    <div>
+      <p><b>Example:</b> (3, 2, 1) means, starting from the origin:</p>
+      <ol class="steps">
+        <li>3 metres along <span class="x">x</span>,</li>
+        <li>then 2 metres along <span class="y">y</span>,</li>
+        <li>then 1 metre along <span class="z">z</span>.</li>
+      </ol>
+      <p>For places, the order doesn't matter: go in any order and you end up at the same point. (Remember that, because for turns it isn't true! You'll see in <a href="#en-euler">lesson 7</a>.)</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 260 210" role="img" aria-label="Three axes from the corner of a room, and the way to the point (3, 2, 1)">
+        <path class="sx" d="M60 170 H222"/><path class="fx" d="M230 170 l-10 -6 v12 z"/><text x="232" y="190" style="fill:var(--ax)">x</text>
+        <path class="sy" d="M60 170 L148 104"/><path class="fy" d="M156 98 l-11 1 l6 9 z"/><text x="160" y="96" style="fill:var(--ay)">y</text>
+        <path class="sz" d="M60 170 V40"/><path class="fz" d="M60 32 l-6 10 h12 z"/><text x="70" y="38" style="fill:var(--az)">z</text>
+        <circle cx="60" cy="170" r="4" class="ff"/><text x="52" y="190" text-anchor="middle" class="m">(0, 0, 0)</text>
+        <path class="sa dsh" d="M60 170 H150 L186 143 V113"/>
+        <text x="104" y="164" text-anchor="middle" class="m">3</text><text x="176" y="166" class="m">2</text><text x="192" y="132" class="m">1</text>
+        <circle cx="186" cy="113" r="7" class="fa"/><text x="196" y="106" style="fill:var(--accent)">(3, 2, 1)</text>
+      </svg>
+      <figcaption>Three axes from one corner, like the corner of a room. The dashed way: 3, then 2, then 1.</figcaption>
+    </figure>
+  </div>
+  <div class="word"><span class="tag">New words</span><dl>
+    <dt>axis (axes)</dt><dd>A straight line you measure along: the x axis, the y axis, the z axis.</dd>
+    <dt>coordinates</dt><dd>The numbers that say where something is, such as (3, 2, 1).</dd>
+  </dl></div>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>Where is (0, 0, 0)?</summary><p>Right at the origin, where measuring starts.</p></details>
+    <details><summary>To get to (2, −1, 0), which way do you go along y?</summary><p>1 metre the other way, because the y number is minus. And z = 0, so no going up or down.</p></details>
+  </div>
+
+  <!-- ===================== 3 ===================== -->
+  <h2 id="en-frame">3. The directions inside Kibo</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-xyz">Lesson 2</a>: x, y, z. If you don't know what Kibo is, look at <a href="robots.html">the robots page</a> first.</div>
+  <div class="lesson">
+    <div>
+      <p>Kibo is Japan's module on the International Space Station: a long room shaped like a tube, with about as much space inside as a bus. The robot's docking station is at one end, and the airlock (a door for sending things outside) is at the other.</p>
+      <p>Kibo-RPC measures every place in metres from an origin right next to the docking station. The directions are:</p>
+      <ul>
+        <li><span class="x">+x</span>: along the module, <b>toward the airlock</b> (−x is toward the dock).</li>
+        <li><span class="y">+y</span>: toward the <b>EPS2 wall</b> (−y is the SAIBO wall opposite).</li>
+        <li><span class="z">+z</span>: toward the <b>deck</b>, the floor (−z is the overhead, the ceiling).</li>
+      </ul>
+      <p>Careful: here <span class="z">+z</span> points <i>down</i>, to the deck! Maths books usually draw z going up, but Kibo-RPC takes it this way. Forget it and your robot will fly the wrong way.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 190" role="img" aria-label="Kibo axes seen from the EPS2 wall">
+        <rect x="20" y="40" width="200" height="110" rx="6" class="ln" style="stroke:var(--border)"/>
+        <text x="120" y="32" text-anchor="middle" class="m">overhead (−z)</text>
+        <text x="120" y="166" text-anchor="middle" class="m">deck (+z)</text>
+        <path class="sx" d="M70 95 H150"/><path class="fx" d="M158 95 l-10 -6 v12 z"/><text x="162" y="99" style="fill:var(--ax)">+x</text>
+        <path class="sz" d="M70 95 V138"/><path class="fz" d="M70 146 l-6 -10 h12 z"/><text x="78" y="146" style="fill:var(--az)">+z</text>
+        <circle cx="70" cy="95" r="8" class="sy"/><circle cx="70" cy="95" r="2.6" class="fy"/><text x="40" y="80" style="fill:var(--ay)">+y</text>
+        <text x="26" y="58" class="m">dock end</text><text x="214" y="58" text-anchor="end" class="m">airlock end</text>
+        <text x="120" y="184" text-anchor="middle" class="m">seen from the EPS2 wall: +y points at you</text>
+      </svg>
+      <figcaption>Kibo from the side, like the sandbox's Side view. A circle with a dot means the arrow points out of the page, at you.</figcaption>
+    </figure>
+  </div>
+  <p><b>Example:</b> AR marker 4 is at (4.18, −1.00, 0.52). From the origin that's 4.18 m toward the airlock, 1 m toward the SAIBO wall (because y is minus) and 0.52 m toward the deck.</p>
+  <p>In space there is no real up or down; everything floats. Kibo's "deck" and "overhead" are just names that make it easier to arrange the equipment inside. An origin together with three directions is called a <b>frame</b>; Kibo-RPC calls this one <code>iss_body</code>.</p>
+  <div class="word"><span class="tag">New words</span><dl>
+    <dt>frame</dt><dd>A way of measuring: one origin and three directions. For example "the classroom frame": measured from the door, with x toward the board.</dd>
+    <dt><code>iss_body</code></dt><dd>The name of Kibo's frame in Kibo-RPC. It never moves.</dd>
+  </dl></div>
+  <details class="deeper"><summary>Go deeper: the right-hand rule</summary>
+    <p>The axes are <b>right-handed</b>: point your right thumb along <span class="x">x</span> and your index finger along <span class="y">y</span>; your middle finger (bent) shows <span class="z">z</span>. The sandbox and this page take +z as the deck, reading JAXA's figures: every marker's "up" points along −z.</p>
+  </details>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>Which way from the origin is the point (1, 0, 0)?</summary><p>1 metre toward the airlock (+x).</p></details>
+    <details><summary>Something has z = −0.5. Is it near the deck or the overhead?</summary><p>Toward the overhead, because −z is the overhead.</p></details>
+  </div>
+
+  <!-- ===================== 4 ===================== -->
+  <h2 id="en-angles">4. Angles and degrees</h2>
+  <div class="need"><span class="tag">Read this first</span>Nothing.</div>
+  <div class="lesson">
+    <div>
+      <p>How far the robot turns is measured in <b>degrees</b> (°).</p>
+      <ul>
+        <li>A whole turn is <b>360°</b>: you face the same way again.</li>
+        <li>Half a turn is <b>180°</b>: you face backwards.</li>
+        <li>A quarter turn is <b>90°</b>: from straight ahead to facing right or left.</li>
+      </ul>
+      <p>The minute hand of a clock turns 90° from 12 to 3, and 180° from 12 to 6.</p>
+      <p>A + or − sign says which way: + is one way, − is the other. So −90° and +270° end up facing the same way: a quarter turn one way, or three quarters the other way.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 200" role="img" aria-label="A circle marked 0°, 90°, 180° and 270°, with one quarter shaded">
+        <path d="M120 100 L200 100 A80 80 0 0 0 120 20 Z" style="fill:var(--accent);opacity:.22"/>
+        <circle cx="120" cy="100" r="80" class="ln" style="stroke:var(--border)"/>
+        <path class="ln" d="M120 100 H200 M120 100 V20 M120 100 H40 M120 100 V180"/>
+        <path class="sa" d="M160 100 A40 40 0 0 0 120 60"/><path class="fa" d="M120 60 l9 -5 l0 10 z"/>
+        <text x="206" y="104" class="m">0°</text><text x="120" y="14" text-anchor="middle" class="m">90°</text><text x="34" y="104" text-anchor="end" class="m">180°</text><text x="120" y="196" text-anchor="middle" class="m">270°</text>
+        <text x="150" y="88" style="fill:var(--accent)">90°</text>
+      </svg>
+      <figcaption>One turn = 360°. The shaded part is 90°, a quarter of a turn.</figcaption>
+    </figure>
+  </div>
+  <div class="try"><span class="tag">Try it yourself</span>Stand up and turn 90°, then another 90°. Now you face backwards: 180° in all. Turn another 180°? You're back where you started: 360° = one turn.</div>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>What part of a turn is 45°?</summary><p>One eighth (360 ÷ 8 = 45).</p></details>
+    <details><summary>After turning 720°, which way does the robot face?</summary><p>The same way as before. 720° is two whole turns.</p></details>
+  </div>
+
+  <!-- ===================== 5 ===================== -->
+  <h2 id="en-body">5. The robot's own front, left and top</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-frame">Lesson 3</a> (Kibo's directions) and <a href="#en-angles">lesson 4</a> (degrees).</div>
+  <div class="lesson">
+    <div>
+      <p>Kibo's directions never change. But the robot turns, and its own "front", "left" and "top" turn with it. Just like you: whichever way you turn, your nose is always at your "front".</p>
+      <p>So if someone says "go left", you first need to know whose left: the room's, or the robot's own? Two people facing each other have opposite lefts (see the picture).</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 260 160" role="img" aria-label="Two people facing each other, seen from above; one's left is up, the other's is down">
+        <circle cx="70" cy="80" r="24" class="ball"/><path class="ff" d="M97 80 l-8 -6 v12 z"/><text x="70" y="85" text-anchor="middle">A</text>
+        <circle cx="190" cy="80" r="24" class="ball"/><path class="ff" d="M163 80 l8 -6 v12 z"/><text x="190" y="85" text-anchor="middle">B</text>
+        <path class="sa" d="M70 54 V22"/><path class="fa" d="M70 14 l-6 10 h12 z"/><text x="80" y="24" style="fill:var(--accent)">A's left</text>
+        <path class="sa" d="M190 106 V138"/><path class="fa" d="M190 146 l-6 -10 h12 z"/><text x="180" y="144" text-anchor="end" style="fill:var(--accent)">B's left</text>
+        <text x="130" y="76" text-anchor="middle" class="m">facing</text>
+      </svg>
+      <figcaption>Seen from above: A and B face each other. Their "lefts" point opposite ways.</figcaption>
+    </figure>
+  </div>
+  <div class="lesson">
+    <div>
+      <p>The robot has three axes of its own, which turn with it. They're written with capital letters:</p>
+      <ul>
+        <li><span class="x">X</span>: the robot's <b>front</b>, where the camera looks.</li>
+        <li><span class="y">Y</span>: the robot's <b>left</b>.</li>
+        <li><span class="z">Z</span>: the robot's <b>top</b>.</li>
+      </ul>
+      <p>The robot's frame is called <code>body</code>. When the robot hasn't turned at all, the two frames line up: the camera looks toward the airlock (+x) and the robot's top points to the deck (+z). Yes, the robot is upside down then! In space that's no problem.</p>
+      <div class="row"><button class="btn" data-demo="body">Show me: turn about its own axes</button></div>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 170" role="img" aria-label="Robot body axes">
+        <circle cx="110" cy="92" r="42" class="ball"/>
+        <rect x="148" y="84" width="9" height="16" rx="2" style="fill:var(--accent)"/>
+        <path class="sx" d="M110 92 H206"/><path class="fx" d="M214 92 l-10 -6 v12 z"/><text x="176" y="82" style="fill:var(--ax)">X front</text>
+        <path class="sz" d="M110 92 V22"/><path class="fz" d="M110 14 l-6 10 h12 z"/><text x="118" y="24" style="fill:var(--az)">Z top</text>
+        <circle cx="110" cy="92" r="8" class="sy"/><circle cx="110" cy="92" r="2.6" class="fy"/><text x="40" y="152" style="fill:var(--ay)">Y left (toward you)</text>
+        <text x="160" y="118" class="m">camera</text>
+      </svg>
+      <figcaption>The robot's body frame, seen from the robot's left side.</figcaption>
+    </figure>
+  </div>
+  <details class="deeper"><summary>Go deeper: which frame does <code>/ctl/command</code> use?</summary>
+    <p>Both: <code>MOVE_TO_ABSOLUTE_TARGET</code> takes targets in <code>iss_body</code> (Kibo's frame), and <code>MOVE_TO_RELATIVE_TARGET</code> in <code>body</code> (the robot's frame). So in a relative move, "1 m forward" means "1 m along the robot's X", whichever way the robot faces.</p>
+  </details>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>The robot faces the airlock and goes "1 m forward". Which way does it move in Kibo?</summary><p>Along +x: 1 metre toward the airlock.</p></details>
+    <details><summary>Now the robot turns to face the EPS2 wall. Where does "1 m forward" take it?</summary><p>Along +y: 1 metre toward the EPS2 wall. Same command, but the robot has turned, so it goes a different way.</p></details>
+  </div>
+
+  <!-- ===================== 6 ===================== -->
+  <h2 id="en-turns">6. Three kinds of turn: roll, pitch, yaw</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-angles">Lesson 4</a> (degrees) and <a href="#en-body">lesson 5</a> (the robot's X, Y, Z).</div>
+  <p>You can turn your head in three ways. Try it now:</p>
+  <figure class="wide" style="max-width:460px">
+    <svg viewBox="0 0 330 150" role="img" aria-label="Three heads: shaking side to side is yaw, nodding up and down is pitch, tilting is roll">
+      <g transform="translate(55 0)">
+        <circle cx="0" cy="62" r="26" class="ball"/><circle cx="-9" cy="57" r="2.6" class="ff"/><circle cx="9" cy="57" r="2.6" class="ff"/><path class="ln" d="M-8 72 q8 6 16 0"/>
+        <path class="sz" d="M-40 70 A40 12 0 0 0 40 70"/><path class="fz" d="M-44 66 l10 -1 l-5 9 z"/><path class="fz" d="M44 66 l-10 -1 l5 9 z"/>
+        <text y="114" text-anchor="middle" style="fill:var(--az)">yaw</text><text y="132" text-anchor="middle" class="m">like saying "no"</text>
+      </g>
+      <g transform="translate(165 0)">
+        <circle cx="0" cy="62" r="26" class="ball"/><circle cx="-9" cy="57" r="2.6" class="ff"/><circle cx="9" cy="57" r="2.6" class="ff"/><path class="ln" d="M-8 72 q8 6 16 0"/>
+        <path class="sy" d="M36 36 A14 26 0 0 1 36 88"/><path class="fy" d="M33 30 l-2 10 l9 -3 z"/><path class="fy" d="M33 94 l-2 -10 l9 3 z"/>
+        <text y="114" text-anchor="middle" style="fill:var(--ay)">pitch</text><text y="132" text-anchor="middle" class="m">like saying "yes"</text>
+      </g>
+      <g transform="translate(275 0)">
+        <g transform="rotate(-18 0 62)"><circle cx="0" cy="62" r="26" class="ball"/><circle cx="-9" cy="57" r="2.6" class="ff"/><circle cx="9" cy="57" r="2.6" class="ff"/><path class="ln" d="M-8 72 q8 6 16 0"/></g>
+        <path class="sx" d="M-26 22 A34 34 0 0 1 26 22"/><path class="fx" d="M-31 27 l3 -10 l7 7 z"/><path class="fx" d="M31 27 l-3 -10 l-7 7 z"/>
+        <text y="114" text-anchor="middle" style="fill:var(--ax)">roll</text><text y="132" text-anchor="middle" class="m">tilt to a shoulder</text>
+      </g>
+    </svg>
+    <figcaption>Three kinds of turn, with your head.</figcaption>
+  </figure>
+  <div class="lesson">
+    <div>
+      <ul>
+        <li><b class="z">Yaw</b>: shaking your head side to side, like saying "no". The robot turns about its <span class="z">Z</span> axis (the top-to-bottom line), and the camera swings left or right.</li>
+        <li><b class="y">Pitch</b>: nodding up and down, like saying "yes". The robot turns about its <span class="y">Y</span> axis (the left-to-right line), and the camera looks up or down.</li>
+        <li><b class="x">Roll</b>: tilting your head toward a shoulder. The robot turns about its <span class="x">X</span> axis (the front-to-back line). You keep looking the same way; only the picture you see tilts.</li>
+      </ul>
+      <p>The names come from aeroplanes: roll is dipping one wing, pitch is the nose going up or down, yaw is the nose swinging left or right.</p>
+      <p><b>Roll really matters in Kibo-RPC.</b> At a checkpoint, the judge measures how far the marker is tilted in the camera picture. Even in exactly the right place, the wrong roll lowers your level.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 170" role="img" aria-label="Roll, pitch and yaw">
+        <g transform="translate(40 70)"><circle r="24" class="ball"/><path class="sx" d="M-30 0 H32"/><path class="st" d="M10 -30 A12 30 0 0 1 10 30"/><path class="ft" d="M10 30 l-6 -9 l9 1 z"/><text y="52" text-anchor="middle" style="fill:var(--ax)">roll</text><text y="66" text-anchor="middle" class="m">about X</text></g>
+        <g transform="translate(120 70)"><circle r="24" class="ball"/><circle r="5" class="sy"/><path class="st" d="M-30 -10 A30 30 0 0 1 22 -22"/><path class="ft" d="M22 -22 l-10 -2 l5 9 z"/><text y="52" text-anchor="middle" style="fill:var(--ay)">pitch</text><text y="66" text-anchor="middle" class="m">about Y</text></g>
+        <g transform="translate(200 70)"><circle r="24" class="ball"/><path class="sz" d="M0 30 V-32"/><path class="st" d="M-30 -14 A30 10 0 0 0 30 -14"/><path class="ft" d="M30 -14 l-10 -4 l3 9 z"/><text y="52" text-anchor="middle" style="fill:var(--az)">yaw</text><text y="66" text-anchor="middle" class="m">about Z</text></g>
+      </svg>
+      <figcaption>Each turn goes round one axis. The yellow arrow shows which way.</figcaption>
+    </figure>
+  </div>
+  <div class="try"><span class="tag">Try it yourself</span>Hold a book with its cover toward you. First roll it (tilt), then pitch it (up and down), then yaw it (left and right). Each time, notice which line it turns around.</div>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>Which turn leaves the camera looking the same way?</summary><p>Roll. When you roll, the camera keeps looking the same way; only the picture tilts.</p></details>
+    <details><summary>Which turn do you need to look at the overhead with the camera?</summary><p>Pitch, the "yes" nod. Which way to nod depends on where the robot's top points at the time (at the start it points to the deck!).</p></details>
+  </div>
+
+  <h2 id="en-try">Now turn it yourself</h2>
+  <p>In the simulator below, drag the <b>Roll</b>, <b>Pitch</b> and <b>Yaw</b> sliders and watch the robot turn. The <span class="x">X</span>, <span class="y">Y</span> and <span class="z">Z</span> − / + buttons turn the robot 15° at a time about its own axes. The three coloured arrows are the robot's own axes: <span class="x">red X</span> (the camera), <span class="y">green Y</span> and <span class="z">blue Z</span>. You don't need to understand the quaternion numbers yet; they come in <a href="#en-quaternion">lesson 8</a>.</p>
+</div>
+  <!-- ===================== Simulator ===================== -->
+  <section class="sim" aria-label="ঘূর্ণনের সিমুলেটর" data-aria-bn="ঘূর্ণনের সিমুলেটর" data-aria-en="Rotation simulator">
+    <div class="stage" id="stage">
+      <div class="tools">
+        <label><input type="checkbox" data-show="room" checked> Kibo</label>
+        <label><input type="checkbox" data-show="axis" checked> <span class="bn">ঘোরার অক্ষ</span><span class="en">Turn axis</span></label>
+        <label><input type="checkbox" data-show="ghost"> <span class="bn">শুরুর পোজ</span><span class="en">Start pose</span></label>
+      </div>
+      <div class="hint"><span class="bn">চারপাশ দেখতে পাশাপাশি টানো</span><span class="en">Drag sideways to look around</span></div>
+      <div class="fallback"><span class="bn">এই সিমুলেটরের জন্য WebGL লাগে, এই ব্রাউজারে সেটা নেই। সংখ্যা আর পাঠগুলো তবু কাজ করবে।</span><span class="en">This simulator needs WebGL, which this browser doesn't offer. The numbers and lessons still work.</span></div>
+    </div>
+    <div class="panel">
+      <h3><span class="bn">অয়লার কোণ <small>ডিগ্রিতে, ROS-এর ক্রমে</small></span><span class="en">Euler angles <small>degrees, ROS order</small></span></h3>
+      <div class="slider"><span class="x"><span class="bn">রোল</span><span class="en">Roll</span></span><input type="range" min="-180" max="180" step="1" data-e="0" aria-label="রোল" data-aria-bn="রোল" data-aria-en="Roll"><input type="number" min="-180" max="180" step="1" data-en="0" aria-label="রোল, ডিগ্রিতে" data-aria-bn="রোল, ডিগ্রিতে" data-aria-en="Roll in degrees"></div>
+      <div class="slider"><span class="y"><span class="bn">পিচ</span><span class="en">Pitch</span></span><input type="range" min="-90" max="90" step="1" data-e="1" aria-label="পিচ" data-aria-bn="পিচ" data-aria-en="Pitch"><input type="number" min="-90" max="90" step="1" data-en="1" aria-label="পিচ, ডিগ্রিতে" data-aria-bn="পিচ, ডিগ্রিতে" data-aria-en="Pitch in degrees"></div>
+      <div class="slider"><span class="z"><span class="bn">ইয়</span><span class="en">Yaw</span></span><input type="range" min="-180" max="180" step="1" data-e="2" aria-label="ইয়" data-aria-bn="ইয়" data-aria-en="Yaw"><input type="number" min="-180" max="180" step="1" data-en="2" aria-label="ইয়, ডিগ্রিতে" data-aria-bn="ইয়, ডিগ্রিতে" data-aria-en="Yaw in degrees"></div>
+      <h3><span class="bn">কোয়াটারনিয়ন <small>ROS-এর ক্রম x, y, z, w · লিখে Enter চাপো</small></span><span class="en">Quaternion <small>ROS order x, y, z, w · type and press Enter</small></span></h3>
+      <div class="quat">
+        <label>x<input type="number" step="0.01" data-q="0"></label><label>y<input type="number" step="0.01" data-q="1"></label><label>z<input type="number" step="0.01" data-q="2"></label><label>w<input type="number" step="0.01" data-q="3"></label>
+      </div>
+      <div class="row" style="margin-top:6px"><button class="btn" data-act="neg" title="চারটারই চিহ্ন উল্টে দাও" data-title-bn="চারটারই চিহ্ন উল্টে দাও" data-title-en="Flip all four signs">−q <span class="bn">(একই পোজ)</span><span class="en">(same pose)</span></button><button class="btn" data-act="play">▶ <span class="bn">ঘোরাটা চালাও</span><span class="en">Play the turn</span></button><button class="btn" data-act="reset"><span class="bn">আগের মতো</span><span class="en">Reset</span></button></div>
+      <h3><span class="bn">রোবটের নিজের অক্ষ বরাবর ঘোরাও <small>প্রতি চাপে ১৫°; অক্ষের ডগা থেকে তাকালে + মানে ঘড়ির কাঁটার উল্টো দিকে</small></span><span class="en">Turn about the robot's own axes <small>15° a press; + is anticlockwise looking down the axis</small></span></h3>
+      <div class="row">
+        <button class="btn" data-turn="x-" title="রোবটের X (তার দৃষ্টিরেখা) বরাবর −১৫° রোল" data-title-bn="রোবটের X (তার দৃষ্টিরেখা) বরাবর −১৫° রোল" data-title-en="Roll −15° about the robot's X (its line of sight)"><span class="x">X</span> −</button><button class="btn" data-turn="x+" title="রোবটের X (তার দৃষ্টিরেখা) বরাবর +১৫° রোল" data-title-bn="রোবটের X (তার দৃষ্টিরেখা) বরাবর +১৫° রোল" data-title-en="Roll +15° about the robot's X (its line of sight)"><span class="x">X</span> +</button>
+        <button class="btn" data-turn="y-" title="রোবটের Y বরাবর −১৫° পিচ" data-title-bn="রোবটের Y বরাবর −১৫° পিচ" data-title-en="Pitch −15° about the robot's Y"><span class="y">Y</span> −</button><button class="btn" data-turn="y+" title="রোবটের Y বরাবর +১৫° পিচ" data-title-bn="রোবটের Y বরাবর +১৫° পিচ" data-title-en="Pitch +15° about the robot's Y"><span class="y">Y</span> +</button>
+        <button class="btn" data-turn="z-" title="রোবটের Z বরাবর −১৫° ইয়" data-title-bn="রোবটের Z বরাবর −১৫° ইয়" data-title-en="Yaw −15° about the robot's Z"><span class="z">Z</span> −</button><button class="btn" data-turn="z+" title="রোবটের Z বরাবর +১৫° ইয়" data-title-bn="রোবটের Z বরাবর +১৫° ইয়" data-title-en="Yaw +15° about the robot's Z"><span class="z">Z</span> +</button>
+      </div>
+      <div class="read" aria-live="polite">
+        <div><span class="bn">দৈর্ঘ্য</span><span class="en">Length</span> |q| = <b id="rLen"></b></div>
+        <div><span class="bn">একবারে </span><span class="en">One turn of </span><b class="t" id="rAng"></b><span class="bn"> ঘোরা, অক্ষ </span><span class="en"> about </span><b class="t" id="rAxis"></b></div>
+        <div><span class="bn">ক্যামেরা</span><span class="en">Camera</span> (<span class="x">X</span>) <span class="bn">তাকিয়ে আছে: </span><span class="en">points to </span><b id="rCam"></b></div>
+        <div><span class="bn">ওপরের দিক</span><span class="en">Top</span> (<span class="z">Z</span>) <span class="bn">ফেরানো: </span><span class="en">points to </span><b id="rTop"></b></div>
+      </div>
+      <h3><span class="bn">একটা পোজ চেষ্টা করো</span><span class="en">Try a pose</span></h3>
+      <div class="row">
+        <button class="btn" data-preset="0,0,0,1"><span class="bn">ডক (কোনো ঘোরা নেই)</span><span class="en">Dock (no turn)</span></button>
+        <button class="btn" data-preset="0,0,0.7071068,0.7071068"><span class="bn">z বরাবর ৯০°</span><span class="en">90° about z</span></button>
+        <button class="btn" data-preset="1,0,0,0"><span class="bn">x বরাবর ১৮০°</span><span class="en">180° about x</span></button>
+        <button class="btn" data-preset="0.705928907230986,-0.689998801417597,0.12254331978784033,-0.10270913665940805" title="প্রোগ্রামিং ম্যানুয়ালের উদাহরণে চেকপয়েন্ট ১-এর দিক" data-title-bn="প্রোগ্রামিং ম্যানুয়ালের উদাহরণে চেকপয়েন্ট ১-এর দিক" data-title-en="The attitude of checkpoint 1 in the Programming Manual's example">CP 1 <span class="bn">(ম্যানুয়াল)</span><span class="en">(manual)</span></button>
+      </div>
+      <p class="msg" id="msg"></p>
+    </div>
+  </section>
+<div class="bn">
+  <!-- ===================== Challenges ===================== -->
+  <h2 id="challenges">চ্যালেঞ্জ</h2>
+  <p>ওপরের যেকোনো কন্ট্রোল ব্যবহার করো। পেরে গেলেই প্রতিটায় নিজে থেকে টিক পড়বে। আটকে গেলে ছোট লেখার ইঙ্গিতটা দেখো।</p>
+  <ol class="goals" id="goals">
+    <li data-goal="deck"><span class="tick">✓</span><div><b>ক্যামেরা মেঝের দিকে তাক করো।</b><small>ক্যামেরা হলো রোবটের <span class="x">X</span>; মেঝে হলো +z (<a href="#frame">৩ নম্বর পাঠ</a>)। পিচ স্লাইডারটা টেনে দেখো।</small></div></li>
+    <li data-goal="saibo"><span class="tick">✓</span><div><b>ক্যামেরা SAIBO দেয়ালের দিকে তাক করো।</b><small>SAIBO দেয়াল হলো −y। ইয় স্লাইডারটা টেনে দেখো।</small></div></li>
+    <li data-goal="upright"><span class="tick">✓</span><div><b>ক্যামেরা এয়ারলকের দিকে, আর রোবটের ওপরের দিক ছাদের দিকে।</b><small>শুরুতে রোবটের ওপরের দিক থাকে মেঝের দিকে। কোন ঘোরায় ক্যামেরার দিক না বদলে ছবিটা উল্টে যায়? (<a href="#turns">৬ নম্বর পাঠ</a>)</small></div></li>
+    <li data-goal="typed"><span class="tick">✓</span><div><b>z বরাবর ৯০° ঘোরার কোয়াটারনিয়নটা নিজে লেখো।</b><small>কোয়াটারনিয়নের ঘরগুলোতে চারটা সংখ্যা লিখে Enter চাপো। হিসাবের নিয়ম <a href="#quaternion">৮ নম্বর পাঠে</a>।</small></div></li>
+    <li data-goal="negw"><span class="tick">✓</span><div><b>রোবট না নড়িয়ে w-কে মাইনাস করো।</b><small>প্রতিটা দিক দুটো কোয়াটারনিয়ন দিয়ে লেখা যায় (<a href="#quaternion">৮ নম্বর পাঠ</a>)।</small></div></li>
+  </ol>
+
+  <!-- ===================== 7 ===================== -->
+  <h2 id="euler">৭. অয়লার কোণ: তিনটা ঘোরার সংখ্যা</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#turns">৬ নম্বর পাঠ</a>: রোল, পিচ আর ইয়।</div>
+  <p>“অয়লার” একজন মানুষের নাম: লিওনার্ড অয়লার, আঠারো শতকের সুইজারল্যান্ডের এক বিখ্যাত গণিতবিদ। <b>অয়লার কোণ</b> মানে সহজ কথায়: রোল, পিচ আর ইয়, এই তিনটা সংখ্যা দিয়ে রোবটের দিক বোঝানো।</p>
+  <div class="lesson">
+    <div>
+      <p><b>উদাহরণ:</b></p>
+      <ul>
+        <li>(রোল ০°, পিচ ০°, ইয় ০°): কোনো ঘোরা নেই। ক্যামেরা এয়ারলকের দিকে।</li>
+        <li>(রোল ০°, পিচ ০°, ইয় ৯০°): শুধু ৯০° ইয়। ক্যামেরা ঘুরে EPS2 দেয়ালের দিকে।</li>
+        <li>(রোল ১৮০°, পিচ ০°, ইয় ০°): শুধু অর্ধেক পাক রোল। ক্যামেরা এখনো এয়ারলকের দিকে, কিন্তু রোবট উল্টে গেছে।</li>
+      </ul>
+      <p>সিমুলেটরের তিনটা স্লাইডারই অয়লার কোণ। ROS (রোবটের সফটওয়্যার) আর এই পাতা এগুলো একটা নির্দিষ্ট ক্রমে প্রয়োগ করে: আগে রোল, তারপর পিচ, তারপর ইয়।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 170" role="img" aria-label="অয়লার কোণ: রোল, পিচ, ইয় পরপর">
+        <g text-anchor="middle">
+          <rect x="10" y="50" width="62" height="40" rx="8" class="ln" style="stroke:var(--ax)"/><text x="41" y="75" style="fill:var(--ax)">রোল</text>
+          <rect x="89" y="50" width="62" height="40" rx="8" class="ln" style="stroke:var(--ay)"/><text x="120" y="75" style="fill:var(--ay)">পিচ</text>
+          <rect x="168" y="50" width="62" height="40" rx="8" class="ln" style="stroke:var(--az)"/><text x="199" y="75" style="fill:var(--az)">ইয়</text>
+          <text x="80" y="75" class="m">→</text><text x="159" y="75" class="m">→</text>
+          <text x="120" y="122" class="m">তিনটা সংখ্যা, এই ক্রমে</text>
+          <text x="120" y="140" class="m">= অয়লার কোণ</text>
+        </g>
+      </svg>
+      <figcaption>অয়লার কোণ মানে তিনটা ঘোরা, একটার পর একটা।</figcaption>
+    </figure>
+  </div>
+  <h3>ক্রমটা গুরুত্বপূর্ণ</h3>
+  <p>জায়গার বেলায় ক্রম বদলালে কিছু হয় না (<a href="#xyz">২ নম্বর পাঠ</a>), কিন্তু ঘোরার বেলায় হয়! একই দুটো ঘোরা অন্য ক্রমে করলে শেষ অবস্থা আলাদা হয়ে যায়।</p>
+  <div class="try"><span class="tag">নিজে করে দেখো</span>একটা বই টেবিলে রাখো। আগে ৯০° ইয় করো (টেবিলের ওপর ঘোরাও), তারপর ৯০° পিচ (দাঁড় করাও)। এবার বইটা আগের জায়গায় রেখে উল্টো ক্রমে করো: আগে পিচ, তারপর ইয়। দুবার কি বইটা একইভাবে শেষ হলো? না!</div>
+  <div class="row"><button class="btn" data-demo="orderA">আগে ইয় ৯০°, তারপর পিচ ৯০°</button><button class="btn" data-demo="orderB">আগে পিচ ৯০°, তারপর ইয় ৯০°</button></div>
+  <h3>একটা গোলমাল: গিম্বল লক</h3>
+  <p>পিচ যদি ঠিক ৯০° হয় (ক্যামেরা সোজা ছাদের দিকে), তাহলে রোল আর ইয় একই কাজ করে ফেলে: দুটোই রোবটকে একই রেখা বরাবর ঘোরায়। তখন তিনটা সংখ্যার একটা কোনো কাজে আসে না। এর নাম <b>গিম্বল লক</b>। নিচের বোতাম চেপে দেখো।</p>
+  <div class="row"><button class="btn" data-demo="gimbal">গিম্বল লক দেখাও</button></div>
+  <p>অয়লার কোণ পড়তে সহজ, কিন্তু এই দুই ঝামেলার (ক্রম আর গিম্বল লক) জন্য রোবটের প্রোগ্রাম অন্য একটা উপায়ে দিক লেখে: <b>কোয়াটারনিয়ন</b>। সেটাই পরের পাঠ।</p>
+  <details class="deeper"><summary>আরও গভীরে: কোন অক্ষ বরাবর ঘোরে?</summary>
+    <p>ROS-এর নিয়মে রোল, পিচ আর ইয় প্রয়োগ হয় Kibo-র স্থির অক্ষ বরাবর (x, তারপর y, তারপর z)। একই ফল পাওয়া যায় উল্টো ক্রমে রোবটের নিজের অক্ষ বরাবর ঘোরালে: আগে ইয় (Z), তারপর নতুন Y বরাবর পিচ, তারপর নতুন X বরাবর রোল।</p>
+  </details>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>অয়লার কোণে কয়টা সংখ্যা থাকে?</summary><p>তিনটা: রোল, পিচ আর ইয়।</p></details>
+    <details><summary>দুটো ঘোরার ক্রম বদলালে কি শেষ অবস্থা একই থাকে?</summary><p>সাধারণত না। এজন্যই ক্রমটা আগে থেকে ঠিক করে রাখা হয়।</p></details>
+  </div>
+
+  <!-- ===================== 8 ===================== -->
+  <h2 id="quaternion">৮. কোয়াটারনিয়ন: একটা ঘোরা, চারটা সংখ্যা</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#angles">৪ নম্বর পাঠ</a> (ডিগ্রি), <a href="#turns">৬</a> আর <a href="#euler">৭ নম্বর পাঠ</a>। হাতের কাছে একটা ক্যালকুলেটর রাখো (মোবাইলেরটাও চলবে)।</div>
+  <h3>ধাপ ১: একটা ঘোরাই যথেষ্ট</h3>
+  <div class="lesson">
+    <div>
+      <p>একটা দরজার কথা ভাবো। দরজা ঘোরে কবজার রেখা বরাবর; কবজাটাই তার <b>অক্ষ</b>।</p>
+      <p>মজার কথা হলো, রোবট যত জটিলভাবেই ঘুরে থাকুক, শুরুর অবস্থা থেকে <b>একটামাত্র ঘোরায়</b> সেখানে পৌঁছানো যায়: কোনো একটা কাল্পনিক “কবজা” বরাবর, কিছু ডিগ্রি। তাই যেকোনো দিক বোঝাতে দুটো জিনিস বললেই চলে:</p>
+      <ol class="steps">
+        <li><b>কোন রেখা বরাবর</b> ঘুরবে (অক্ষ),</li>
+        <li><b>কতটা</b> ঘুরবে (কোণ, এর নাম <b>θ</b>, পড়ো “থিটা”)।</li>
+      </ol>
+      <p>সিমুলেটরের <span class="t">হলুদ রেখাটা</span> সেই অক্ষ। <b>▶ ঘোরাটা চালাও</b> চাপলে শুরু থেকে এখনকার অবস্থায় একটামাত্র ঘোরা দেখা যায়।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 200" role="img" aria-label="কবজা বরাবর খোলা দরজা: কবজা হলো অক্ষ, খোলার কোণ θ">
+        <path class="st dsh" d="M60 12 V188"/><text x="66" y="22" style="fill:var(--turn)">কবজা = অক্ষ</text>
+        <path class="ln dsh" style="stroke:var(--muted)" d="M60 40 H190 V170 H60"/>
+        <path class="ln" d="M60 40 L150 70 V188 L60 170 Z" style="fill:var(--soft)"/>
+        <circle cx="136" cy="128" r="4" class="ff"/>
+        <path class="st" d="M150 110 A110 30 0 0 0 190 104"/><path class="ft" d="M146 112 l11 -6 l-2 10 z"/>
+        <text x="174" y="128" style="fill:var(--turn)">θ</text>
+        <text x="196" y="98" class="m">বন্ধ</text><text x="100" y="196" class="m">খোলা</text>
+      </svg>
+      <figcaption>দরজা খোলা মানে কবজা (অক্ষ) বরাবর θ কোণে ঘোরা।</figcaption>
+    </figure>
+  </div>
+  <h3>ধাপ ২: অক্ষ আর কোণকে চারটা সংখ্যায় ভরা</h3>
+  <p>কোয়াটারনিয়ন এই অক্ষ আর কোণকে চারটা সংখ্যায় রাখে, নাম (x, y, z, w)। এর জন্য লাগে sin আর cos। এরা হলো ক্যালকুলেটরের দুটো বোতাম; এখন এদের পুরো মানে না জানলেও চলবে, নিচের টেবিল থেকে মান পড়ে নিলেই হবে।</p>
+  <div class="wrap"><table style="max-width:420px">
+    <tr><th>কোণ</th><th>sin</th><th>cos</th></tr>
+    <tr><td>০°</td><td class="n">0</td><td class="n">1</td></tr>
+    <tr><td>৩০°</td><td class="n">0.5</td><td class="n">0.866</td></tr>
+    <tr><td>৪৫°</td><td class="n">0.7071</td><td class="n">0.7071</td></tr>
+    <tr><td>৬০°</td><td class="n">0.866</td><td class="n">0.5</td></tr>
+    <tr><td>৯০°</td><td class="n">1</td><td class="n">0</td></tr>
+  </table></div>
+  <p><b>রেসিপি</b> (কোনো একটা অক্ষ বরাবর θ ঘোরার কোয়াটারনিয়ন):</p>
+  <ol class="steps">
+    <li>অক্ষটা ঠিক করো: x অক্ষ হলে (1, 0, 0), y অক্ষ হলে (0, 1, 0), z অক্ষ হলে (0, 0, 1)।</li>
+    <li>কোণটাকে অর্ধেক করো: θ ÷ ২।</li>
+    <li>অর্ধেক কোণের <b>sin</b> দিয়ে অক্ষের তিনটা সংখ্যা গুণ করো: এই তিনটাই x, y আর z।</li>
+    <li>অর্ধেক কোণের <b>cos</b> হলো w।</li>
+  </ol>
+  <div class="formula">q = ( অক্ষ × sin(θ/2), cos(θ/2) ) = ( x, y, z, w )</div>
+  <p><b>উদাহরণ ১: z বরাবর ৯০°।</b> অক্ষ (0, 0, 1)। অর্ধেক কোণ ৪৫°। sin ৪৫° = 0.7071, তাই অক্ষ × 0.7071 = (0, 0, 0.7071)। cos ৪৫° = 0.7071, তাই w = 0.7071। <b>উত্তর: (0, 0, 0.7071, 0.7071)</b>।</p>
+  <p><b>উদাহরণ ২: x বরাবর ১৮০°।</b> অক্ষ (1, 0, 0)। অর্ধেক কোণ ৯০°। sin ৯০° = 1, তাই (1, 0, 0)। cos ৯০° = 0, তাই w = 0। <b>উত্তর: (1, 0, 0, 0)</b>।</p>
+  <p><b>উদাহরণ ৩: কোনো ঘোরা নেই।</b> θ = ০°, অর্ধেকও ০°। sin ০° = 0, তাই (0, 0, 0)। cos ০° = 1, তাই w = 1। <b>উত্তর: (0, 0, 0, 1)</b>। মনে রেখো: “কোনো ঘোরা নেই” মানে চারটা শূন্য নয়, শেষেরটা ১!</p>
+  <h3>ধাপ ৩: দুটো নিয়ম</h3>
+  <ul>
+    <li><b>দৈর্ঘ্য সবসময় ১:</b> চারটা সংখ্যার প্রতিটার বর্গ যোগ করলে ১ হয়: x² + y² + z² + w² = 1। পরীক্ষা করো: 0.7071² + 0.7071² = 0.5 + 0.5 = 1 ✓। সিমুলেটরে ভুল সংখ্যা লিখলে সে নিজেই মাপমতো ঠিক করে নেয়।</li>
+    <li><b>q আর −q একই দিক:</b> চারটা সংখ্যারই চিহ্ন উল্টে দিলে রোবট একটুও নড়ে না। কারণ এক দিকে θ ঘুরলে আর উল্টো দিকে ৩৬০° − θ ঘুরলে শেষে একই দিকে মুখ থাকে (<a href="#angles">৪ নম্বর পাঠ</a> মনে করো)।</li>
+  </ul>
+  <div class="box warn">
+    <p><b>চারটা সংখ্যার ক্রম খেয়াল করো।</b> ROS লেখে (x, y, z, w), w সবশেষে; রুলবুক, <code>/mission/get_checkpoints</code> আর স্যান্ডবক্সও তাই। কিছু লাইব্রেরি w আগে লেখে: যেমন Eigen-এর <code>Quaterniond(w, x, y, z)</code>। ক্রম গুলিয়ে ফেললে রোবট উল্টো দিকে ঘুরে যায়!</p>
+  </div>
+  <div class="try"><span class="tag">নিজে করে দেখো</span>সিমুলেটরের কোয়াটারনিয়ন ঘরগুলোতে 0, 0, 0.7071, 0.7071 লিখে Enter চাপো। রোবটের ক্যামেরা কোন দিকে ঘুরল? (EPS2 দেয়ালের দিকে: z বরাবর ৯০° ইয়।) তারপর <b>−q</b> বোতাম চেপে দেখো, রোবট নড়ে কি না।</div>
+  <p>কোয়াটারনিয়নে গিম্বল লক হয় না, আর দুটো দিকের মাঝে মসৃণভাবে ঘোরানো যায় (এর নাম <b>slerp</b>)। এ কারণেই রোবট, ভিডিও গেম আর ROS কোয়াটারনিয়ন ব্যবহার করে।</p>
+  <figure class="wide" style="max-width:300px">
+    <svg viewBox="0 0 240 190" role="img" aria-label="একটা অক্ষ বরাবর θ কোণে ঘোরা">
+      <path class="st" d="M120 160 L120 14" style="stroke-dasharray:6 5"/><path class="ft" d="M120 6 l-6 11 h12 z"/><text x="128" y="20" style="fill:var(--turn)">অক্ষ (ax, ay, az)</text>
+      <ellipse cx="120" cy="96" rx="70" ry="20" class="ln" style="stroke:var(--border)"/>
+      <path class="st" d="M62 108 A70 20 0 0 0 176 108"/><path class="ft" d="M176 108 l-12 1 l6 -9 z"/>
+      <text x="120" y="142" text-anchor="middle" style="fill:var(--turn)">θ</text>
+      <circle cx="120" cy="96" r="16" class="ball"/><path class="sx" d="M120 96 L62 108"/>
+      <text x="120" y="182" text-anchor="middle" class="m">w = cos(θ/2) · (x, y, z) = অক্ষ · sin(θ/2)</text>
+    </svg>
+    <figcaption>একটা অক্ষ বরাবর একবার ঘোরা, আর তার চারটা সংখ্যা।</figcaption>
+  </figure>
+  <details class="deeper"><summary>আরও গভীরে: দুটো ঘোরা জোড়া দেওয়া</summary>
+    <p>একটা দিক <code>q</code>-কে রোবটের নিজের অক্ষ বরাবর <code>r</code> পরিমাণ ঘোরাতে গুণ করো: <code>q · r</code>। Kibo-র অক্ষ বরাবর ঘোরাতে গুণ করো অন্য পাশ থেকে: <code>r · q</code>। কোয়াটারনিয়ন কখনো যোগ কোরো না। সিমুলেটরের X, Y, Z বোতামগুলো ১৫°-এর একটা ঘোরা দিয়ে <code>q · r</code> করে। অর্ধেক কোণ কেন লাগে, তার পেছনের গণিত একটু কঠিন; আপাতত নিয়মটা মনে রাখলেই চলবে।</p>
+  </details>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>(0, 0, 0, 1) মানে কী?</summary><p>কোনো ঘোরা নেই: রোবটের অক্ষগুলো Kibo-র অক্ষের সঙ্গে মিলে আছে।</p></details>
+    <details><summary>y বরাবর ৯০° ঘোরার কোয়াটারনিয়ন কী?</summary><p>অক্ষ (0, 1, 0), অর্ধেক কোণ ৪৫°: (0, 0.7071, 0, 0.7071)।</p></details>
+    <details><summary>z বরাবর ১৮০°?</summary><p>অর্ধেক কোণ ৯০°, sin ৯০° = 1, cos ৯০° = 0: (0, 0, 1, 0)।</p></details>
+    <details><summary>(0, 0, −0.7071, −0.7071) আর (0, 0, 0.7071, 0.7071) কি একই দিক?</summary><p>হ্যাঁ। চারটারই চিহ্ন উল্টানো (−q), তাই রোবট একই দিকে মুখ করে থাকে।</p></details>
+  </div>
+
+  <!-- ===================== 9 ===================== -->
+  <h2 id="kiborpc">৯. Kibo-RPC-তে কোথায় লাগে</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>এই পাতার ১ থেকে ৮ নম্বর পাঠ।</div>
+  <ul>
+    <li><b>রোবটকে কোথাও পাঠানো:</b> <code>/ctl/command</code>-কে দিতে হয় একটা অবস্থান (x, y, z) আর একটা কোয়াটারনিয়ন (x, y, z, w), দুটোই <code>iss_body</code> ফ্রেমে। এই দুটো মিলিয়ে বলে <b>পোজ</b>।</li>
+    <li><b>চেকপয়েন্ট:</b> <code>/mission/get_checkpoints</code> প্রতিটা চেকপয়েন্টের অবস্থান আর দিক দেয়; দিকটা কোয়াটারনিয়ন হিসেবে। সিমুলেটরের <b>CP 1 (ম্যানুয়াল)</b> বোতাম চেপে দেখো: ওই পোজে ক্যামেরা SAIBO দেয়ালের মার্কার ১-এর দিকে তাকায়।</li>
+    <li><b>রোল মেলানো:</b> চেকপয়েন্টে বিচারক দেখে ক্যামেরার ছবিতে মার্কার কতটা কাত, মানে ক্যামেরার অক্ষ (রোবটের <span class="x">X</span>) বরাবর রোল। এখানে <span class="x">X</span> − / + বোতাম, আর স্যান্ডবক্সে ⟲ / ⟳ বোতাম ঠিক এটাই করে।</li>
+    <li><b>ক্যামেরার নিজের অক্ষ:</b> ক্যামেরার ছবির হিসাবে (OpenCV) x ডানে, y নিচে, আর z লেন্স থেকে সোজা বাইরে। এর কথা আছে <a href="learn.html#ar">নিয়মের গাইডে</a>।</li>
+  </ul>
+  <p>ওড়ার জন্য তৈরি? এবার <a href="learn.html">খেলার নিয়ম</a> পড়ো (শেখার পথের ৩ নম্বর ধাপ), বা সরাসরি <a href="index.html">স্যান্ডবক্সে</a> গিয়ে কোনো ওয়েপয়েন্টের দিক “নিজের কোয়াটারনিয়ন” করে নিজে সংখ্যা লিখে দেখো।</p>
+
+  <!-- ===================== Words ===================== -->
+  <h2 id="words">শব্দকোষ</h2>
+  <dl class="words">
+    <dt>মূলবিন্দু</dt><dd>যেখান থেকে মাপা শুরু; সেখানে সব সংখ্যা ০। (<a href="#position">পাঠ ১</a>)</dd>
+    <dt>অক্ষ</dt><dd>যে সোজা রেখা বরাবর মাপা হয়, বা যে রেখা বরাবর কিছু ঘোরে। (<a href="#xyz">পাঠ ২</a>)</dd>
+    <dt>স্থানাঙ্ক</dt><dd>জায়গা বোঝানোর তিনটা সংখ্যা (x, y, z)। (<a href="#xyz">পাঠ ২</a>)</dd>
+    <dt>ফ্রেম</dt><dd>মূলবিন্দু আর তিনটা দিক মিলিয়ে মাপার ব্যবস্থা। <code>iss_body</code> হলো Kibo-র, <code>body</code> হলো রোবটের। (<a href="#frame">পাঠ ৩</a>, <a href="#body">৫</a>)</dd>
+    <dt>ডিগ্রি (°)</dt><dd>ঘোরার মাপ; এক পাক = ৩৬০°। (<a href="#angles">পাঠ ৪</a>)</dd>
+    <dt>রোল, পিচ, ইয়</dt><dd>তিন রকম ঘোরা: কাত হওয়া, ওপর-নিচে তাকানো, ডানে-বাঁয়ে ঘোরা। (<a href="#turns">পাঠ ৬</a>)</dd>
+    <dt>অয়লার কোণ</dt><dd>রোল, পিচ আর ইয় দিয়ে দিক লেখা। (<a href="#euler">পাঠ ৭</a>)</dd>
+    <dt>গিম্বল লক</dt><dd>পিচ ৯০° হলে রোল আর ইয় একই কাজ করে ফেলে। (<a href="#euler">পাঠ ৭</a>)</dd>
+    <dt>কোয়াটারনিয়ন</dt><dd>চারটা সংখ্যায় (x, y, z, w) লেখা একটা ঘোরা: অক্ষ আর কোণ। (<a href="#quaternion">পাঠ ৮</a>)</dd>
+    <dt>পোজ</dt><dd>অবস্থান আর দিক একসঙ্গে: রোবট কোথায়, আর কোন দিকে মুখ করে। (<a href="#kiborpc">পাঠ ৯</a>)</dd>
+  </dl>
+
+  <footer>
+    <a href="LICENSE.txt" target="_blank" rel="noopener">লাইসেন্স</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">ihashib-এর তৈরি</a>
+  </footer>
+</div>
+<div class="en" lang="en">
+  <!-- ===================== Challenges ===================== -->
+  <h2 id="en-challenges">Challenges</h2>
+  <p>Use any control above. Each one ticks itself when you get it. If you're stuck, read the small hint.</p>
+  <ol class="goals" id="en-goals">
+    <li data-goal="deck"><span class="tick">✓</span><div><b>Point the camera at the deck.</b><small>The camera is the robot's <span class="x">X</span>; the deck is +z (<a href="#en-frame">lesson 3</a>). Try the Pitch slider.</small></div></li>
+    <li data-goal="saibo"><span class="tick">✓</span><div><b>Point the camera at the SAIBO wall.</b><small>The SAIBO wall is −y. Try the Yaw slider.</small></div></li>
+    <li data-goal="upright"><span class="tick">✓</span><div><b>Camera toward the airlock, and the robot's top toward the overhead.</b><small>At the start the robot's top points to the deck. Which turn flips the picture without changing where the camera looks? (<a href="#en-turns">lesson 6</a>)</small></div></li>
+    <li data-goal="typed"><span class="tick">✓</span><div><b>Type the quaternion for a 90° turn about z yourself.</b><small>Type four numbers in the quaternion boxes and press Enter. How to work them out is in <a href="#en-quaternion">lesson 8</a>.</small></div></li>
+    <li data-goal="negw"><span class="tick">✓</span><div><b>Make w negative without moving the robot.</b><small>Every orientation can be written with two quaternions (<a href="#en-quaternion">lesson 8</a>).</small></div></li>
+  </ol>
+
+  <!-- ===================== 7 ===================== -->
+  <h2 id="en-euler">7. Euler angles: three numbers for three turns</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-turns">Lesson 6</a>: roll, pitch and yaw.</div>
+  <p>"Euler" (say "OY-ler") is a person's name: Leonhard Euler, a famous Swiss mathematician from the 1700s. “<b>Euler angles</b>” simply means saying which way the robot faces with three numbers: roll, pitch and yaw.</p>
+  <div class="lesson">
+    <div>
+      <p><b>Examples:</b></p>
+      <ul>
+        <li>(roll 0°, pitch 0°, yaw 0°): no turn. The camera looks toward the airlock.</li>
+        <li>(roll 0°, pitch 0°, yaw 90°): only a 90° yaw. The camera turns to the EPS2 wall.</li>
+        <li>(roll 180°, pitch 0°, yaw 0°): only a half-turn roll. The camera still looks toward the airlock, but the robot is flipped over.</li>
+      </ul>
+      <p>The simulator's three sliders are Euler angles. ROS (the robot's software) and this page always use them in the same order: roll first, then pitch, then yaw.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 170" role="img" aria-label="Euler angles: roll, then pitch, then yaw">
+        <g text-anchor="middle">
+          <rect x="10" y="50" width="62" height="40" rx="8" class="ln" style="stroke:var(--ax)"/><text x="41" y="75" style="fill:var(--ax)">roll</text>
+          <rect x="89" y="50" width="62" height="40" rx="8" class="ln" style="stroke:var(--ay)"/><text x="120" y="75" style="fill:var(--ay)">pitch</text>
+          <rect x="168" y="50" width="62" height="40" rx="8" class="ln" style="stroke:var(--az)"/><text x="199" y="75" style="fill:var(--az)">yaw</text>
+          <text x="80" y="75" class="m">→</text><text x="159" y="75" class="m">→</text>
+          <text x="120" y="122" class="m">three numbers, in this order</text>
+          <text x="120" y="140" class="m">= Euler angles</text>
+        </g>
+      </svg>
+      <figcaption>Euler angles are three turns, one after another.</figcaption>
+    </figure>
+  </div>
+  <h3>The order matters</h3>
+  <p>For places the order makes no difference (<a href="#en-xyz">lesson 2</a>), but for turns it does! The same two turns in a different order end in a different pose.</p>
+  <div class="try"><span class="tag">Try it yourself</span>Put a book on a table. Yaw it 90° (spin it on the table), then pitch it 90° (stand it up). Now put it back and do it the other way round: pitch first, then yaw. Does the book end up the same both times? No!</div>
+  <div class="row"><button class="btn" data-demo="orderA">Yaw 90°, then pitch 90°</button><button class="btn" data-demo="orderB">Pitch 90°, then yaw 90°</button></div>
+  <h3>A problem: gimbal lock</h3>
+  <p>If the pitch is exactly 90° (the camera looks straight at the overhead), roll and yaw do the same job: both spin the robot about the same line. Then one of the three numbers is wasted. This is called <b>gimbal lock</b>. Press the button to see it.</p>
+  <div class="row"><button class="btn" data-demo="gimbal">Show gimbal lock</button></div>
+  <p>Euler angles are easy to read, but because of these two problems (order and gimbal lock), robot programs write orientations another way: as a <b>quaternion</b>. That's the next lesson.</p>
+  <details class="deeper"><summary>Go deeper: which axes do they turn about?</summary>
+    <p>In ROS, roll, pitch and yaw are applied about Kibo's fixed axes (x, then y, then z). You get the same result turning about the robot's own axes in the opposite order: yaw about Z first, then pitch about the new Y, then roll about the new X.</p>
+  </details>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>How many numbers are in Euler angles?</summary><p>Three: roll, pitch and yaw.</p></details>
+    <details><summary>If you swap the order of two turns, do you end up the same?</summary><p>Usually not. That's why the order is fixed in advance.</p></details>
+  </div>
+
+  <!-- ===================== 8 ===================== -->
+  <h2 id="en-quaternion">8. Quaternions: one turn, four numbers</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-angles">Lesson 4</a> (degrees), <a href="#en-turns">lesson 6</a> and <a href="#en-euler">lesson 7</a>. Keep a calculator handy (a phone's is fine).</div>
+  <h3>Step 1: one turn is enough</h3>
+  <div class="lesson">
+    <div>
+      <p>Think of a door. A door turns about the line of its hinges; the hinge line is its <b>axis</b>.</p>
+      <p>Here's the surprising part: however complicated the robot's turning has been, it can get from its start to where it is now with <b>a single turn</b>, about one imaginary "hinge", by some number of degrees. So to describe any orientation you only need to say two things:</p>
+      <ol class="steps">
+        <li><b>which line</b> it turns about (the axis),</li>
+        <li><b>how far</b> it turns (the angle, called <b>θ</b>, said "theta").</li>
+      </ol>
+      <p>The <span class="t">yellow line</span> in the simulator is that axis. <b>▶ Play the turn</b> shows the single turn from the start to the robot's pose now.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 240 200" role="img" aria-label="A door opening on its hinges: the hinge line is the axis, the opening angle is theta">
+        <path class="st dsh" d="M60 12 V188"/><text x="66" y="22" style="fill:var(--turn)">hinge = axis</text>
+        <path class="ln dsh" style="stroke:var(--muted)" d="M60 40 H190 V170 H60"/>
+        <path class="ln" d="M60 40 L150 70 V188 L60 170 Z" style="fill:var(--soft)"/>
+        <circle cx="136" cy="128" r="4" class="ff"/>
+        <path class="st" d="M150 110 A110 30 0 0 0 190 104"/><path class="ft" d="M146 112 l11 -6 l-2 10 z"/>
+        <text x="174" y="128" style="fill:var(--turn)">θ</text>
+        <text x="196" y="98" class="m">shut</text><text x="100" y="196" class="m">open</text>
+      </svg>
+      <figcaption>Opening a door is a turn of θ about the hinge (the axis).</figcaption>
+    </figure>
+  </div>
+  <h3>Step 2: packing the axis and angle into four numbers</h3>
+  <p>A quaternion stores the axis and the angle in four numbers, called (x, y, z, w). For this you need sin and cos. They are two buttons on a calculator; you don't need to know exactly what they mean yet, just read the values from this table.</p>
+  <div class="wrap"><table style="max-width:420px">
+    <tr><th>Angle</th><th>sin</th><th>cos</th></tr>
+    <tr><td>0°</td><td class="n">0</td><td class="n">1</td></tr>
+    <tr><td>30°</td><td class="n">0.5</td><td class="n">0.866</td></tr>
+    <tr><td>45°</td><td class="n">0.7071</td><td class="n">0.7071</td></tr>
+    <tr><td>60°</td><td class="n">0.866</td><td class="n">0.5</td></tr>
+    <tr><td>90°</td><td class="n">1</td><td class="n">0</td></tr>
+  </table></div>
+  <p><b>The recipe</b> (the quaternion for a turn of θ about one axis):</p>
+  <ol class="steps">
+    <li>Pick the axis: (1, 0, 0) for the x axis, (0, 1, 0) for y, (0, 0, 1) for z.</li>
+    <li>Halve the angle: θ ÷ 2.</li>
+    <li>Multiply the axis's three numbers by the <b>sin</b> of the half angle: these are x, y and z.</li>
+    <li>The <b>cos</b> of the half angle is w.</li>
+  </ol>
+  <div class="formula">q = ( axis × sin(θ/2), cos(θ/2) ) = ( x, y, z, w )</div>
+  <p><b>Example 1: 90° about z.</b> Axis (0, 0, 1). Half the angle is 45°. sin 45° = 0.7071, so axis × 0.7071 = (0, 0, 0.7071). cos 45° = 0.7071, so w = 0.7071. <b>Answer: (0, 0, 0.7071, 0.7071)</b>.</p>
+  <p><b>Example 2: 180° about x.</b> Axis (1, 0, 0). Half the angle is 90°. sin 90° = 1, giving (1, 0, 0). cos 90° = 0, so w = 0. <b>Answer: (1, 0, 0, 0)</b>.</p>
+  <p><b>Example 3: no turn.</b> θ = 0°, and half of it is 0° too. sin 0° = 0, giving (0, 0, 0). cos 0° = 1, so w = 1. <b>Answer: (0, 0, 0, 1)</b>. Remember: "no turn" isn't four zeros; the last number is 1!</p>
+  <h3>Step 3: two rules</h3>
+  <ul>
+    <li><b>The length is always 1:</b> square each of the four numbers and add them up, and you get 1: x² + y² + z² + w² = 1. Check: 0.7071² + 0.7071² = 0.5 + 0.5 = 1 ✓. If you type numbers that break this rule, the simulator scales them to fit.</li>
+    <li><b>q and −q are the same orientation:</b> flip the signs of all four numbers and the robot doesn't move at all. That's because turning θ one way ends up where turning 360° − θ the other way does (remember <a href="#en-angles">lesson 4</a>).</li>
+  </ul>
+  <div class="box warn">
+    <p><b>Watch the order of the four numbers.</b> ROS writes (x, y, z, w), with w last, and so do the Rulebook, <code>/mission/get_checkpoints</code> and the sandbox. Some libraries put w first, such as Eigen's <code>Quaterniond(w, x, y, z)</code>. Mix up the order and your robot turns the wrong way!</p>
+  </div>
+  <div class="try"><span class="tag">Try it yourself</span>Type 0, 0, 0.7071, 0.7071 into the simulator's quaternion boxes and press Enter. Which way did the camera turn? (To the EPS2 wall: a 90° yaw about z.) Then press the <b>−q</b> button and see whether the robot moves.</div>
+  <p>Quaternions never get gimbal lock, and you can turn smoothly between two of them (this is called <b>slerp</b>). That's why robots, video games and ROS use them.</p>
+  <figure class="wide" style="max-width:300px">
+    <svg viewBox="0 0 240 190" role="img" aria-label="A turn of angle theta about an axis">
+      <path class="st" d="M120 160 L120 14" style="stroke-dasharray:6 5"/><path class="ft" d="M120 6 l-6 11 h12 z"/><text x="128" y="20" style="fill:var(--turn)">axis (ax, ay, az)</text>
+      <ellipse cx="120" cy="96" rx="70" ry="20" class="ln" style="stroke:var(--border)"/>
+      <path class="st" d="M62 108 A70 20 0 0 0 176 108"/><path class="ft" d="M176 108 l-12 1 l6 -9 z"/>
+      <text x="120" y="142" text-anchor="middle" style="fill:var(--turn)">θ</text>
+      <circle cx="120" cy="96" r="16" class="ball"/><path class="sx" d="M120 96 L62 108"/>
+      <text x="120" y="182" text-anchor="middle" class="m">w = cos(θ/2) · (x, y, z) = axis · sin(θ/2)</text>
+    </svg>
+    <figcaption>One turn about one axis, and its four numbers.</figcaption>
+  </figure>
+  <details class="deeper"><summary>Go deeper: combining two turns</summary>
+    <p>To turn an orientation <code>q</code> by a turn <code>r</code> about the robot's own axes, multiply: <code>q · r</code>. To turn it about Kibo's axes, multiply on the other side: <code>r · q</code>. Never add quaternions. The simulator's X, Y and Z buttons do <code>q · r</code> with a 15° turn. Why the half angle? The maths behind it is harder; for now, just remember the rule.</p>
+  </details>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>What does (0, 0, 0, 1) mean?</summary><p>No turn: the robot's axes line up with Kibo's.</p></details>
+    <details><summary>What's the quaternion for 90° about y?</summary><p>Axis (0, 1, 0), half angle 45°: (0, 0.7071, 0, 0.7071).</p></details>
+    <details><summary>And 180° about z?</summary><p>Half angle 90°, sin 90° = 1, cos 90° = 0: (0, 0, 1, 0).</p></details>
+    <details><summary>Are (0, 0, −0.7071, −0.7071) and (0, 0, 0.7071, 0.7071) the same orientation?</summary><p>Yes. All four signs are flipped (−q), so the robot faces the same way.</p></details>
+  </div>
+
+  <!-- ===================== 9 ===================== -->
+  <h2 id="en-kiborpc">9. Where Kibo-RPC uses them</h2>
+  <div class="need"><span class="tag">Read this first</span>Lessons 1 to 8 on this page.</div>
+  <ul>
+    <li><b>Sending the robot somewhere:</b> <code>/ctl/command</code> needs a position (x, y, z) and a quaternion (x, y, z, w), both in the <code>iss_body</code> frame. The two together are called a <b>pose</b>.</li>
+    <li><b>Checkpoints:</b> <code>/mission/get_checkpoints</code> gives each checkpoint's position and orientation, with the orientation as a quaternion. Press <b>CP 1 (manual)</b> in the simulator: in that pose the camera looks at marker 1 on the SAIBO wall.</li>
+    <li><b>Matching the roll:</b> at a checkpoint the judge checks how tilted the marker is in the camera picture: the roll about the camera's axis (the robot's <span class="x">X</span>). The <span class="x">X</span> − / + buttons here, and the ⟲ / ⟳ buttons in the sandbox, do exactly that.</li>
+    <li><b>The camera's own axes:</b> for the camera picture (OpenCV), x is right, y is down and z points straight out of the lens. The <a href="learn.html#ar">rules guide</a> has more.</li>
+  </ul>
+  <p>Ready to fly? Read <a href="learn.html">the game's rules</a> next (step 3 on the learning path), or go straight to the <a href="index.html">sandbox</a>, set a waypoint's orientation to "Custom quaternion" and type the numbers yourself.</p>
+
+  <!-- ===================== Words ===================== -->
+  <h2 id="en-words">Word list</h2>
+  <dl class="words">
+    <dt>origin</dt><dd>Where measuring starts; every number there is 0. (<a href="#en-position">lesson 1</a>)</dd>
+    <dt>axis</dt><dd>A straight line you measure along, or that something turns around. (<a href="#en-xyz">lesson 2</a>)</dd>
+    <dt>coordinates</dt><dd>The three numbers (x, y, z) that say where something is. (<a href="#en-xyz">lesson 2</a>)</dd>
+    <dt>frame</dt><dd>An origin and three directions to measure with. <code>iss_body</code> is Kibo's, <code>body</code> is the robot's. (<a href="#en-frame">lessons 3</a> and <a href="#en-body">5</a>)</dd>
+    <dt>degree (°)</dt><dd>How far something turns; one whole turn is 360°. (<a href="#en-angles">lesson 4</a>)</dd>
+    <dt>roll, pitch, yaw</dt><dd>Three kinds of turn: tilting, looking up or down, swinging left or right. (<a href="#en-turns">lesson 6</a>)</dd>
+    <dt>Euler angles</dt><dd>Writing an orientation as roll, pitch and yaw. (<a href="#en-euler">lesson 7</a>)</dd>
+    <dt>gimbal lock</dt><dd>At 90° of pitch, roll and yaw do the same job. (<a href="#en-euler">lesson 7</a>)</dd>
+    <dt>quaternion</dt><dd>A turn written as four numbers (x, y, z, w): an axis and an angle. (<a href="#en-quaternion">lesson 8</a>)</dd>
+    <dt>pose</dt><dd>A position and an orientation together: where the robot is and which way it faces. (<a href="#en-kiborpc">lesson 9</a>)</dd>
+  </dl>
+
+  <footer>
+    <a href="LICENSE.txt" target="_blank" rel="noopener">License</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">Developed by ihashib</a>
+  </footer>
+</div>
+</main>
+
+<script src="vendor/three.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  // ---------- quaternion maths ([x, y, z, w], Hamilton product, ROS conventions) ----------
+  var D = Math.PI / 180;
+  function qn(q) { var l = Math.hypot(q[0], q[1], q[2], q[3]) || 1; return [q[0] / l, q[1] / l, q[2] / l, q[3] / l]; }
+  function qmul(a, b) {
+    return [a[3] * b[0] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1], a[3] * b[1] - a[0] * b[2] + a[1] * b[3] + a[2] * b[0],
+      a[3] * b[2] + a[0] * b[1] - a[1] * b[0] + a[2] * b[3], a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2]];
+  }
+  function qaxis(ax, deg) { var h = deg * D / 2, s = Math.sin(h); return [ax[0] * s, ax[1] * s, ax[2] * s, Math.cos(h)]; }
+  function qrot(q, v) {
+    var x = q[0], y = q[1], z = q[2], w = q[3];
+    var tx = 2 * (y * v[2] - z * v[1]), ty = 2 * (z * v[0] - x * v[2]), tz = 2 * (x * v[1] - y * v[0]);
+    return [v[0] + w * tx + (y * tz - z * ty), v[1] + w * ty + (z * tx - x * tz), v[2] + w * tz + (x * ty - y * tx)];
+  }
+  // ROS: R = Rz(yaw) Ry(pitch) Rx(roll), i.e. roll, then pitch, then yaw about the fixed axes.
+  function fromEuler(r, p, y) {
+    var cr = Math.cos(r * D / 2), sr = Math.sin(r * D / 2), cp = Math.cos(p * D / 2), sp = Math.sin(p * D / 2), cy = Math.cos(y * D / 2), sy = Math.sin(y * D / 2);
+    return [sr * cp * cy - cr * sp * sy, cr * sp * cy + sr * cp * sy, cr * cp * sy - sr * sp * cy, cr * cp * cy + sr * sp * sy];
+  }
+  function toEuler(q) {
+    var x = q[0], y = q[1], z = q[2], w = q[3], s = Math.max(-1, Math.min(1, 2 * (w * y - z * x)));
+    return [Math.atan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y)) / D, Math.asin(s) / D, Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)) / D];
+  }
+  function slerp(a, b, t) {
+    var d = a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3], bb = b;
+    if (d < 0) { d = -d; bb = b.map(function (v) { return -v; }); }
+    if (d > 0.9995) return qn(a.map(function (v, i) { return v + (bb[i] - v) * t; }));
+    var th = Math.acos(d), s = Math.sin(th), wa = Math.sin((1 - t) * th) / s, wb = Math.sin(t * th) / s;
+    return a.map(function (v, i) { return v * wa + bb[i] * wb; });
+  }
+  // In Bangla (the site's default; switching language reloads the page) the texts below are Bangla.
+  var BN = document.documentElement.getAttribute('data-lang') === 'bn';
+  function T(en, bn) { return BN ? bn : en; }
+  var SIDES = BN ? [['এয়ারলকের', 'ডকের'], ['EPS2 দেয়ালের', 'SAIBO দেয়ালের'], ['মেঝের', 'ছাদের']]
+    : [['the airlock end', 'the dock end'], ['the EPS2 wall', 'the SAIBO wall'], ['the deck', 'the overhead']];
+  function towards(v) {
+    var order = [0, 1, 2].sort(function (a, b) { return Math.abs(v[b]) - Math.abs(v[a]); });
+    var name = function (k) { return SIDES[k][v[k] >= 0 ? 0 : 1]; };
+    if (Math.abs(v[order[0]]) > 0.97) return BN ? name(order[0]) + ' দিকে' : name(order[0]);
+    if (Math.abs(v[order[1]]) < 0.2) return BN ? 'মোটামুটি ' + name(order[0]) + ' দিকে' : 'mostly ' + name(order[0]);
+    return BN ? name(order[0]) + ' আর ' + name(order[1]) + ' মাঝামাঝি' : 'between ' + name(order[0]) + ' and ' + name(order[1]);
+  }
+  function f(n, d) { var s = n.toFixed(d); return s === '-' + (0).toFixed(d) ? (0).toFixed(d) : s; }
+
+  // ---------- state ----------
+  var q = [0, 0, 0, 1], euler = [0, 0, 0], lastSrc = 'none', anim = null, done = {};
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (s) { return document.querySelector(s); }, $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+  var msg = $('#msg');
+
+  function setQ(nq, src, keepEuler) {
+    q = qn(nq); lastSrc = src || lastSrc;
+    if (!keepEuler) euler = toEuler(q).map(function (v) { return Math.round(v * 10) / 10; });
+    $$('[data-e]').forEach(function (el) { var i = +el.dataset.e; el.value = euler[i]; });
+    $$('[data-en]').forEach(function (el) { if (el !== document.activeElement) el.value = Math.round(euler[+el.dataset.en]); });
+    $$('[data-q]').forEach(function (el) { if (el !== document.activeElement || src !== 'quat') el.value = f(q[+el.dataset.q], 4); });
+    var len = Math.hypot(q[0], q[1], q[2], q[3]);
+    $('#rLen').textContent = f(len, 4);
+    var w = Math.max(-1, Math.min(1, q[3])), ang = 2 * Math.acos(w) / D, s = Math.sqrt(Math.max(0, 1 - w * w));
+    $('#rAng').textContent = f(ang, 1) + '°';
+    $('#rAxis').textContent = s < 1e-4 ? T('(no turn)', '(কোনো ঘোরা নেই)') : '(' + f(q[0] / s, 3) + ', ' + f(q[1] / s, 3) + ', ' + f(q[2] / s, 3) + ')';
+    var cam = qrot(q, [1, 0, 0]), top = qrot(q, [0, 0, 1]);
+    $('#rCam').textContent = towards(cam); $('#rTop').textContent = towards(top);
+    checkGoals(cam, top);
+    place();
+  }
+  function checkGoals(cam, top) {
+    var c5 = Math.cos(5 * D), r = {
+      deck: cam[2] > c5,
+      saibo: -cam[1] > c5,
+      upright: cam[0] > c5 && -top[2] > c5,
+      typed: lastSrc === 'quat' && Math.abs((q[2] + q[3]) * Math.SQRT1_2) > 0.9995, // |q · (0, 0, 0.7071, 0.7071)|
+      negw: q[3] < -0.01
+    };
+    Object.keys(r).forEach(function (k) { if (r[k]) done[k] = true; });
+    $$('[data-goal]').forEach(function (li) { li.classList.toggle('done', !!done[li.dataset.goal]); });
+  }
+
+  // ---------- animation ----------
+  function animateTo(target, ms, src) {
+    return new Promise(function (res) {
+      if (anim) anim.stop();
+      if (reduce || !renderer) { setQ(target, src); res(); return; }
+      var from = q.slice(), t0 = performance.now(), live = true;
+      anim = { stop: function () { live = false; res(); } };
+      (function step(t) {
+        if (!live) return;
+        var k = Math.min(1, (t - t0) / ms), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        setQ(slerp(from, target, e), src);
+        if (k < 1) requestAnimationFrame(step); else { anim = null; setQ(target, src); res(); }
+      })(t0);
+    });
+  }
+  function sequence(steps) { // [[quaternion, ms, message], ...]
+    var p = Promise.resolve();
+    steps.forEach(function (s) { p = p.then(function () { if (s[2]) msg.textContent = s[2]; return animateTo(s[0], s[1], 'demo'); }).then(function () { return new Promise(function (r) { setTimeout(r, reduce ? 0 : 350); }); }); });
+    return p;
+  }
+  function eulerSweep(from, to, ms) {
+    return new Promise(function (res) {
+      var t0 = performance.now();
+      (function step(t) {
+        var k = reduce ? 1 : Math.min(1, (t - t0) / ms);
+        var e = from.map(function (v, i) { return v + (to[i] - v) * k; });
+        euler = e; setQ(fromEuler(e[0], e[1], e[2]), 'euler', true);
+        if (k < 1) requestAnimationFrame(step); else res();
+      })(t0);
+    });
+  }
+
+  // ---------- 3D ----------
+  var THREE = window.THREE, renderer, scene, camera, world, robot, ghost, axisLine, room, labels = [], stage = $('#stage');
+  var view = { az: 0, el: 0, dist: 7.2 };
+  function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function label(text, cls, color, pos, body) {
+    var el = document.createElement('div'); el.className = 'lbl ' + cls; el.textContent = text; if (color) el.style.color = color;
+    stage.appendChild(el); var L = { el: el, pos: pos, body: body }; labels.push(L); return L;
+  }
+  function arrow(dir, len, color, r) {
+    var g = new THREE.Group(), m = new THREE.MeshStandardMaterial({ color: color, roughness: 0.45 });
+    var shaft = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len - 0.16, 16), m); shaft.position.y = (len - 0.16) / 2; g.add(shaft);
+    var head = new THREE.Mesh(new THREE.ConeGeometry(r * 2.6, 0.18, 20), m); head.position.y = len - 0.08; g.add(head);
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(dir[0], dir[1], dir[2]));
+    return g;
+  }
+  function buildRobot(opacity) {
+    var g = new THREE.Group(), tr = opacity < 1;
+    var ball = new THREE.Mesh(new THREE.SphereGeometry(0.42, 48, 32), new THREE.MeshStandardMaterial({ color: '#f1f3f7', roughness: 0.4, transparent: tr, opacity: opacity, depthWrite: !tr }));
+    g.add(ball);
+    var lens = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.06, 24), new THREE.MeshStandardMaterial({ color: '#15181e', roughness: 0.2, transparent: tr, opacity: opacity }));
+    lens.rotation.z = -Math.PI / 2; lens.position.x = 0.42; g.add(lens);
+    var topDot = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), new THREE.MeshStandardMaterial({ color: css('--az') || '#3e63dd', transparent: tr, opacity: opacity }));
+    topDot.position.z = 0.42; g.add(topDot);
+    if (!tr) {
+      g.add(arrow([1, 0, 0], 1.25, css('--ax') || '#e5484d', 0.035));
+      g.add(arrow([0, 1, 0], 0.9, css('--ay') || '#2f9e5e', 0.03));
+      g.add(arrow([0, 0, 1], 0.9, css('--az') || '#3e63dd', 0.03));
+      // the camera's view: a faint cone along X
+      var cone = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.6, 32, 1, true), new THREE.MeshBasicMaterial({ color: css('--ax') || '#e5484d', transparent: true, opacity: 0.1, side: THREE.DoubleSide, depthWrite: false }));
+      cone.rotation.z = Math.PI / 2; cone.position.x = 0.42 + 0.8; g.add(cone);
+    } else {
+      [[1, 0, 0, '#e5484d'], [0, 0, 1, '#3e63dd']].forEach(function (a) {
+        var line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(a[0] * 1.1, a[1] * 1.1, a[2] * 1.1)]), new THREE.LineDashedMaterial({ color: a[3], dashSize: 0.08, gapSize: 0.06, transparent: true, opacity: 0.7 }));
+        line.computeLineDistances(); g.add(line);
+      });
+    }
+    return g;
+  }
+  function init3d() {
+    try { if (!THREE) throw 0; renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); }
+    catch (e) { stage.classList.add('nogl'); renderer = null; return; }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    if ('outputEncoding' in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
+    stage.insertBefore(renderer.domElement, stage.firstChild);
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+    scene.add(new THREE.HemisphereLight('#ffffff', '#8a93a6', 0.9));
+    var key = new THREE.DirectionalLight('#ffffff', 0.7); key.position.set(3, 5, 4); scene.add(key);
+    // Kibo's frame (iss_body) inside a group turned so +z (the deck) is down on screen.
+    world = new THREE.Group(); world.rotation.x = Math.PI / 2; scene.add(world);
+    room = new THREE.Group(); world.add(room);
+    var box = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(4.4, 2.4, 2.4)), new THREE.LineBasicMaterial({ color: css('--muted') || '#5b6475', transparent: true, opacity: 0.45 }));
+    room.add(box);
+    var deck = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 2.4), new THREE.MeshBasicMaterial({ color: '#8a93a6', transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false }));
+    deck.position.z = 1.2; room.add(deck);
+    [[[1, 0, 0], css('--ax')], [[0, 1, 0], css('--ay')], [[0, 0, 1], css('--az')]].forEach(function (a) {
+      var d = a[0], line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-d[0] * 2.2, -d[1] * 1.2, -d[2] * 1.2), new THREE.Vector3(d[0] * 2.2, d[1] * 1.2, d[2] * 1.2)]),
+        new THREE.LineDashedMaterial({ color: a[1] || '#888', dashSize: 0.1, gapSize: 0.08, transparent: true, opacity: 0.75 }));
+      line.computeLineDistances(); room.add(line);
+    });
+    label(T('+x airlock end', '+x এয়ারলকের দিক'), 'w', css('--ax'), [2.35, 0, 0]); label(T('−x dock end', '−x ডকের দিক'), 'w', null, [-2.35, 0, 0]);
+    label(T('+y EPS2 wall', '+y EPS2 দেয়াল'), 'w', css('--ay'), [0, 1.35, 0]); label(T('−y SAIBO wall', '−y SAIBO দেয়াল'), 'w', null, [0, -1.35, 0]);
+    label(T('+z deck', '+z মেঝে'), 'w', css('--az'), [0, 0, 1.38]); label(T('−z overhead', '−z ছাদ'), 'w', null, [0, 0, -1.38]);
+    ghost = buildRobot(0.25); ghost.visible = false; world.add(ghost);
+    robot = buildRobot(1); world.add(robot);
+    label(T('X camera', 'X ক্যামেরা'), 'b', css('--ax'), [1.4, 0, 0], true); label(T('Y left', 'Y বাঁ দিক'), 'b', css('--ay'), [0, 1.05, 0], true); label(T('Z top', 'Z ওপর'), 'b', css('--az'), [0, 0, 1.05], true);
+    axisLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, -1.6), new THREE.Vector3(0, 0, 1.6)]), new THREE.LineDashedMaterial({ color: css('--turn') || '#d4a017', dashSize: 0.12, gapSize: 0.08, linewidth: 2 }));
+    axisLine.computeLineDistances(); world.add(axisLine);
+    var axisLbl = label(T('turn axis', 'ঘোরার অক্ষ'), 'b', css('--turn'), [0, 0, 1.75]); axisLbl.axis = true;
+    // Start looking from the EPS2 wall side, a little toward the dock and from overhead (like the sandbox).
+    var v = new THREE.Vector3(-0.3, 1, -0.55).applyEuler(new THREE.Euler(Math.PI / 2, 0, 0)).normalize();
+    view.az = Math.atan2(v.x, v.z); view.el = Math.asin(v.y);
+    var drag = null;
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('label,button,input')) return;
+      drag = { x: e.clientX, y: e.clientY, id: e.pointerId, touch: e.pointerType === 'touch' }; stage.classList.add('drag');
+      try { stage.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY;
+      view.az -= dx * 0.01; if (!drag.touch) view.el = Math.max(-1.45, Math.min(1.45, view.el + dy * 0.01));
+      place();
+    });
+    function end() { drag = null; stage.classList.remove('drag'); }
+    stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+    stage.addEventListener('change', function (e) {
+      var k = e.target.dataset.show; if (!k) return;
+      if (k === 'room') room.visible = e.target.checked;
+      if (k === 'axis') showAxis = e.target.checked;
+      if (k === 'ghost') ghost.visible = e.target.checked;
+      place();
+    });
+    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(stage); else window.addEventListener('resize', resize);
+    resize();
+  }
+  var showAxis = true, tmp = THREE ? new THREE.Vector3() : null;
+  function resize() {
+    if (!renderer) return;
+    var w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false); camera.aspect = w / h;
+    view.dist = w / h < 0.9 ? 9.4 : 7.2;
+    camera.updateProjectionMatrix(); place();
+  }
+  function place() {
+    if (!renderer) return;
+    var c = Math.cos(view.el);
+    camera.position.set(Math.sin(view.az) * c * view.dist, Math.sin(view.el) * view.dist, Math.cos(view.az) * c * view.dist);
+    camera.lookAt(0, 0, 0);
+    robot.quaternion.set(q[0], q[1], q[2], q[3]);
+    var w = Math.max(-1, Math.min(1, q[3])), s = Math.sqrt(Math.max(0, 1 - w * w)), ax = s < 1e-4 ? null : [q[0] / s, q[1] / s, q[2] / s];
+    axisLine.visible = showAxis && !!ax;
+    if (ax) axisLine.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(ax[0], ax[1], ax[2]));
+    scene.updateMatrixWorld(true);
+    renderer.render(scene, camera);
+    var W = stage.clientWidth, H = stage.clientHeight;
+    labels.forEach(function (L) {
+      var p = L.pos;
+      if (L.body) p = qrot(q, p);
+      if (L.axis) { if (!axisLine.visible) { L.el.classList.add('hide'); return; } p = [ax[0] * 1.75, ax[1] * 1.75, ax[2] * 1.75]; }
+      if (!L.body && !L.axis && !room.visible) { L.el.classList.add('hide'); return; }
+      tmp.set(p[0], p[1], p[2]).applyMatrix4(world.matrixWorld).project(camera);
+      L.el.classList.toggle('hide', tmp.z > 1);
+      L.el.style.left = ((tmp.x + 1) / 2 * W) + 'px'; L.el.style.top = ((1 - tmp.y) / 2 * H) + 'px';
+    });
+  }
+
+  // ---------- controls ----------
+  $$('[data-e]').forEach(function (el) {
+    el.addEventListener('input', function () {
+      if (anim) anim.stop();
+      euler[+el.dataset.e] = +el.value; msg.textContent = '';
+      setQ(fromEuler(euler[0], euler[1], euler[2]), 'euler', true);
+    });
+  });
+  $$('[data-en]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      var i = +el.dataset.en, lim = i === 1 ? 90 : 180, v = Math.max(-lim, Math.min(lim, +el.value || 0));
+      euler[i] = v; setQ(fromEuler(euler[0], euler[1], euler[2]), 'euler', true);
+    });
+  });
+  $$('[data-q]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      var nq = $$('[data-q]').map(function (e) { return +e.value || 0; });
+      if (!Math.hypot(nq[0], nq[1], nq[2], nq[3])) { msg.textContent = T('All zeros is not a rotation: at least one number must be non-zero.', 'সব শূন্য দিয়ে কোনো ঘূর্ণন হয় না: অন্তত একটা সংখ্যা শূন্য ছাড়া হতে হবে।'); setQ(q, 'quat'); return; }
+      var len = Math.hypot(nq[0], nq[1], nq[2], nq[3]);
+      msg.textContent = Math.abs(len - 1) > 0.002 ? T('Your quaternion had length ' + f(len, 3) + ', so it was divided by that to make the length 1.', 'তোমার কোয়াটারনিয়নের দৈর্ঘ্য ছিল ' + f(len, 3) + ', তাই দৈর্ঘ্য ১ করতে সবগুলো সংখ্যাকে এটা দিয়ে ভাগ করা হয়েছে।') : '';
+      setQ(nq, 'quat');
+    });
+  });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var act = b.dataset.act, turn = b.dataset.turn, preset = b.dataset.preset, demo = b.dataset.demo;
+    if (act === 'neg') { msg.textContent = T('All four signs flipped, and the robot didn\'t move: q and −q are the same pose.', 'চারটা চিহ্নই উল্টে গেল, অথচ রোবট একটুও নড়ল না: q আর −q একই পোজ।'); setQ(q.map(function (v) { return -v; }), 'neg'); }
+    if (act === 'reset') { msg.textContent = ''; animateTo([0, 0, 0, 1], 600, 'reset'); }
+    if (act === 'play') {
+      var target = q.slice(); msg.textContent = T('From the dock pose, one smooth turn about the yellow axis.', 'ডকের পোজ থেকে হলুদ অক্ষ বরাবর একটানা একবার ঘোরা।');
+      ghostBox(); setQ([0, 0, 0, 1], 'play'); animateTo(target, 1600, 'play');
+    }
+    if (turn) {
+      var ax = { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] }[turn[0]], deg = turn[1] === '+' ? 15 : -15;
+      msg.textContent = '';
+      animateTo(qmul(q, qaxis(ax, deg)), 220, 'turn');
+    }
+    if (preset) { msg.textContent = presetText[preset] || ''; animateTo(preset.split(',').map(Number), 900, 'preset'); }
+    if (demo) { scrollToSim(); runDemo(demo); }
+  });
+  function ghostBox() { var g = $('[data-show=ghost]'); if (g && !g.checked) { g.checked = true; if (ghost) ghost.visible = true; } }
+  var presetText = {
+    '0,0,0,1': T('No turn: the robot\'s axes line up with Kibo\'s. The camera looks toward the airlock end and the top points to the deck.', 'কোনো ঘোরা নেই: রোবটের অক্ষগুলো Kibo-র অক্ষের সঙ্গে মিলে আছে। ক্যামেরা তাকিয়ে আছে এয়ারলকের দিকে, আর ওপরের দিক মেঝের দিকে।'),
+    '0,0,0.7071068,0.7071068': T('90° about z: (0, 0, sin 45°, cos 45°). The camera now looks at the EPS2 wall.', 'z বরাবর ৯০°: (0, 0, sin 45°, cos 45°)। ক্যামেরা এখন তাকিয়ে আছে EPS2 দেয়ালের দিকে।'),
+    '1,0,0,0': T('180° about x: w = cos 90° = 0. The camera still looks toward the airlock end, but the top now points to the overhead.', 'x বরাবর ১৮০°: w = cos 90° = 0। ক্যামেরা এখনো এয়ারলকের দিকেই তাকিয়ে, কিন্তু ওপরের দিকটা এখন ছাদের দিকে।'),
+    '0.705928907230986,-0.689998801417597,0.12254331978784033,-0.10270913665940805': T('Checkpoint 1 from the Programming Manual: the camera looks straight at the SAIBO wall, where marker 1 is, and the top leans about 18° away from the overhead. That lean is the roll the judge checks.', 'প্রোগ্রামিং ম্যানুয়ালের চেকপয়েন্ট ১: ক্যামেরা সোজা তাকিয়ে আছে SAIBO দেয়ালের দিকে, যেখানে মার্কার ১ আছে, আর ওপরের দিকটা ছাদ থেকে প্রায় ১৮° হেলে আছে। এই হেলে থাকাটাই সেই রোল, যেটা বিচারক যাচাই করে।')
+  };
+  function scrollToSim() { var r = stage.getBoundingClientRect(); if (r.top < 0 || r.bottom > innerHeight) stage.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
+  function runDemo(d) {
+    var I = [0, 0, 0, 1];
+    if (d === 'body') {
+      setQ(fromEuler(0, 0, 50), 'demo');
+      sequence([[qmul(q, qaxis([1, 0, 0], 60)), 900, T('Roll: a turn about the robot\'s own X, its line of sight. The camera keeps pointing the same way; the picture turns.', 'রোল: রোবটের নিজের X, মানে তার দৃষ্টিরেখা বরাবর ঘোরা। ক্যামেরা একই দিকে তাকিয়ে থাকে; শুধু ছবিটা ঘুরে যায়।')],
+        [qmul(qmul(q, qaxis([1, 0, 0], 60)), qaxis([0, 1, 0], -40)), 900, T('Then a turn about its own Y: the camera tips up, whichever way the robot faces.', 'তারপর তার নিজের Y বরাবর ঘোরা: রোবট যেদিকেই মুখ করে থাকুক, ক্যামেরা ওপরের দিকে হেলে যায়।')]]);
+    }
+    if (d === 'orderA') {
+      setQ(I, 'demo'); var a1 = qaxis([0, 0, 1], 90);
+      sequence([[a1, 900, T('Yaw 90° about the robot\'s Z: the camera turns to the EPS2 wall.', 'রোবটের Z বরাবর ৯০° ইয়: ক্যামেরা ঘুরে যায় EPS2 দেয়ালের দিকে।')],
+        [qmul(a1, qaxis([0, 1, 0], 90)), 900, T('…then pitch 90° about its own Y: the camera ends up pointing at the overhead.', '…তারপর তার নিজের Y বরাবর ৯০° পিচ: শেষে ক্যামেরা তাক করা থাকে ছাদের দিকে।')]]);
+    }
+    if (d === 'orderB') {
+      setQ(I, 'demo'); var b1 = qaxis([0, 1, 0], 90);
+      sequence([[b1, 900, T('Pitch 90° about the robot\'s Y: the camera turns to the overhead.', 'রোবটের Y বরাবর ৯০° পিচ: ক্যামেরা ঘুরে যায় ছাদের দিকে।')],
+        [qmul(b1, qaxis([0, 0, 1], 90)), 900, T('…then yaw 90° about its own Z: the camera ends up pointing at the EPS2 wall. Same turns, different order, different pose.', '…তারপর তার নিজের Z বরাবর ৯০° ইয়: শেষে ক্যামেরা তাক করা থাকে EPS2 দেয়ালের দিকে। একই ঘোরা, ভিন্ন ক্রম, ভিন্ন পোজ।')]]);
+    }
+    if (d === 'gimbal') {
+      if (anim) anim.stop();
+      msg.textContent = T('Pitch goes to 90°: the camera points at the overhead.', 'পিচ যায় ৯০°-এ: ক্যামেরা তাক করে ছাদের দিকে।');
+      eulerSweep(euler.slice(), [0, 90, 0], 900).then(function () {
+        msg.textContent = T('Now roll moves 0 → 60°…', 'এবার রোল ০ থেকে ৬০°-এ যায়…'); return eulerSweep([0, 90, 0], [60, 90, 0], 1100);
+      }).then(function () {
+        msg.textContent = T('…and yaw moves 0 → 60° with roll back at 0. Roll and yaw spin the robot about the same line: that\'s gimbal lock. Quaternions never have this problem.', '…আর রোল ০-তে ফিরিয়ে ইয় যায় ০ থেকে ৬০°-এ। রোল আর ইয় রোবটকে একই রেখা বরাবর ঘোরায়: এটাই গিম্বল লক। কোয়াটারনিয়নে এই সমস্যা কখনো হয় না।');
+        return eulerSweep([60, 90, 0], [0, 90, 60], 1400);
+      });
+    }
+  }
+
+  init3d();
+  setQ([0, 0, 0, 1], 'none');
+  done = {}; $$('[data-goal]').forEach(function (li) { li.classList.remove('done'); });
+  // Keep the current page tab in view on narrow screens.
+  var cur = document.querySelector('nav.tabs [aria-current]'); if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+})();
+</script>
+</body>
+</html>
