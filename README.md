@@ -1,5 +1,7 @@
 # Kibo-RPC sandbox
 
+**Live: https://ihashib.github.io/kibo-rpc-7-sandbox/**
+
 Practice pages for the Kibo Robot Programming Challenge (Kibo-RPC), in Bangla and English (English by default; a button switches):
 
 - **Sandbox** (`index.html`): plan a route for the robot in Kibo's module, drive it by hand, see it from the top, side, end, in 3D and through its camera, and check it against the 7th Kibo-RPC's rules.
@@ -48,7 +50,7 @@ npm run serve       # site/ at http://127.0.0.1:8080
 - `src/core/`: the maths, with no screen: routes, markers, camera, world.
 - `src/element/`: the `<kibo-nav-sandbox>` element (`robots.ts` draws the two robots).
 - `pages/`: the HTML pages. `docs/help/`: the pictures in the manual. `world.json`: the 7th Kibo-RPC world.
-- `site/` is generated: do not edit it by hand.
+- `site/` is generated: do not edit it by hand. It is committed, and GitHub Pages serves it: when a push to `main` changes it, `.github/workflows/pages.yml` publishes it to the `gh-pages` branch.
 
 ## Licence
 

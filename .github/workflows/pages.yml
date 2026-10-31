@@ -1,0 +1,17 @@
+# Publishes site/ to the gh-pages branch, which GitHub Pages serves, whenever main changes it.
+name: Publish to GitHub Pages
+on:
+  push:
+    branches: [main]
+    paths: ['site/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git push --force origin "$(git subtree split --prefix site HEAD):refs/heads/gh-pages"

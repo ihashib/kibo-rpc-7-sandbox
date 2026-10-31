@@ -20,6 +20,7 @@ cpSync(at('LICENSE'), join(out, 'LICENSE.txt'));
 cpSync(at('docs/help'), join(out, 'docs/help'), { recursive: true });
 cpSync(at('examples'), join(out, 'examples'), { recursive: true });
 cpSync(at('dist/kibo-nav-sandbox.js'), join(out, 'dist/kibo-nav-sandbox.js'));
+writeFileSync(join(out, '.nojekyll'), ''); // (GitHub Pages: serve the files as they are)
 
 // three.js r128 and OrbitControls: the versions the tool was written for.
 cpSync(at('node_modules/three/build/three.min.js'), join(out, 'vendor/three.min.js'));
