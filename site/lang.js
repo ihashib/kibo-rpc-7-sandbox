@@ -60,7 +60,7 @@
     save(l);
     // Drop a ?lang= in the address: it would win over the choice on the next load.
     var q = location.search.replace(/([?&])lang=(bn|en)(&|$)/, '$1').replace(/[?&]$/, '');
-    if (document.querySelector('kibo-nav-sandbox, iss-free-flight') || root.hasAttribute('data-lang-reload')) {
+    if (document.querySelector('kibo-nav-sandbox') || root.hasAttribute('data-lang-reload')) {
       location.replace(location.pathname + q + location.hash); // reload in the new language
       return;
     }

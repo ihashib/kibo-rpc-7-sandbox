@@ -256,8 +256,8 @@
         <ol class="parts" id="parts"></ol>
       </div>
     </div>
-    <p class="note bn">3D মডেলগুলো প্রকাশিত বর্ণনা আর ছবি দেখে বানানো সহজ নকশা, অফিশিয়াল CAD মডেল নয়; মাপগুলো মোটামুটি অনুপাতে। রঙের মানে: <span class="chip cam">ক্যামেরা</span> <span class="chip sense">সেন্সর আর মস্তিষ্ক</span> <span class="chip move">চলাফেরা আর শক্তি</span> <span class="chip body">বডি আর মানুষের সঙ্গে যোগাযোগ</span></p>
-    <p class="note en" lang="en">The 3D models are simplified sketches built from the published descriptions and diagrams, not official CAD models; sizes are only roughly to scale. Colours: <span class="chip cam">camera</span> <span class="chip sense">sensing &amp; brain</span> <span class="chip move">moving &amp; power</span> <span class="chip body">body &amp; people</span></p>
+    <p class="note bn">3D মডেলগুলো আমাদের নিজেদের সহজ নকশা, আসল রোবটের চেহারা নয়: প্রকাশিত বর্ণনা আর ছবি দেখে আসল রোবটের কোন অংশ কোথায় থাকে তা দেখানো হয়েছে; মাপগুলো মোটামুটি অনুপাতে। রঙের মানে: <span class="chip cam">ক্যামেরা</span> <span class="chip sense">সেন্সর আর মস্তিষ্ক</span> <span class="chip move">চলাফেরা আর শক্তি</span> <span class="chip body">বডি আর মানুষের সঙ্গে যোগাযোগ</span></p>
+    <p class="note en" lang="en">The 3D models are our own simplified designs, not what the real robots look like: they show where each part of the real robot goes (from the published descriptions and diagrams), and sizes are only roughly to scale. Colours: <span class="chip cam">camera</span> <span class="chip sense">sensing &amp; brain</span> <span class="chip move">moving &amp; power</span> <span class="chip body">body &amp; people</span></p>
   </section>
 <div class="bn">
 
@@ -793,26 +793,26 @@
   // Parts: pos = where the number sits (model units), n = which way that spot faces, inside = no facing check.
   // Int-Ball2's, in the page's language, come from the shared bundle.
   var NS = window.KiboNavSandbox;
-  // Int-Ball2: radius 1 = about 10 cm. Astrobee: half-width 1 = 16 cm. Front is +z, up is +y, the robot's left is +x.
+  // The ball: radius 1 = about 10 cm. The pod: 2 wide. Front is +z, up is +y, the robot's left is +x.
   var ROBOTS = {
     ib2: {
       name: 'Int-Ball2', dist: 4.7,
       parts: NS ? NS.ballParts() : [] // from dist/kibo-nav-sandbox.js
     },
     ab: {
-      name: 'Astrobee', dist: 6.5,
+      name: 'Astrobee', dist: 7.6,
       parts: [
-        { id: 'navcam', kind: 'cam', name: 'NavCam', pos: [-0.32, 0.48, 0.95], n: [0, 0, 1], text: 'A wide-angle camera that spots features of the ISS and matches them to a map, so Astrobee knows where it is.' },
-        { id: 'scicam', kind: 'cam', name: 'SciCam', pos: [0, 0.48, 0.95], n: [0, 0, 1], text: 'An HD colour camera with autofocus, for live video to the ground.' },
-        { id: 'hazcam', kind: 'cam', name: 'HazCam', pos: [0.32, 0.48, 0.95], n: [0, 0, 1], text: 'A depth camera (time of flight): instead of colours it measures how far away things are, to avoid obstacles.' },
-        { id: 'speedcam', kind: 'sense', name: 'SpeedCam', pos: [0.3, -0.05, 0.95], n: [0, 0, 1], text: 'Measures how fast Astrobee moves: a small optical-flow camera with a laser distance sensor and its own processor (a modified PX4FLOW).' },
-        { id: 'people', kind: 'body', name: 'Screen, lights, laser', pos: [-0.12, -0.42, 0.95], n: [0, 0, 1], text: 'A touch screen, speaker and microphone, signal lights, a laser pointer and a flashlight, so astronauts can see what it is doing and it can point things out.' },
-        { id: 'prop', kind: 'move', name: 'Fan modules and nozzles', pos: [1.02, 0, 0], n: [1, 0, 0], text: 'Two side modules, each with a fan (impeller) that fills it with air. Twelve adjustable nozzles let the air out to push and turn it any way: at least 0.6 N forward and 0.3 N sideways.' },
-        { id: 'dockcam', kind: 'cam', name: 'DockCam', pos: [-0.3, 0.45, -0.95], n: [0, 0, -1], text: 'Looks backwards and finds the AR markers on the dock, so Astrobee can back in and recharge by itself.' },
-        { id: 'perchcam', kind: 'cam', name: 'PerchCam', pos: [0.3, 0.45, -0.95], n: [0, 0, -1], text: 'A second depth camera, facing back. It finds ISS handrails for the arm to grab.' },
-        { id: 'arm', kind: 'move', name: 'Perching arm', pos: [0, -0.62, -1.02], n: [0, -0.3, -1], text: 'A two-joint arm with a gripper. It grabs a handrail so Astrobee can hold still and save power, and it can tilt and turn the robot like a camera mount.' },
-        { id: 'bump', kind: 'body', name: 'Corner bumpers', pos: [0.97, 0.97, 0.97], n: [1, 1, 1], text: 'Soft bumpers protect the robot and the station. With them, Astrobee fits in a 32 cm cube.' },
-        { id: 'bays', kind: 'body', name: 'Payload bays', pos: [0, 0.97, 0.35], n: [0, 1, 0.25], text: 'Three bays give experiment hardware power and data.' },
+        { id: 'navcam', kind: 'cam', name: 'NavCam', pos: [-0.38, 0.2, 1.22], n: [-0.45, 0.42, 0.78], text: 'A wide-angle camera that spots features of the ISS and matches them to a map, so Astrobee knows where it is.' },
+        { id: 'scicam', kind: 'cam', name: 'SciCam', pos: [0, 0.2, 1.33], n: [0, 0.45, 0.9], text: 'An HD colour camera with autofocus, for live video to the ground.' },
+        { id: 'hazcam', kind: 'cam', name: 'HazCam', pos: [0.38, 0.2, 1.22], n: [0.45, 0.42, 0.78], text: 'A depth camera (time of flight): instead of colours it measures how far away things are, to avoid obstacles.' },
+        { id: 'speedcam', kind: 'sense', name: 'SpeedCam', pos: [0.5, -0.15, 1.16], n: [0.59, -0.32, 0.74], text: 'Measures how fast Astrobee moves: a small optical-flow camera with a laser distance sensor and its own processor (a modified PX4FLOW).' },
+        { id: 'people', kind: 'body', name: 'Screen, lights, laser', pos: [-0.12, -0.32, 1.24], n: [-0.14, -0.64, 0.75], text: 'A touch screen, speaker and microphone, signal lights, a laser pointer and a flashlight, so astronauts can see what it is doing and it can point things out.' },
+        { id: 'prop', kind: 'move', name: 'Fan modules and nozzles', pos: [1.3, 0.15, 0.6], n: [0.5, 0.1, 1], text: 'Two side modules, each with a fan (impeller) that fills it with air. Twelve adjustable nozzles let the air out to push and turn it any way: at least 0.6 N forward and 0.3 N sideways.' },
+        { id: 'dockcam', kind: 'cam', name: 'DockCam', pos: [-0.3, 0.2, -1.26], n: [-0.36, 0.43, -0.82], text: 'Looks backwards and finds the AR markers on the dock, so Astrobee can back in and recharge by itself.' },
+        { id: 'perchcam', kind: 'cam', name: 'PerchCam', pos: [0.3, 0.2, -1.26], n: [0.36, 0.43, -0.82], text: 'A second depth camera, facing back. It finds ISS handrails for the arm to grab.' },
+        { id: 'arm', kind: 'move', name: 'Perching arm', pos: [0, -0.8, -0.85], n: [0, -1, -0.3], text: 'A two-joint arm with a gripper. It grabs a handrail so Astrobee can hold still and save power, and it can tilt and turn the robot like a camera mount.' },
+        { id: 'bump', kind: 'body', name: 'Corner bumpers', pos: [1.3, 0, -0.68], n: [0.5, 0, -1], text: 'Soft bumpers protect the robot and the station. With them, Astrobee fits in a 32 cm cube.' },
+        { id: 'bays', kind: 'body', name: 'Payload bays', pos: [0, 0.78, 0], n: [0, 1, 0.1], text: 'Three bays give experiment hardware power and data.' },
         { id: 'inside', kind: 'sense', name: 'Inside: computers, IMU, batteries', pos: [0, 0, 0], n: [0.2, 0.45, 1], inside: true, text: 'Three processors (LLP, MLP and HLP; the HLP runs Android for guest-science apps), an IMU, and up to four batteries for about two hours of flying.' }
       ]
     }
@@ -867,7 +867,7 @@
 
   // The cube's model, from the same file.
   function buildAb() {
-    var m = window.KiboNavSandbox.buildCube(THREE);
+    var m = window.KiboNavSandbox.buildPod(THREE);
     shells.push.apply(shells, m.shells);
     spinners.push.apply(spinners, m.spinners);
     return m.group;
