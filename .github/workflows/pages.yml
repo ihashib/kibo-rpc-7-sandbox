@@ -14,4 +14,5 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - run: test -s site/dist/kibo-nav-sandbox.js # (the pages are nothing without it)
       - run: git push --force origin "$(git subtree split --prefix site HEAD):refs/heads/gh-pages"
