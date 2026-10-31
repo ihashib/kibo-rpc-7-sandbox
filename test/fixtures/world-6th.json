@@ -1,0 +1,231 @@
+{
+  "name": "6th Kibo-RPC layout (approximate)",
+  "robot": {
+    "name": "Astrobee",
+    "size": 0.32
+  },
+  "settings": {
+    "clearance": 0.05,
+    "standoff": 0.7,
+    "speed": 0.1,
+    "turnRate": 30,
+    "gridRes": 0.05,
+    "snap": 0.01,
+    "aimTolerance": 10,
+    "rangeTolerance": 0.25,
+    "poseTolerance": 0.1
+  },
+  "kiz": [
+    {
+      "name": "KIZ 1",
+      "min": [
+        10.3,
+        -10.2,
+        4.32
+      ],
+      "max": [
+        11.55,
+        -6,
+        5.57
+      ]
+    },
+    {
+      "name": "KIZ 2",
+      "min": [
+        9.5,
+        -10.5,
+        4.02
+      ],
+      "max": [
+        10.5,
+        -9.6,
+        4.8
+      ]
+    }
+  ],
+  "koz": [],
+  "oasis": [
+    {
+      "name": "Oasis 1",
+      "min": [
+        10.425,
+        -10.2,
+        4.445
+      ],
+      "max": [
+        11.425,
+        -9.5,
+        4.945
+      ]
+    },
+    {
+      "name": "Oasis 2",
+      "min": [
+        10.925,
+        -9.5,
+        4.945
+      ],
+      "max": [
+        11.425,
+        -8.45,
+        5.445
+      ]
+    },
+    {
+      "name": "Oasis 3",
+      "min": [
+        10.425,
+        -8.45,
+        4.945
+      ],
+      "max": [
+        10.975,
+        -7.4,
+        5.445
+      ]
+    },
+    {
+      "name": "Oasis 4",
+      "min": [
+        10.925,
+        -7.4,
+        4.425
+      ],
+      "max": [
+        11.425,
+        -6.35,
+        4.945
+      ]
+    }
+  ],
+  "targets": [
+    {
+      "id": "area1",
+      "name": "Area 1",
+      "min": [
+        10.42,
+        -10.58,
+        4.82
+      ],
+      "max": [
+        11.48,
+        -10.58,
+        5.57
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "area2",
+      "name": "Area 2",
+      "min": [
+        10.3,
+        -9.25,
+        3.76203
+      ],
+      "max": [
+        11.55,
+        -8.5,
+        3.76203
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "area3",
+      "name": "Area 3",
+      "min": [
+        10.3,
+        -8.4,
+        3.76093
+      ],
+      "max": [
+        11.55,
+        -7.45,
+        3.76093
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "area4",
+      "name": "Area 4",
+      "min": [
+        9.866984,
+        -7.34,
+        4.32
+      ],
+      "max": [
+        9.866984,
+        -6.365,
+        5.57
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "start": {
+    "name": "Dock",
+    "pos": [
+      9.815,
+      -9.806,
+      4.293
+    ],
+    "q": [
+      1,
+      0,
+      0,
+      0
+    ]
+  },
+  "poses": [
+    {
+      "id": "astronaut",
+      "name": "Astronaut report",
+      "pos": [
+        11.143,
+        -6.7607,
+        4.9654
+      ],
+      "q": [
+        0,
+        0,
+        0.707,
+        0.707
+      ]
+    }
+  ],
+  "mission": [
+    "area1",
+    "area2",
+    "area3",
+    "area4",
+    "astronaut"
+  ],
+  "export": {
+    "prefix": "//",
+    "header": "// Kibo Nav Sandbox route for: {world} (inspired by Kibo-RPC)\n// Paste inside runPlan1(). Check every value in the official simulator.\n// Needs: import gov.nasa.arc.astrobee.types.Point;\n//        import gov.nasa.arc.astrobee.types.Quaternion;",
+    "comment": "// {i}. {name}",
+    "line": "api.moveTo(new Point({x}d, {y}d, {z}d), new Quaternion({qx}f, {qy}f, {qz}f, {qw}f), false);",
+    "footer": ""
+  },
+  "exportPython": {
+    "prefix": "#",
+    "header": "# Kibo Nav Sandbox route for: {world} (inspired by Kibo-RPC)\n# Not an official Kibo-RPC API: Kibo-RPC robot programs are written in Java.\n# Runs as-is with Python 3 and prints each move. Replace move_to() to drive your own simulator.\nfrom collections import namedtuple\n\nPoint = namedtuple(\"Point\", \"x y z\")\nQuaternion = namedtuple(\"Quaternion\", \"x y z w\")  # [x, y, z, w], camera looks along body +X\n\n\ndef move_to(point, quaternion):\n    print(\"move_to\", tuple(point), tuple(quaternion))\n",
+    "comment": "# {i}. {name}",
+    "line": "move_to(Point({x}, {y}, {z}), Quaternion({qx}, {qy}, {qz}, {qw}))",
+    "footer": ""
+  }
+}

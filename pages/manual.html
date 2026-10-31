@@ -1,0 +1,537 @@
+<!doctype html>
+<!-- KIBO RPC 7 Nav Sandbox by ihashib · https://ihashib.github.io -->
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KIBO RPC 7 Nav Sandbox: ব্যবহারবিধি</title>
+  <meta name="title-en" content="How to use the KIBO RPC 7 Nav Sandbox">
+  <meta name="description" content="KIBO RPC 7 Nav Sandbox কীভাবে ব্যবহার করবে: ভিউ, মিশন আর স্কোর, রোবট চালানো, রোবটের ক্যামেরা, ওয়েপয়েন্ট আর কোড।">
+  <link rel="stylesheet" href="vendor/fonts.css">
+  <script src="lang.js"></script>
+  <style>
+    /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
+    html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
+    html[data-lang="bn"] body { line-height: 1.75; }
+    html[data-lang="bn"] .bn ol:not(.flow):not(.steps):not(.goals) { list-style-type: bengali; }
+    html[data-lang="bn"] .bn ol.flow > li::before { content: counter(step, bengali); }
+    html[data-lang="bn"] .bn h2.part { letter-spacing: 0; text-transform: none; font-size: 14px; }
+    nav.tabs .langsw { flex: none; margin-left: auto; align-self: center; padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; color: var(--fg); font-size: 13.5px; font-weight: 600; }
+    nav.tabs .langsw:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 480px) { nav.tabs .langsw { flex: none; min-height: 32px; padding: 0 9px; margin: 0 0 0 4px; border-radius: 999px; font-size: 12.5px; } }
+    /* Phones and tablets: the language button sits above the tabs, top right, so the six tabs keep the row. */
+    @media (max-width: 860px) { main { position: relative; } nav.tabs .langsw { position: absolute; top: 1px; right: 16px; margin: 0; min-height: 0; padding: 1px 10px; font-size: 12.5px; line-height: 1.5; } }
+    @media (max-width: 380px) { html[data-lang="en"] nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    :root { color-scheme: dark; --bg: #0d1016; --fg: #e6e9f0; --muted: #9aa3b5; --border: #2c3342; --code: #161a23; --accent: #86a2ff; --kbd: #1c2130; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+    h1 { font-size: 28px; margin: 0 0 4px; }
+    h2 { font-size: 20px; margin: 36px 0 8px; padding-top: 4px; }
+    h3 { font-size: 16px; margin: 20px 0 6px; }
+    p.lead { color: var(--muted); margin: 0 0 18px; }
+    ol, ul { padding-left: 22px; }
+    li { margin: 4px 0; }
+    code { font-family: ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; font-size: 0.92em; }
+    kbd { font: 600 0.85em ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; background: var(--kbd); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; padding: 0 5px; white-space: nowrap; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 15px; }
+    th, td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    .wrap { overflow-x: auto; }
+    nav.toc { border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; margin: 0 0 8px; }
+    nav.toc ol { margin: 4px 0; columns: 2 220px; }
+    nav.tabs { display: flex; gap: 2px; margin: 0 0 18px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+    nav.tabs a { flex: none; padding: 8px 14px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; font-size: 15px; text-decoration: none; white-space: nowrap; }
+    nav.tabs a:hover { color: var(--fg); }
+    nav.tabs a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
+    nav.tabs a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    nav.tabs a:active { color: var(--fg); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    /* Phones: the tabs share the row and are full-height touch targets (44px). */
+    @media (max-width: 480px) { nav.tabs { gap: 0; } nav.tabs a { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; box-sizing: border-box; padding: 0 6px; font-size: 14px; border-radius: 8px 8px 0 0; } }
+    @media (max-width: 400px) { nav.tabs a { padding: 0 3px; font-size: 13px; min-width: 44px; flex-shrink: 0; } }
+    @media (max-width: 340px) { nav.tabs { margin-left: -8px; margin-right: -8px; } nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    /* Phones and tablets: shorter tab names so all six fit (the full name stays as the link's accessible name). */
+    nav.tabs .ts { display: none; }
+    @media (max-width: 860px) { nav.tabs .tl { display: none; } nav.tabs .ts { display: inline; } }
+    .note { color: var(--muted); font-size: 15px; }
+    footer { margin-top: 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+    a { color: var(--accent); }
+    /* Learning helpers (the four learning pages): the path through them, what to read first, new words, things to
+       try, quick self-checks and the deeper detail for older students. */
+    .path { display: flex; flex-wrap: wrap; gap: 6px 4px; align-items: center; margin: 6px 0 20px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--soft, #141924); font-size: 14px; }
+    .path > b { flex: 1 0 100%; color: var(--muted); font-size: 13px; font-weight: 600; }
+    .path a, .path .here { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px; border: 1px solid var(--border); color: var(--fg); text-decoration: none; }
+    .path a:hover { border-color: var(--accent); }
+    .path .here { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); font-weight: 700; }
+    .path i { font-style: normal; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--fg); font-size: 12px; font-weight: 700; }
+    .path .here i { background: var(--accent); color: var(--bg); }
+    .path .arr { color: var(--muted); }
+    /* The page's intro, learning path and contents sit folded in a bar under the title, so the page opens on its content. */
+    details.intro { margin: 10px 0 18px; }
+    details.intro + details.intro { margin-top: -10px; }
+    details.intro > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; min-height: 44px; box-sizing: border-box; padding: 6px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--soft, #141924); cursor: pointer; list-style: none; font-weight: 700; }
+    details.intro > summary::-webkit-details-marker { display: none; }
+    details.intro > summary::before { content: '\25B8'; color: var(--muted); }
+    details.intro[open] > summary::before { content: '\25BE'; }
+    details.intro > summary:hover { border-color: var(--accent); }
+    details.intro > summary small { color: var(--muted); font-size: 13px; font-weight: 400; }
+    details.intro[open] > summary { margin-bottom: 14px; }
+    .need, .word, .try, .check { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin: 14px 0; background: var(--soft, #141924); }
+    .need { border-left: 4px solid var(--warn, #f0b54a); }
+    .word { border-left: 4px solid var(--accent); }
+    .try { border-left: 4px solid var(--ok, #3ccf9f); }
+    .check { border-left: 4px solid #f07ad8; }
+    .need > :last-child, .word > :last-child, .try > :last-child, .check > :last-child { margin-bottom: 0; }
+    .tag { display: block; font-size: 12.5px; font-weight: 700; margin: 0 0 4px; }
+    .need .tag { color: var(--warn, #f0b54a); } .word .tag { color: var(--accent); } .try .tag { color: var(--ok, #3ccf9f); } .check .tag { color: #f07ad8; }
+    .word dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; }
+    .word dt { font-weight: 700; } .word dd { margin: 0; }
+    .check details { border-top: 1px dashed var(--border); padding: 6px 0; }
+    .check details:first-of-type { border-top: 0; }
+    .check summary { cursor: pointer; font-weight: 600; }
+    .check summary::marker { color: #f07ad8; }
+    .check details[open] summary { color: #f07ad8; }
+    .check details > p { margin: 6px 0 2px; }
+    details.deeper { border: 1px dashed var(--border); border-radius: 10px; padding: 8px 14px; margin: 14px 0; }
+    details.deeper > summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+    details.deeper[open] > summary { margin-bottom: 6px; color: var(--fg); }
+    .steps { counter-reset: s; list-style: none; padding: 0; }
+    .steps > li { counter-increment: s; position: relative; padding-left: 34px; margin: 8px 0; }
+    .steps > li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--bg); font: 700 13px/24px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; }
+    html[data-lang="bn"] .bn .steps > li::before { content: counter(s, bengali); }
+    nav.mini { border: 1px solid var(--border); border-radius: 10px; padding: 8px 16px; margin: 0 0 8px; }
+    nav.mini ol { margin: 4px 0; columns: 2 230px; }
+    dl.words { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+    dl.words dt { font-weight: 700; } dl.words dd { margin: 0; }
+    figure.wide { max-width: 640px; margin: 12px auto; }
+    @media (max-width: 560px) { dl.words, .word dl { grid-template-columns: 1fr; gap: 0; } dl.words dd, .word dd { margin-bottom: 8px; } }
+    svg .ff { fill: var(--fg); } svg .fa { fill: var(--accent); } svg .fm { fill: var(--muted); }
+    svg .sa { stroke: var(--accent); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    svg .sm { stroke: var(--muted); fill: none; stroke-width: 1.2; stroke-linecap: round; }
+    svg .dsh { stroke-dasharray: 5 4; }
+    .lesson { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; align-items: start; }
+    .lesson figure, figure.wide { margin: 0; border: 1px dashed var(--border); border-radius: 12px; padding: 10px; background: var(--soft, #141924); }
+    figure.wide { margin: 12px auto; }
+    .lesson figure svg, figure.wide svg { width: 100%; height: auto; display: block; max-width: none; margin: 0; }
+    .lesson figure figcaption, figure.wide figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    @media (max-width: 820px) { .lesson { grid-template-columns: 1fr; } .lesson figure { max-width: 360px; } }
+    svg .ball { fill: var(--bg); stroke: var(--fg); stroke-width: 1.6; }
+    figure.shot { margin: 12px 0; }
+    .shotbox { position: relative; }
+    .shotbox img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; }
+    .pin { position: absolute; transform: translate(-50%, -50%); width: 24px; height: 24px; border-radius: 50%; background: #f0b54a; color: #111; font: 700 13px/24px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; box-shadow: 0 0 0 2px #111, 0 2px 6px rgba(0, 0, 0, .6); pointer-events: none; }
+    figure.shot figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    ol.steps.pins { columns: 2 320px; column-gap: 24px; }
+    ol.steps.pins > li { break-inside: avoid; }
+    ol.steps.pins > li::before { background: #f0b54a; color: #111; }
+    @media (max-width: 560px) { .pin { width: 18px; height: 18px; font-size: 10.5px; line-height: 18px; } }
+  </style>
+</head>
+<body>
+<main>
+  <nav class="tabs" aria-label="পাতাগুলো" data-aria-bn="পাতাগুলো" data-aria-en="Pages"><a href="index.html"><span class="bn">স্যান্ডবক্স</span><span class="en">Sandbox</span></a><a href="robots.html" aria-label="রোবটগুলো" data-aria-bn="রোবটগুলো" data-aria-en="The robots"><span class="tl"><span class="bn">রোবটগুলো</span><span class="en">The robots</span></span><span class="ts"><span class="bn">রোবট</span><span class="en">Robots</span></span></a><a href="rotations.html" aria-label="স্থানাঙ্ক ও ঘূর্ণন" data-aria-bn="স্থানাঙ্ক ও ঘূর্ণন" data-aria-en="Coordinates and rotations"><span class="tl"><span class="bn">স্থানাঙ্ক ও ঘূর্ণন</span><span class="en">Coordinates &amp; rotations</span></span><span class="ts"><span class="bn">ঘূর্ণন</span><span class="en">Rotations</span></span></a><a href="learn.html" aria-label="নিয়মের গাইড" data-aria-bn="নিয়মের গাইড" data-aria-en="Rules guide"><span class="tl"><span class="bn">নিয়মের গাইড</span><span class="en">Rules guide</span></span><span class="ts"><span class="bn">নিয়ম</span><span class="en">Rules</span></span></a><a href="manual.html" aria-current="page" aria-label="ব্যবহারবিধি" data-aria-bn="ব্যবহারবিধি" data-aria-en="How to use"><span class="tl"><span class="bn">ব্যবহারবিধি</span><span class="en">How to use</span></span><span class="ts"><span class="bn">সাহায্য</span><span class="en">Help</span></span></a><a class="langsw bn" href="?lang=en" data-setlang="en" lang="en" title="Read this site in English"><span class="tl">English</span><span class="ts">EN</span></a><a class="langsw en" href="?lang=bn" data-setlang="bn" lang="bn" title="সাইটটি বাংলায় পড়ো"><span class="tl">বাংলা</span><span class="ts">বাং</span></a></nav>
+<div class="bn">
+  <h1>স্যান্ডবক্স যেভাবে ব্যবহার করবে</h1>
+  <details class="intro">
+    <summary>এই পাতা সম্পর্কে<small>শেখার পথ · নতুন শব্দ · সূচিপত্র</small></summary>
+    <p class="lead">স্যান্ডবক্সে ৭ম Kibo-RPC (Int-Ball2) মিশন কীভাবে সাজাবে আর ওড়াবে: প্রথমবার চারপাশটা দেখা থেকে শুরু করে সিমুলেটরের জন্য কোড কপি করা পর্যন্ত। স্যান্ডবক্স তোমাকে ঠিক দিকে এগিয়ে দেবে; শেষ কথা বলবে অফিশিয়াল সিমুলেটর।</p>
+
+    <nav class="path" aria-label="শেখার পথ"><b>শেখার পথ: ধাপে ধাপে এগোও</b><a href="robots.html"><i>১</i>রোবটকে চেনো</a><span class="arr">→</span><a href="rotations.html"><i>২</i>কোথায় আর কোন দিকে</a><span class="arr">→</span><a href="learn.html"><i>৩</i>খেলার নিয়ম</a><span class="arr">→</span><span class="here" aria-current="step"><i>৪</i>স্যান্ডবক্স চালানো</span><span class="arr">→</span><a href="index.html"><i>৫</i>অনুশীলন</a></nav>
+    <div class="need"><span class="tag">আগে যা জানা দরকার</span>কিছু না জানলেও স্যান্ডবক্স খুলে খেলতে পারো। তবে সবকিছু বুঝতে হলে আগে পড়ে নাও: <a href="robots.html">রোবটের পাতা</a>, <a href="rotations.html">স্থানাঙ্ক ও ঘূর্ণনের</a> ১ থেকে ৬ নম্বর পাঠ, আর <a href="learn.html">নিয়মের গাইডের</a> ১ থেকে ৫ নম্বর অংশ।</div>
+    <div class="word"><span class="tag">নতুন শব্দ</span><dl>
+      <dt>স্যান্ডবক্স</dt><dd>খেলার মাঠের বালির বাক্সের মতো একটা জায়গা, যেখানে ভয় ছাড়া যা খুশি চেষ্টা করা যায়। এখানে মানে এই সাইটের অনুশীলনের টুলটা।</dd>
+      <dt>ওয়েপয়েন্ট</dt><dd>রুটের একেকটা থামার জায়গা, বাসের স্টপেজের মতো। রোবট একটার পর একটা ওয়েপয়েন্টে যায়।</dd>
+      <dt>রুট</dt><dd>ওয়েপয়েন্টগুলো পরপর সাজালে যে পথ হয়।</dd>
+      <dt>কিপ-ইন জোন</dt><dd>যে জায়গার ভেতরে রোবটকে থাকতেই হবে (সবুজ বাক্স)।</dd>
+      <dt>কিপ-আউট জোন</dt><dd>যেখানে রোবট ঢুকতে পারবে না (লাল বাক্স)।</dd>
+      <dt>পোজ</dt><dd>অবস্থান আর দিক একসঙ্গে: রোবট কোথায়, আর কোন দিকে মুখ করে।</dd>
+    </dl></div>
+
+    <nav class="toc" aria-label="সূচি">
+      <p style="margin:2px 0 4px 6px"><a href="#screen">শুরুর আগে: স্ক্রিনের কোন অংশ কী</a></p>
+      <ol>
+        <li><a href="#start">শুরু করা</a></li>
+        <li><a href="#views">ভিউগুলো</a></li>
+        <li><a href="#mission">মিশন আর স্কোর</a></li>
+        <li><a href="#waypoints">ওয়েপয়েন্ট</a></li>
+        <li><a href="#drive">রোবট চালানো</a></li>
+        <li><a href="#camera">রোবটের ক্যামেরা আর AR মার্কার</a></li>
+        <li><a href="#play">রুট চালানো আর যাচাই</a></li>
+        <li><a href="#practice">অনুশীলন</a></li>
+        <li><a href="#code">কোড কপি করা</a></li>
+        <li><a href="#saves">সেভ আর অগ্রগতি</a></li>
+        <li><a href="#phone">ফোন আর ফুল স্ক্রিন</a></li>
+      </ol>
+    </nav>
+  </details>
+
+  <h2 id="screen">শুরুর আগে: স্ক্রিনের কোন অংশ কী</h2>
+  <p>স্যান্ডবক্স খুললে প্রথমে এরকম দেখাবে। নম্বরগুলো মিলিয়ে নিচের তালিকা পড়ো।</p>
+  <figure class="shot">
+    <div class="shotbox"><img src="docs/help/sandbox-bn.jpg" width="1068" height="848" loading="lazy" alt="স্যান্ডবক্সের স্ক্রিন: ওপরে বোতামের সারি, বাঁয়ে রোবটের ক্যামেরা, ডানে 3D ভিউ, নিচে চালানোর কন্ট্রোল, স্ট্যাটাস বার আর মিশনের তালিকা"><span class="pin" style="left:38.0%;top:4.4%" aria-hidden="true">১</span><span class="pin" style="left:65.9%;top:4.3%" aria-hidden="true">২</span><span class="pin" style="left:71.5%;top:4.3%" aria-hidden="true">৩</span><span class="pin" style="left:44.6%;top:8.1%" aria-hidden="true">৪</span><span class="pin" style="left:22.6%;top:36.5%" aria-hidden="true">৫</span><span class="pin" style="left:72.5%;top:36.5%" aria-hidden="true">৬</span><span class="pin" style="left:1.8%;top:69.1%" aria-hidden="true">৭</span><span class="pin" style="left:1.8%;top:73.0%" aria-hidden="true">৮</span><span class="pin" style="left:98.0%;top:77.4%" aria-hidden="true">৯</span><span class="pin" style="left:50.0%;top:81.4%" aria-hidden="true">১০</span><span class="pin" style="left:2.9%;top:86.6%" aria-hidden="true">১১</span></div>
+    <figcaption>কম্পিউটারে স্যান্ডবক্স। ফোনে একই অংশগুলো ওপর-নিচে সাজানো থাকে।</figcaption>
+  </figure>
+  <ol class="steps pins"><li><b>ভিউ বোতাম</b>: কোন দৃশ্য দেখবে (সব, 3D, ওপর, পাশ, মাথা, ক্যামেরা)।</li><li><b>ড্রাইভ</b>: নিজে হাতে রোবট চালাও।</li><li><b>▶ চালাও</b>: তোমার রুট ধরে রোবট নিজে নিজে ওড়ে।</li><li><b>ওপরের লেখা</b>: রোবট কোথায়, কোন দিকে মুখ করে, আর কাছের চেকপয়েন্ট কোন লেভেলে।</li><li><b>রোবটের ক্যামেরা</b>: রোবট এখন যা দেখছে।</li><li><b>3D ভিউ</b>: পুরো Kibo, রোবট আর তোমার রুট।</li><li><b>লগ</b>: কী কী ঘটল, ছোট করে লেখা থাকে।</li><li><b>চালানোর কন্ট্রোল</b>: কিবোর্ডের কি আর বোতাম (ফোনে জয়স্টিক)।</li><li><b>স্ট্যাটাস বার</b>: রুট খোলা কি না, দূরত্ব, সময় আর আনুমানিক স্কোর।</li><li><b>ট্যাব</b>: রুট (ওয়েপয়েন্টের তালিকা), কোড আর ওয়ার্ল্ড।</li><li><b>মিশনের তালিকা</b>: প্রতিটা চেকপয়েন্টে এখনো কী বাকি।</li></ol>
+
+  <h2 id="start">১. শুরু করা</h2>
+  <ol>
+    <li><b>চারপাশটা দেখে নাও।</b> সবুজ বাক্সটা কিপ-ইন জোন: রোবটকে এর ভেতরেই থাকতে হবে। নীল চৌকোগুলো AR মার্কার, আর ছোট গোলাপি বিন্দুগুলো চেকপয়েন্ট। প্রতিটা চেকপয়েন্ট থেকে তার মার্কার পর্যন্ত একটা ড্যাশ দেওয়া রেখা আছে, আর একটা কমলা কাঠি দেখায় সেখানে রোবটের ওপরের দিকটা কোন দিকে রাখতে হবে।</li>
+    <li>রুট ট্যাবের <b>মিশনের তালিকাটা পড়ো।</b> সেখানে সব চেকপয়েন্ট আছে, সবশেষে গোল, আর প্রতিটায় এখনো কী ভুল আছে, তাও লেখা থাকে।</li>
+    <li>চার ওয়েপয়েন্টের <b>শুরুর রুট থেকে শুরু করো।</b> ওয়েপয়েন্ট ১ একটা করে দেখানো উদাহরণ, যেটা CP 1 পার হয়। পরের তিনটা কাঁচা খসড়া, ইচ্ছে করেই একটু ভুল রাখা। রোবট কীভাবে সেগুলোতে যায় আর প্রতিটা AR মার্কার পড়ে, দেখতে <b>▶ চালাও</b> চাপো; তারপর খসড়াগুলো ঠিক করো আর বাকিটা নিজে সাজাও। ⋯ মেনুর <b>শুরুর উদাহরণ রুট আনো</b> চাপলে রুটটা আবার ফিরে আসে।</li>
+  </ol>
+
+  <h3>প্রথম দশ মিনিট: ধাপে ধাপে</h3>
+  <ol class="steps">
+    <li>ওপরের <b>3D</b> বোতাম চাপো। মাউস দিয়ে টেনে (ফোনে আঙুল দিয়ে) মডিউলটা ঘুরিয়ে দেখো: সবুজ বাক্স, নীল মার্কার আর গোলাপি চেকপয়েন্টগুলো খুঁজে বের করো।</li>
+    <li><b>▶ চালাও</b> চাপো। রোবট শুরুর রুট ধরে ওড়ে; প্রতিটা ওয়েপয়েন্টে থেমে মার্কার পড়ে। লগে কী লেখা আসছে, খেয়াল করো।</li>
+    <li><b>✕ বের হও</b> চেপে ফিরে এসো। নিচের <b>মিশনের তালিকায়</b> দেখো, কোন চেকপয়েন্টে কী ভুল আছে।</li>
+    <li>মিশনের তালিকা যা বলছে, সেই অনুযায়ী একটা কাঁচা ওয়েপয়েন্ট ঠিক করো: তালিকার x, y, z ঘরে সংখ্যা একটু বদলাও, বা দিকের মেনুতে “টার্গেটের দিকে মুখ” বাছো। মিশনের তালিকায় লেভেল বদলাল কি না দেখো।</li>
+    <li>সব চেকপয়েন্ট পার হলে <b>কোড</b> ট্যাবে গিয়ে কোড কপি করো। অভিনন্দন, প্রথম রুট তৈরি!</li>
+  </ol>
+
+  <h2 id="views">২. ভিউগুলো</h2>
+  <p>ওপরের বোতামগুলো দিয়ে ভিউ বেছে নাও: <b>সব</b>, <b>3D</b>, <b>ওপর</b>, <b>পাশ</b>, <b>মাথা</b> আর <b>ক্যামেরা</b>।</p>
+  <ul>
+    <li><b>3D</b> পুরো মডিউলটা লম্বা দিকের পাশ থেকে দেখায়: বাঁয়ে ডকের দিক, ডানে এয়ারলকের দিক, ওপরে ছাদ। মাউসে টেনে ঘোরাও, আর স্ক্রল করলে পয়েন্টারের দিকে জুম হবে। টাচ স্ক্রিনে এক আঙুলে টেনে ঘোরাও, দুই আঙুলে চিমটি কেটে আঙুলের দিকে জুম করো, দুই আঙুলে টেনে সরাও, আর দুবার ট্যাপ করলে আগের মতো হয়ে যাবে। ফোন খাড়া করে ধরলে (ফুল স্ক্রিন ছাড়া) ওপরে-নিচে টানলে পাতা যথারীতি স্ক্রল হয়, আর পাশাপাশি টানলে ভিউ ঘোরে; মডিউলটাকে তার লম্বা অক্ষ (এয়ারলক থেকে ডক) বরাবর রোল করাতে 3D ভিউয়ের বাঁ কিনারের <b>⟲</b> রোল চাকাটা ওপরে-নিচে টানো। (আঙুল ওপরে-নিচে নড়লেই ফোন পাতা স্ক্রল করতে শুরু করে, তাই রোলের জন্য আলাদা চাকা।) <b>ভিউ আগের মতো</b> চাপলে সব ভিউ শুরুর অবস্থায় ফেরে: 3D-র কোণ, ওপর, পাশ আর মাথার ফ্রেম, ক্যামেরার ছবি আর ছোট ক্যামেরা জানালা।</li>
+    <li><b>ওপর</b> হলো ছাদ থেকে দেখা, <b>পাশ</b> হলো লম্বা দিকের পাশ থেকে, আর <b>মাথা</b> হলো ডকের দিক থেকে মডিউলের ভেতর বরাবর তাকানো। প্রতিটা ভিউয়ের চারপাশের লেখাগুলো দেয়ালের নাম বলে (ডকের দিক, এয়ারলকের দিক, SAIBO দেয়াল, EPS2 দেয়াল, ছাদ, মেঝে), আর কোণের ছোট তীরগুলো দেখায় x, y আর z কোন দিকে বাড়ে।</li>
+    <li><b>ক্যামেরা</b> দেখায় রোবটের ক্যামেরা কী দেখছে। <a href="#camera">৬ নম্বর অংশ</a> দেখো।</li>
+    <li>3D-তে ওপরের ডান কোণে একটা ছোট ক্যামেরা জানালা থাকে: বাছাই করা ওয়েপয়েন্ট থেকে ক্যামেরা কী দেখে, সেটা দেখায়। ⤢ চাপলে সেটা বড় হয়ে পুরো জায়গা জুড়ে বসে; ফিরতে <b>⤡ ফিরে যাও</b> চাপো।</li>
+  </ul>
+
+  <h2 id="mission">৩. মিশন আর স্কোর</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>চেকপয়েন্টের তিনটা শর্ত আর লেভেল: <a href="learn.html#checkpoint">নিয়মের গাইডের ৪ নম্বর অংশ</a>।</div>
+  <p>সব চেকপয়েন্ট পার হও, তারপর গোল চেকপয়েন্টে গিয়ে শেষ করো, সব মিলিয়ে ৫ মিনিটের মধ্যে। প্রতিটা চেকপয়েন্টের বিচার হয় তিনটা জিনিস দেখে, আর তিনটার মধ্যে যেটা সবচেয়ে কম, সেটাই তার লেভেল (Lv1 থেকে Lv3):</p>
+  <div class="wrap"><table>
+    <tr><th>যা দেখা হয়</th><th>Lv3</th><th>Lv2</th><th>Lv1</th></tr>
+    <tr><td>অবস্থান: চেকপয়েন্ট থেকে দূরত্ব</td><td>০.১ মি</td><td>০.২ মি</td><td>০.৩ মি</td></tr>
+    <tr><td>কেন্দ্রে রাখা: ক্যামেরার ছবির মাঝখান থেকে AR মার্কার কতটা সরে আছে</td><td>১০°</td><td>২০°</td><td>৩০°</td></tr>
+    <tr><td>রোল: চেকপয়েন্টের তুলনায় রোবট ক্যামেরার অক্ষ বরাবর কতটা ঘুরে আছে</td><td>১০°</td><td>২০°</td><td>৩০°</td></tr>
+  </table></div>
+  <ul>
+    <li>মিশনের তালিকার মাথায় <b>লেভেল</b> দিয়ে কঠিনতা ঠিক হয়: সহজ (৬টা চেকপয়েন্ট), মাঝারি (৮), কঠিন (১০) বা খুব কঠিন (১২)। একটা বাছলেই এলোমেলো নতুন লেআউট তৈরি হয়; <b>নতুন লেআউট</b> একই লেভেলে আরেকটা বানায়। নিচের লাইনে লেখা থাকে এই রানে কোন কোন AR মার্কারের কোনো চেকপয়েন্ট নেই: আসল খেলায় ৬ থেকে ১২টা চেকপয়েন্ট থাকে, তাই কিছু মার্কার সবসময় বাদ পড়ে। কোন লেভেলে কয়টা চেকপয়েন্ট, নিয়মে তা বলা নেই, তাই এই সংখ্যাগুলো অনুমান।</li>
+    <li>পরের লেভেলে উঠতে কী বদলাতে হবে, আর কোন রোল বোতাম (⟲ না ⟳) চাপতে হবে, মিশনের তালিকা তা বলে দেয়।</li>
+    <li>গোলকেই হতে হবে তোমার পার হওয়া শেষ চেকপয়েন্ট। ৫ মিনিটের সীমা পেরোনোর পরে পার হলে তা গোনা হয় না।</li>
+    <li>আনুমানিক স্কোর = (চেকপয়েন্টের পয়েন্ট + গোলের পয়েন্ট) × সময়ের বোনাস। এটা মোটামুটি হিসাব: সিমুলেটরের সময় আর বাধাবিঘ্ন আলাদা হয়।</li>
+  </ul>
+
+  <h2 id="waypoints">৪. ওয়েপয়েন্ট</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>x, y, z: <a href="rotations.html#xyz">স্থানাঙ্ক ও ঘূর্ণনের ২ নম্বর পাঠ</a>। দিকের সংখ্যাগুলো (কোয়াটারনিয়ন) আছে <a href="rotations.html#quaternion">৮ নম্বর পাঠে</a>; তবে না বুঝলেও চলবে: “টার্গেটের দিকে মুখ” বা ড্রাইভ ব্যবহার করলে টুল নিজেই হিসাব করে নেয়।</div>
+  <ul>
+    <li><b>যোগ করো</b> <b>+ ওয়েপয়েন্ট</b> চেপে, ওপর, পাশ বা মাথার ভিউতে ডাবল-ক্লিক (বা দুবার ট্যাপ) করে, অথবা রোবট চালিয়ে সেখানে নিয়ে গিয়ে (<a href="#drive">৫ নম্বর অংশ</a>)। <b>যাও…</b> কোনো চেকপয়েন্টের কাছে একটা কাঁচা পোজ বসায়, তুমি সেটা ঠিক করে নেবে।</li>
+    <li>ওপর, পাশ বা মাথার ভিউতে টেনে, অথবা x, y আর z লিখে ওয়েপয়েন্ট <b>সরাও</b>। পয়েন্টারের নিচের লেখায় স্থানাঙ্ক দেখা যায়, আর জায়গাটায় যাওয়া যায় কি না, তাও।</li>
+    <li>দিকের মেনু দিয়ে ওয়েপয়েন্টের <b>মুখ ঠিক করো</b>: আগের দিকই রাখো, যাওয়ার দিকে মুখ, <b>টার্গেটের দিকে মুখ</b> (একটা AR মার্কারের দিকে), অথবা নিজের কোয়াটারনিয়ন লিখে দাও। প্রতিটা ওয়েপয়েন্টের নিচে তার হেডিং, পিচ আর রোল দেখা যায়।</li>
+    <li><b>লাল পথ</b> মানে পথটা কিপ-ইন জোনের বাইরে যায় বা কোনো কিপ-আউট জোনে ঢুকে পড়ে; X চিহ্ন দেখায় ঠিক কোথায়। কারণ জানতে <b>ইঙ্গিত</b> চাপো, তারপর ওয়েপয়েন্ট সরাও বা নতুন বসাও। <b>ঘুরে যাওয়ার পথ বানাও</b> আর <b>আটকে যাওয়া পথ ঠিক করো</b> নিজেরাই মাঝপথে পয়েন্ট বসিয়ে দেয়।</li>
+    <li>ক্রম বদলাতে ↑ ↓, আর মুছতে ✕ চাপো। <b>আগের অবস্থায় ফেরো</b> (আনডু) আছে ⋯ মেনুতে, নয়তো <kbd>Ctrl</kbd>+<kbd>Z</kbd>।</li>
+  </ul>
+
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>একটা পথ লাল দেখাচ্ছে। এর মানে কী, আর কী করবে?</summary><p>পথটা কিপ-ইন জোনের বাইরে যায় বা কোনো কিপ-আউট জোনে ঢোকে। <b>ইঙ্গিত</b> চেপে কারণ দেখো, তারপর মাঝে একটা ওয়েপয়েন্ট বসাও বা <b>ঘুরে যাওয়ার পথ বানাও</b> চাপো।</p></details>
+    <details><summary>মিশনের তালিকায় একটা চেকপয়েন্ট বলছে “রোল মিলছে না”। কোন বোতাম কাজে লাগবে?</summary><p>রোলের বোতাম ⟲ বা ⟳ (কিবোর্ডে Q বা E); তালিকাই বলে দেয় কোনটা।</p></details>
+  </div>
+
+  <h2 id="drive">৫. রোবট চালানো</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>রোল, পিচ, ইয়: <a href="rotations.html#turns">স্থানাঙ্ক ও ঘূর্ণনের ৬ নম্বর পাঠ</a>। শূন্য মাধ্যাকর্ষণে কেন রোবট ভেসে চলতেই থাকে: <a href="robots.html#float">রোবটের পাতা, অংশ ২</a>।</div>
+  <p>স্যান্ডবক্স খোলে <b>ড্রাইভ</b> মোডে, তাই শুরু থেকেই হাতে রোবট চালাতে পারবে (<b>▶ চালাও</b> চাপলে ড্রাইভ থেকে বেরিয়ে যাবে, <b>ড্রাইভ</b> চাপলে আবার ফিরবে; ড্রাইভের মধ্যে <b>ড্রাইভ</b> চাপলেও ড্রাইভেই থাকবে)। আগে স্যান্ডবক্সের ভেতরে একবার ট্যাপ বা ক্লিক করো: তার আগে কিবোর্ড চাপলে পাতাই স্ক্রল হতে থাকবে। বাঁয়ে রোবটের ক্যামেরা আর ডানে 3D ভিউ দেখা যায় (ফোন খাড়া করে ধরলে ক্যামেরা ওপরে)। রোবট যেভাবেই উল্টে থাকুক, কন্ট্রোল চলে ক্যামেরার ছবি অনুযায়ী।</p>
+  <div class="wrap"><table>
+    <tr><th>যা করতে চাও</th><th>কিবোর্ড</th><th>ফোন</th></tr>
+    <tr><td>সামনে / পেছনে যাও</td><td><kbd>W</kbd> <kbd>S</kbd></td><td>বাঁ স্টিক ওপরে / নিচে</td></tr>
+    <tr><td>বাঁয়ে / ডানে সরো</td><td><kbd>A</kbd> <kbd>D</kbd></td><td>বাঁ স্টিক বাঁয়ে / ডানে</td></tr>
+    <tr><td>ছবিতে ওপরে / নিচে যাও</td><td><kbd>R</kbd> <kbd>F</kbd></td><td>▲ ▼</td></tr>
+    <tr><td>বাঁয়ে / ডানে ঘোরো</td><td><kbd>←</kbd> <kbd>→</kbd></td><td>ডান স্টিক বাঁয়ে / ডানে</td></tr>
+    <tr><td>ওপরে / নিচে তাকাও</td><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>ডান স্টিক ওপরে / নিচে</td></tr>
+    <tr><td>ছবিটা ঘড়ির কাঁটার উল্টো দিকে / দিকে রোল করো</td><td><kbd>Q</kbd> <kbd>E</kbd></td><td>⟲ ⟳</td></tr>
+    <tr><td>সূক্ষ্ম নিয়ন্ত্রণ (ধীরে)</td><td><kbd>Shift</kbd> চেপে রাখো</td><td><b>ধীরে</b></td></tr>
+    <tr><td>শূন্য মাধ্যাকর্ষণ চালু / বন্ধ</td><td><kbd>G</kbd></td><td><b>Zero-g</b> সুইচ</td></tr>
+    <tr><td>ভেসে চলা আর ঘোরা থামাও (শূন্য মাধ্যাকর্ষণে)</td><td><kbd>X</kbd></td><td><b>থামো</b></td></tr>
+    <tr><td>এখানে ওয়েপয়েন্ট বসাও</td><td><kbd>Enter</kbd></td><td><b>ওয়েপয়েন্ট বসাও</b></td></tr>
+    <tr><td>বাছাই করা ওয়েপয়েন্ট এখানে আনো</td><td><kbd>U</kbd></td><td><b>এখানে আনো</b></td></tr>
+    <tr><td>যেখান থেকে শুরু করেছিলে, সোজা হয়ে সেখানে ফেরো</td><td><kbd>H</kbd></td><td><b>শুরুতে ফেরো</b></td></tr>
+  </table></div>
+  <p><b>শূন্য মাধ্যাকর্ষণ</b> (<b>শুরুতে ফেরো</b>-র পাশের <b>Zero-g</b> সুইচ, বা <kbd>G</kbd>; প্রতিবার ড্রাইভ শুরু হলে বন্ধ থাকে) চালু করলে রোবট ঠিক স্টেশনে যেভাবে চলে, সেভাবে ওড়ে: কন্ট্রোল চাপলে থ্রাস্টার জ্বলে, আর ছেড়ে দিলেও রোবট ভেসে চলতে আর ঘুরতে থাকে। ভেসে চলার গতি খুব ধীরে কমে (মোটামুটি ২০ সেকেন্ডে অর্ধেক), তাই উল্টো দিকে থ্রাস্ট না দেওয়া, <b>থামো</b> না চাপা বা দেয়ালে না লাগা পর্যন্ত রোবট চলতেই থাকে। থ্রাস্টে গতি বাড়ে সেকেন্ডে ১ মিটার পর্যন্ত; ঘোরা সেকেন্ডে ৪০°-এর মধ্যে থাকে আর মোটামুটি ২ সেকেন্ডে থিতু হয়; উল্টো দিকে থ্রাস্ট দিলে সামনে ঠেলার চেয়ে জোরে ব্রেক হয়। সঙ্গে সঙ্গে থামাতে <b>থামো</b> (শূন্য মাধ্যাকর্ষণ চালু থাকলে সুইচের পাশে দেখা যায়) বা <kbd>X</kbd> চাপো; উল্টো দিকে থ্রাস্ট দিলেও গতি কমে। দেয়ালে ধাক্কা লাগলে সেই দিকের গতি থেমে যায়। HUD-এ ভেসে চলার গতি দেখা যায়। <b>শুরুতে ফেরো</b> চাপলে বা Zero-g বন্ধ করলে রোবট থেমে যায়।</p>
+  <ul>
+    <li>ড্রাইভ চালু থাকলে পাতার যেকোনো জায়গা থেকে কি কাজ করে, শুধু কোনো বক্সে লেখার সময় বাদে। কম্পিউটারে স্ক্রিনের কিগুলো মাউসে চেপেও ধরে রাখা যায়।</li>
+    <li>ওপরের লেখায় অবস্থান, হেডিং, পিচ আর রোল দেখা যায়; কোনো চেকপয়েন্টের কাছে গেলে অবস্থান, কেন্দ্রে রাখা আর রোলে তার লেভেলও। ক্যামেরা কী পড়ছে, তাও বলে। কম্পিউটারে এটা সবসময় দুই লাইন জায়গা নেয়, যাতে ক্যামেরার ছবি নড়ে না যায়; কোনো লাইন বেশি লম্বা হলে … দিয়ে ছেঁটে দেওয়া হয়, আর লেখার ওপর মাউস রাখলে পুরোটা দেখা যায়।</li>
+    <li>রোবট কিপ-ইন জোনের বাইরে যেতে পারে না: দেয়াল বরাবর পিছলে যায়।</li>
+    <li>ড্রাইভ সবসময় শুরু হয় ক্যামেরার ছবি সোজা রেখে। ডকে রোবট উল্টো হয়ে বসে থাকে, তাই আগে তাকে উল্টে সোজা করে নেওয়া হয়।</li>
+    <li>যে ওয়েপয়েন্টই বসাও, তার কোয়াটারনিয়ন টুল নিজেই হিসাব করে নেয়, তাই তোমাকে কখনো নিজে লিখতে হয় না।</li>
+    <li>ড্রাইভ চলে ক্যামেরা + 3D ভিউতে। ওপরের বোতাম থেকে অন্য ভিউ বাছলে ড্রাইভ থেমে থাকে; আবার চালাতে <b>⤡ আবার ড্রাইভে</b> (বা <kbd>Esc</kbd>) চাপো।</li>
+    <li>চালানোর সময় <b>☰ ওয়েপয়েন্ট</b> চাপলে ওয়েপয়েন্টের তালিকা খোলে, সংখ্যাগুলো দেখে নিতে বা বদলাতে পারবে।</li>
+  </ul>
+
+  <h2 id="camera">৬. রোবটের ক্যামেরা আর AR মার্কার</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>AR মার্কার কী: <a href="robots.html#sense">রোবটের পাতা, অংশ ৩</a>। মার্কার “মাঝখানে রাখা” কেন দরকার: <a href="learn.html#checkpoint">নিয়মের গাইডের ৪ নম্বর অংশ</a>।</div>
+  <p><b>ক্যামেরা</b> ভিউ দেখায় বাছাই করা ওয়েপয়েন্ট থেকে রোবটের ক্যামেরা কী দেখে; ড্রাইভ বা রুট চালানোর সময় দেখায় সরাসরি। AR মার্কারগুলো আসল ৪×৪ ArUco মার্কার (ID ১ থেকে ১২, ২ সেমি), তাই রোবটে OpenCV যেভাবে পড়ে, স্যান্ডবক্সও সেভাবেই পড়ে।</p>
+  <ul>
+    <li>যে মার্কার পড়া যায়, তার চারপাশে সবুজ রেখা পড়ে, সঙ্গে তার id আর অক্ষগুলো। কমলা ড্যাশ দেওয়া রেখা মানে মার্কারটা ছবিতে আছে কিন্তু পড়া যাচ্ছে না, আর প্যানেলে কারণও লেখা থাকে (বেশি দূরে, বেশি ছোট, বেশি কাত হয়ে আছে, কিছুটা ছবির বাইরে, বা পেছন দিক থেকে দেখা)।</li>
+    <li>মার্কার পড়তে রোবটকে কাছে থাকতে হয়: ক্যামেরা থেকে ১ মিটারের মধ্যে। এর চেয়ে দূরে মার্কার দেখা যায়, কিন্তু পড়া যায় না।</li>
+    <li>মাঝখান ঘিরে ড্যাশ দেওয়া বৃত্তগুলো কেন্দ্রে রাখার লেভেল: ১০° (Lv3), ২০° (Lv2) আর ৩০° (Lv1)।</li>
+    <li>ছবির নিচে থাকে: প্রতিটা মার্কারের id, দূরত্ব, কেন্দ্র থেকে কতটা সরে আছে আর কতটা ঘোরানো দেখায়, তোমার প্রোগ্রাম যে <code>tvec</code> আর <code>rvec</code> পাবে, আর <code>tvec</code> থেকে উল্টো হিসাব করে বের করা মার্কারের অবস্থান। <b>রিডিং কপি করো</b> চাপলে সবটা কপি হয়।</li>
+    <li>ক্যামেরার সংখ্যাগুলো (রেজোলিউশন আর ফোকাল লেংথ) ধরে নেওয়া। আসল রোবটে <code>/camera_main/camera_info</code> থেকে আসল মানগুলো পড়ে নিও।</li>
+  </ul>
+
+  <h2 id="play">৭. রুট চালানো আর যাচাই</h2>
+  <ul>
+    <li><b>▶ চালাও</b> আগে ছোট একটা <i>Initializing</i> লগ দেখায়, তারপর তোমার রুট ধরে রোবট ওড়ায়; <b>থামাও</b> চাপলে থেমে থাকে, আর পাশের গতির মেনুও চালানোর সময় কাজ করে। রোবট খোলা পথগুলো ধরে ওড়ে আর প্রথম আটকানো পথের আগে থেমে যায়। শেষ হলে রোবট যেখানে থেমেছে সেখানেই থাকে, যতক্ষণ না <b>✕ বের হও</b> চাপো; আরেকবার ওড়াতে চাপো <b>আবার চালাও</b>।</li>
+    <li>চলার সময় রোবটের ক্যামেরা আর 3D ভিউ দেখা যায় (ফোন খাড়া করে ধরলে ক্যামেরা ওপরে)। প্রতিটা ওয়েপয়েন্টে রোবট একটু থেমে AR মার্কারগুলো পড়ে। ক্যামেরা বড় করে দেখতে <b>⤢ বড় করো</b> চাপো।</li>
+    <li><b>লগ</b> (ভিউগুলোর মাঝে বা নিচে ছোট কালো প্যানেলটা) সব ঘটনা লিখে রাখে: রোবট কোন ওয়েপয়েন্টের দিকে যাচ্ছে, সেখানে ক্যামেরা কী পড়ল (<code>[AR] ID 4 · 0.71 মি · কেন্দ্র থেকে 0° সরে</code>), চেকপয়েন্ট পার হলো কি না, আর শেষে ফলাফল। ড্রাইভের সময় এতে থাকে কোন মার্কার চোখে পড়ল বা হারিয়ে গেল, চেকপয়েন্টের লেভেল, আর তুমি কোন কোন ওয়েপয়েন্ট বসালে। ▾ চাপলে শুধু শেষ লাইনটা থাকে, ▴ চাপলে আবার খোলে; ফোনে ফুল স্ক্রিনে এটা গুটানো অবস্থায় শুরু হয়।</li>
+    <li>রুট চালানো শুরু হয় 2× গতিতে। আরও ধীরে দেখতে 1×, আর তাড়াতাড়ি শেষ করতে 5× বা 10× বেছে নাও।</li>
+    <li>স্ট্যাটাস বারে দেখা যায় রুট বাধাহীন কি না, দূরত্ব, ৫ মিনিটের সীমার তুলনায় মিশনের সময়, আর আনুমানিক স্কোর।</li>
+  </ul>
+
+  <h2 id="practice">৮. অনুশীলন</h2>
+  <ul>
+    <li>সিমুলেটর প্রতিবার নতুন চেকপয়েন্ট বানায়, তাই মিশনের তালিকায় <b>নতুন লেআউট</b> (বা ওয়ার্ল্ড ট্যাবে <b>নতুন এলোমেলো চেকপয়েন্ট</b>) চেপে আবার পরিকল্পনা করো। <b>নমুনা লেআউটে ফেরো</b> চাপলে প্রথমটায় ফেরা যায়।</li>
+    <li>নিজের সিমুলেটর রানের লেআউট চালিয়ে দেখতে চাইলে তার <code>/mission/get_checkpoints</code> মেসেজটা World JSON বক্সে পেস্ট করে <b>প্রয়োগ করো</b> চাপো।</li>
+    <li>ওয়ার্ল্ড ট্যাবে <b>কিপ-আউট জোন যোগ করো</b>, তারপর সেটা এড়িয়ে রুট বানাও।</li>
+    <li>আরও কঠিন চ্যালেঞ্জের জন্য তোমার শিক্ষক স্যান্ডবক্সটা প্র্যাকটিস মোডে খুলে দিতে পারেন: রুট ফাঁকা, কোনো সাহায্যও নেই (যাও…, ঘুরে যাওয়ার পথ বানাও, আটকে যাওয়া পথ ঠিক করো বা শুরুর রুট, কিছুই থাকে না)।</li>
+  </ul>
+
+  <h2 id="code">৯. কোড কপি করা</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>প্রোগ্রাম, Python আর টেমপ্লেট কী: <a href="learn.html#codewords">নিয়মের গাইডের প্রোগ্রামিংয়ের শব্দগুলো</a>।</div>
+  <ul>
+    <li><b>Python</b> কোডটা অফিশিয়াল টেমপ্লেটের <code>USER EDIT AREA</code> চিহ্ন দুটোর মাঝখানে সরাসরি পেস্ট করার মতো করে বানানো। এটা প্রতিটা ওয়েপয়েন্টে যায় আর প্রতিটা চেকপয়েন্ট পার হওয়ার খবর জানায়।</li>
+    <li><b>C++</b> একই রুট, C++ টেমপ্লেটের জন্য।</li>
+    <li>তোমার চূড়ান্ত প্রোগ্রামকে চেকপয়েন্টগুলো <code>/mission/get_checkpoints</code> থেকে পড়তে হবে, কারণ প্রতিটা রানে সেগুলো বদলায়। স্যান্ডবক্স দিয়ে চলাফেরার কৌশলটা শেখো; নির্দিষ্ট সংখ্যা কপি করে বসিয়ে দেওয়ার জন্য নয়।</li>
+  </ul>
+
+  <h2 id="saves">১০. সেভ আর অগ্রগতি</h2>
+  <ul>
+    <li>তোমার রুট, ওয়ার্ল্ড আর অগ্রগতি এই ব্রাউজারে নিজে থেকেই সেভ হয়।</li>
+    <li><b>সেভ</b> নাম দিয়ে আলাদা আলাদা সংস্করণ রাখে, কাজটা অন্য ডিভাইসে নিতে ব্যাকআপ ফাইল ডাউনলোড করে দেয়, আর সেটা আবার লোডও করে।</li>
+    <li>শিখতে শিখতে অগ্রগতির তালিকায় একে একে মাইলফলকে টিক পড়ে: প্রথম ওয়েপয়েন্ট, রোবট চালানো, চেকপয়েন্ট পার হওয়া, মার্কার পড়া, মিশন শেষ করা, আরও অনেক কিছু।</li>
+  </ul>
+
+  <h2 id="phone">১১. ফোন আর ফুল স্ক্রিন</h2>
+  <ul>
+    <li><b>ফুল স্ক্রিন</b> পুরো স্ক্রিন ভিউ দিয়ে ভরে দেয়, আর ব্রাউজার অনুমতি দিলে ফোনটা আড়াআড়ি করে দেয়। iPhone-এ ফোনটা নিজেই আড়াআড়ি ঘুরিয়ে নাও। বেরোতে <b>বের হও</b> (বা <kbd>Esc</kbd>) চাপো।</li>
+    <li>ফুল স্ক্রিনে ট্যাবগুলো লুকানো থাকে। <b>☰ ওয়েপয়েন্ট</b> চাপলে পাশ থেকে ওয়েপয়েন্টের তালিকা বেরিয়ে আসে, বন্ধ করতে ✕।</li>
+    <li>ফোনে চালানোর সময় জয়স্টিকের আশপাশে ছুঁলেও জয়স্টিক সাড়া দেয়, যাতে বুড়ো আঙুল ভুল করে 3D ভিউ ঘুরিয়ে না ফেলে।</li>
+    <li>ফোন খাড়া করে ধরলে ভিউয়ের বোতামগুলো (সব, 3D, ওপর, পাশ, মাথা, ক্যামেরা) নামের পাশে একটা বোতামে গুটিয়ে যায়, যেটায় এখনকার ভিউয়ের নাম লেখা থাকে; অন্য ভিউ বাছতে ওটায় ট্যাপ করো। এতে ক্যামেরা আর 3D ভিউ বেশি জায়গা পায়।</li>
+    <li>চালানো শুরু করলেই (ফোনে জয়স্টিক, কম্পিউটারে ড্রাইভের কোনো কি) পাতা স্ক্রল হয়ে ভিউ আর তার কন্ট্রোলগুলো স্ক্রিনের মাঝখানে চলে আসে।</li>
+    <li>যে বার্তাগুলো ভেসে ওঠে, সেগুলো বন্ধ করতে ✕ আছে; নয়তো কিছুক্ষণ পর নিজে থেকেই চলে যায়।</li>
+  </ul>
+
+  <h2 id="words">শব্দকোষ</h2>
+  <dl class="words">
+    <dt>ওয়েপয়েন্ট</dt><dd>রুটের একেকটা থামার জায়গা।</dd>
+    <dt>রুট</dt><dd>পরপর সাজানো ওয়েপয়েন্টগুলোর পথ।</dd>
+    <dt>চেকপয়েন্ট</dt><dd>যেসব জায়গায় গিয়ে মার্কারের দিকে ক্যামেরা তাক করতে হয়। (<a href="learn.html#checkpoint">নিয়মের গাইড</a>)</dd>
+    <dt>লেভেল</dt><dd>চেকপয়েন্ট কত ভালোভাবে পার হলো: Lv1 থেকে Lv3।</dd>
+    <dt>কিপ-ইন / কিপ-আউট জোন</dt><dd>যেখানে থাকতে হবে / যেখানে ঢোকা যাবে না।</dd>
+    <dt>ড্রাইভ</dt><dd>হাতে রোবট চালানো।</dd>
+    <dt>শূন্য মাধ্যাকর্ষণ (Zero-g)</dt><dd>রোবট স্টেশনের মতো ভেসে চলে; থামাতে উল্টো দিকে ঠেলতে হয়।</dd>
+    <dt>HUD বা ওপরের লেখা</dt><dd>ছবির ওপরে রোবটের অবস্থান, দিক আর কাছের চেকপয়েন্টের খবর।</dd>
+    <dt>লগ</dt><dd>কী ঘটল, তার ছোট ডায়েরি।</dd>
+    <dt>কোয়াটারনিয়ন</dt><dd>দিক লেখার চারটা সংখ্যা। (<a href="rotations.html#quaternion">স্থানাঙ্ক ও ঘূর্ণন</a>)</dd>
+  </dl>
+  <p>এবার শেখার পথের শেষ ধাপ: <a href="index.html">স্যান্ডবক্সে</a> গিয়ে নিজে চেষ্টা করো।</p>
+
+  <footer>
+    KIBO RPC 7 Nav Sandbox, Kibo Robot Programming Challenge (Kibo-RPC) থেকে অনুপ্রাণিত। এটা JAXA বা UNOOSA-র সঙ্গে যুক্ত নয়, তাদের অনুমোদিতও নয়, আর JAXA-র কোনো ছবি, মডেল বা অন্য সম্পদ ব্যবহার করে না।<br>
+    <a href="LICENSE.txt" target="_blank" rel="noopener">লাইসেন্স</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">ihashib-এর তৈরি</a>
+  </footer>
+</div>
+<div class="en" lang="en">
+  <h1>How to use the sandbox</h1>
+  <details class="intro">
+    <summary>About this page<small>Learning path · new words · contents</small></summary>
+    <p class="lead">How to plan and fly a 7th Kibo-RPC (Int-Ball2) mission in the sandbox, from the first look around to copying code for the simulator. The sandbox points you in the right direction; the official simulator has the final say.</p>
+
+    <nav class="path" aria-label="Learning path"><b>Learning path: one step at a time</b><a href="robots.html"><i>1</i>Meet the robot</a><span class="arr">→</span><a href="rotations.html"><i>2</i>Where and which way</a><span class="arr">→</span><a href="learn.html"><i>3</i>The game's rules</a><span class="arr">→</span><span class="here" aria-current="step"><i>4</i>Using the sandbox</span><span class="arr">→</span><a href="index.html"><i>5</i>Practise</a></nav>
+    <div class="need"><span class="tag">Read this first</span>You can open the sandbox and play without knowing anything. To understand everything, first read the <a href="robots.html">robots page</a>, lessons 1 to 6 of <a href="rotations.html">Coordinates and rotations</a>, and parts 1 to 5 of the <a href="learn.html">rules guide</a>.</div>
+    <div class="word"><span class="tag">New words</span><dl>
+      <dt>sandbox</dt><dd>Like a sandpit in a playground: a place to try anything without worrying. Here it means this site's practice tool.</dd>
+      <dt>waypoint</dt><dd>One stop on your route, like a bus stop. The robot goes to the waypoints one after another.</dd>
+      <dt>route</dt><dd>The path you get by putting waypoints in order.</dd>
+      <dt>Keep-In Zone</dt><dd>The space the robot must stay inside (the green box).</dd>
+      <dt>Keep-Out Zone</dt><dd>A space the robot must not enter (a red box).</dd>
+      <dt>pose</dt><dd>A position and an orientation together: where the robot is and which way it faces.</dd>
+    </dl></div>
+
+    <nav class="toc" aria-label="Contents">
+      <p style="margin:2px 0 4px 6px"><a href="#en-screen">Before you start: what's what on the screen</a></p>
+      <ol>
+        <li><a href="#en-start">Getting started</a></li>
+        <li><a href="#en-views">The views</a></li>
+        <li><a href="#en-mission">Mission and scoring</a></li>
+        <li><a href="#en-waypoints">Waypoints</a></li>
+        <li><a href="#en-drive">Driving the robot</a></li>
+        <li><a href="#en-camera">The robot camera and AR markers</a></li>
+        <li><a href="#en-play">Play and checking a route</a></li>
+        <li><a href="#en-practice">Practising</a></li>
+        <li><a href="#en-code">Copying the code</a></li>
+        <li><a href="#en-saves">Saves and progress</a></li>
+        <li><a href="#en-phone">Phones and full screen</a></li>
+      </ol>
+    </nav>
+  </details>
+
+  <h2 id="en-screen">Before you start: what's what on the screen</h2>
+  <p>When you open the sandbox, it looks like this. Match the numbers with the list below.</p>
+  <figure class="shot">
+    <div class="shotbox"><img src="docs/help/sandbox-en.jpg" width="1068" height="848" loading="lazy" alt="The sandbox screen: a row of buttons at the top, the robot camera on the left, the 3D view on the right, and below them the drive controls, the status bar and the mission list"><span class="pin" style="left:32.9%;top:4.4%" aria-hidden="true">1</span><span class="pin" style="left:62.0%;top:4.3%" aria-hidden="true">2</span><span class="pin" style="left:68.2%;top:4.3%" aria-hidden="true">3</span><span class="pin" style="left:44.6%;top:8.1%" aria-hidden="true">4</span><span class="pin" style="left:22.6%;top:36.5%" aria-hidden="true">5</span><span class="pin" style="left:72.5%;top:36.5%" aria-hidden="true">6</span><span class="pin" style="left:1.8%;top:69.1%" aria-hidden="true">7</span><span class="pin" style="left:1.8%;top:73.0%" aria-hidden="true">8</span><span class="pin" style="left:98.0%;top:77.4%" aria-hidden="true">9</span><span class="pin" style="left:50.0%;top:81.4%" aria-hidden="true">10</span><span class="pin" style="left:2.9%;top:86.6%" aria-hidden="true">11</span></div>
+    <figcaption>The sandbox on a computer. On a phone the same parts are stacked one above another.</figcaption>
+  </figure>
+  <ol class="steps pins"><li><b>View buttons</b>: choose what to look at (All, 3D, Top, Side, End, Camera).</li><li><b>Drive</b>: fly the robot by hand.</li><li><b>▶ Play</b>: the robot flies your route by itself.</li><li><b>The readout</b>: where the robot is, which way it faces, and the nearby checkpoint's level.</li><li><b>The robot camera</b>: what the robot sees right now.</li><li><b>3D view</b>: the whole of Kibo, the robot and your route.</li><li><b>The log</b>: a short list of what happened.</li><li><b>Drive controls</b>: keys and buttons (joysticks on a phone).</li><li><b>Status bar</b>: whether the route is clear, the distance, the time and the estimated score.</li><li><b>Tabs</b>: Route (the list of waypoints), Code and World.</li><li><b>Mission list</b>: what's still left to do at each checkpoint.</li></ol>
+
+  <h2 id="en-start">1. Getting started</h2>
+  <ol>
+    <li><b>Look around.</b> The green box is the Keep-In Zone: the robot must stay inside it. Blue squares are the AR markers, and the small pink dots are the checkpoints. Each checkpoint has a dashed line to its marker and an orange stick showing which way the top of the robot must point there.</li>
+    <li><b>Read the Mission list</b> in the Route tab. It lists every checkpoint, the goal last, and says what is still wrong with each one.</li>
+    <li><b>Start from the starter route</b> of four waypoints. Waypoint 1 is a worked example that passes CP 1. The next three are rough drafts that are a little wrong on purpose. Press <b>Play</b> to watch the robot visit them and read each AR marker, then fix the drafts and plan the rest yourself. <b>Load the starter route</b> in the ⋯ menu brings it back.</li>
+  </ol>
+
+  <h3>Your first ten minutes, step by step</h3>
+  <ol class="steps">
+    <li>Press <b>3D</b> at the top. Drag with the mouse (or a finger on a phone) to turn the module: find the green box, the blue markers and the pink checkpoints.</li>
+    <li>Press <b>▶ Play</b>. The robot flies the starter route, stopping at each waypoint to read the markers. Watch what the log says.</li>
+    <li>Press <b>✕ Exit play</b> to come back. Look at the <b>Mission list</b> to see what's wrong at each checkpoint.</li>
+    <li>Fix one of the rough waypoints the way the Mission list suggests: change its x, y or z a little in the list, or pick "Face a target" in its orientation menu. See whether the level in the Mission list changes.</li>
+    <li>When every checkpoint passes, go to the <b>Code</b> tab and copy the code. Well done: your first route!</li>
+  </ol>
+
+  <h2 id="en-views">2. The views</h2>
+  <p>Choose a view with the buttons at the top: <b>All</b>, <b>3D</b>, <b>Top</b>, <b>Side</b>, <b>End</b> and <b>Camera</b>.</p>
+  <ul>
+    <li><b>3D</b> shows the whole module from the long side: the dock end on the left, the airlock end on the right, overhead at the top. With a mouse, drag to turn it and scroll to zoom toward the pointer. On a touch screen, drag one finger to turn it, pinch to zoom toward your fingers, drag two fingers to slide it, and double-tap to put it back. On a phone held upright (not full screen), dragging up or down scrolls the page as usual and dragging sideways turns the view; to roll the module about its long axis (airlock to dock), drag the <b>⟲</b> roll wheel on the left edge of the 3D view up or down. (A phone starts scrolling the page as soon as a finger moves up or down, so the roll has its own wheel.) <b>Reset view</b> puts every view back as it started: the 3D angle, the Top, Side and End framing, the camera picture and the small camera window.</li>
+    <li><b>Top</b> is seen from overhead, <b>Side</b> is the long side and <b>End</b> looks down the module from the dock end. The labels around each view name the walls (Dock end, Airlock end, SAIBO wall, EPS2 wall, Overhead, Deck), and the small arrows in the corner show which way x, y and z grow.</li>
+    <li><b>Camera</b> shows what the robot camera sees. See <a href="#en-camera">section 6</a>.</li>
+    <li>In 3D, a small camera window in the top right shows what the camera sees from the selected waypoint. Tap ⤢ to make it fill the view, then <b>⤡ Back</b> to return.</li>
+  </ul>
+
+  <h2 id="en-mission">3. Mission and scoring</h2>
+  <div class="need"><span class="tag">Read this first</span>The three checkpoint conditions and levels: <a href="learn.html#checkpoint">part 4 of the rules guide</a>.</div>
+  <p>Pass every checkpoint, then finish at the goal checkpoint, all within 5 minutes. A checkpoint is judged on three things, and its level (Lv1 to Lv3) is the lowest of the three:</p>
+  <div class="wrap"><table>
+    <tr><th>Check</th><th>Lv3</th><th>Lv2</th><th>Lv1</th></tr>
+    <tr><td>Position: distance from the checkpoint</td><td>0.1 m</td><td>0.2 m</td><td>0.3 m</td></tr>
+    <tr><td>Centring: how far the AR marker is from the middle of the camera picture</td><td>10°</td><td>20°</td><td>30°</td></tr>
+    <tr><td>Roll: how far the robot is turned about the camera axis compared with the checkpoint</td><td>10°</td><td>20°</td><td>30°</td></tr>
+  </table></div>
+  <ul>
+    <li><b>Level</b>, at the top of the Mission list, sets the difficulty: Easy (6 checkpoints), Normal (8), Hard (10) or Very Hard (12). Picking one draws a new random layout; <b>New layout</b> draws another at the same level. The line under it names the AR markers that have no checkpoint this run: the real game uses 6 to 12 checkpoints, so some markers are always left out. The rules don't say how many checkpoints each level has, so these numbers are a guess.</li>
+    <li>The Mission list says what to change for the next level, and which roll button to press (⟲ or ⟳).</li>
+    <li>The goal must be the last checkpoint you pass. Passes after the 5-minute limit don't count.</li>
+    <li>The estimated score is (checkpoint points + goal points) × a time bonus. It is a rough guide: the simulator's timing and disturbances differ.</li>
+  </ul>
+
+  <h2 id="en-waypoints">4. Waypoints</h2>
+  <div class="need"><span class="tag">Read this first</span>x, y, z: <a href="rotations.html#xyz">lesson 2 of Coordinates and rotations</a>. The orientation numbers (quaternions) are in <a href="rotations.html#quaternion">lesson 8</a>; but you don't need them: use "Face a target" or Drive and the tool works them out.</div>
+  <ul>
+    <li><b>Add</b> one with <b>+ Waypoint</b>, by double-clicking (or double-tapping) in the Top, Side or End view, or by driving there (<a href="#en-drive">section 5</a>). <b>Go to…</b> adds a rough pose near a checkpoint for you to fix.</li>
+    <li><b>Move</b> a waypoint by dragging it in the Top, Side or End view, or by typing its x, y and z. The readout under the pointer shows the coordinates and whether that spot is allowed.</li>
+    <li><b>Aim</b> it with the orientation menu: keep the previous direction, face the travel direction, <b>Face a target</b> (an AR marker), or type a custom quaternion. Under each waypoint you can see its heading, pitch and roll.</li>
+    <li><b>Red moves</b> leave the Keep-In Zone or hit a Keep-Out Zone; the X marks where. Press <b>Hint</b> to learn why, then move or add waypoints. <b>Route around it</b> and <b>Fix blocked moves</b> add via points for you.</li>
+    <li>Use ↑ ↓ to reorder waypoints and ✕ to delete one. <b>Undo</b> is in the ⋯ menu, or <kbd>Ctrl</kbd>+<kbd>Z</kbd>.</li>
+  </ul>
+
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>A move shows in red. What does that mean, and what do you do?</summary><p>The move leaves the Keep-In Zone or goes into a Keep-Out Zone. Press <b>Hint</b> to see why, then add a waypoint in between or press <b>Route around it</b>.</p></details>
+    <details><summary>The Mission list says a checkpoint's roll is off. Which button helps?</summary><p>The roll buttons, ⟲ or ⟳ (Q or E on a keyboard); the list tells you which.</p></details>
+  </div>
+
+  <h2 id="en-drive">5. Driving the robot</h2>
+  <div class="need"><span class="tag">Read this first</span>Roll, pitch and yaw: <a href="rotations.html#turns">lesson 6 of Coordinates and rotations</a>. Why the robot keeps drifting in zero gravity: <a href="robots.html#float">the robots page, part 2</a>.</div>
+  <p>The sandbox opens in <b>Drive</b>, so you can fly the robot by hand straight away (<b>▶ Play</b> leaves it and <b>Drive</b> brings you back; pressing <b>Drive</b> while driving keeps you in Drive). Tap or click in the sandbox first: until then the keyboard keeps scrolling the page. The robot camera appears on the left and the 3D view on the right (camera on top on a phone held upright). The controls follow the camera picture, whichever way up the robot is.</p>
+  <div class="wrap"><table>
+    <tr><th>To</th><th>Keyboard</th><th>Phone</th></tr>
+    <tr><td>Move forward / back</td><td><kbd>W</kbd> <kbd>S</kbd></td><td>Left stick up / down</td></tr>
+    <tr><td>Move left / right</td><td><kbd>A</kbd> <kbd>D</kbd></td><td>Left stick left / right</td></tr>
+    <tr><td>Move up / down in the picture</td><td><kbd>R</kbd> <kbd>F</kbd></td><td>▲ ▼</td></tr>
+    <tr><td>Turn left / right</td><td><kbd>←</kbd> <kbd>→</kbd></td><td>Right stick left / right</td></tr>
+    <tr><td>Look up / down</td><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Right stick up / down</td></tr>
+    <tr><td>Roll the picture anticlockwise / clockwise</td><td><kbd>Q</kbd> <kbd>E</kbd></td><td>⟲ ⟳</td></tr>
+    <tr><td>Fine control (slower)</td><td>Hold <kbd>Shift</kbd></td><td><b>Fine</b></td></tr>
+    <tr><td>Zero gravity on / off</td><td><kbd>G</kbd></td><td><b>Zero-g</b> switch</td></tr>
+    <tr><td>Stop drifting and spinning (zero gravity)</td><td><kbd>X</kbd></td><td><b>Halt</b></td></tr>
+    <tr><td>Add a waypoint here</td><td><kbd>Enter</kbd></td><td><b>Add waypoint</b></td></tr>
+    <tr><td>Move the selected waypoint here</td><td><kbd>U</kbd></td><td><b>Move here</b></td></tr>
+    <tr><td>Go back to where you started, upright</td><td><kbd>H</kbd></td><td><b>Reset</b></td></tr>
+  </table></div>
+  <p><b>Zero gravity</b> (the <b>Zero-g</b> switch beside <b>Reset</b>, or <kbd>G</kbd>; off each time Drive starts) flies the robot the way it moves on the station: the controls fire thrusters, and when you let go it keeps drifting and turning. The drift fades only very slowly (to half in about 20 seconds), so the robot keeps going until you thrust the other way, press <b>Halt</b> or hit a wall. Thrust builds speed up to 1 m/s; turning is limited to 40° a second and settles in about 2 seconds; thrusting the other way brakes harder than it pushes. To stop at once, press <b>Halt</b> (shown beside the switch while zero gravity is on) or <kbd>X</kbd>; thrusting the other way brakes too. Bumping a wall stops the motion into it. The HUD shows the drift speed. <b>Reset</b> or turning Zero-g off stops the robot.</p>
+  <ul>
+    <li>The keys work anywhere on the page while Drive is on, except while you are typing in a box. On a computer you can also hold the on-screen keys with the mouse.</li>
+    <li>The readout at the top shows the position, heading, pitch and roll, and near a checkpoint its level for position, centring and roll. It also says what the camera reads. On a computer it always takes two lines, so the camera picture stays put; a line too long to fit is cut short with …, and hovering over the readout shows all of it.</li>
+    <li>The robot can't leave the Keep-In Zone: it slides along the walls.</li>
+    <li>Driving always starts with the camera picture the right way up. At the dock the robot sits upside down, so it is rolled over first.</li>
+    <li>The tool works out the quaternion of each waypoint you add, so you never have to type one.</li>
+    <li>Driving works in the camera + 3D view. If you pick another view from the buttons at the top, driving pauses; press <b>⤡ Back to driving</b> (or <kbd>Esc</kbd>) to carry on.</li>
+    <li><b>☰ Waypoints</b> opens the waypoint list while you drive, so you can check or edit the numbers.</li>
+  </ul>
+
+  <h2 id="en-camera">6. The robot camera and AR markers</h2>
+  <div class="need"><span class="tag">Read this first</span>What an AR marker is: <a href="robots.html#sense">the robots page, part 3</a>. Why the marker must be centred: <a href="learn.html#checkpoint">part 4 of the rules guide</a>.</div>
+  <p>The <b>Camera</b> view shows what the robot camera sees from the selected waypoint, or live while you drive or play. The AR markers are real 4×4 ArUco markers (IDs 1 to 12, 2 cm), so the sandbox reads them the way OpenCV does on the robot.</p>
+  <ul>
+    <li>A marker it reads gets a green outline, its id and its axes. An orange dashed outline means the marker is in the picture but can't be read, and the panel says why (too far away, too small, too edge-on, partly outside, or seen from behind).</li>
+    <li>The robot has to be close to read a marker: within 1 m of the camera. Farther away, the marker shows but isn't read.</li>
+    <li>The dashed rings around the centre are the centring levels: 10° (Lv3), 20° (Lv2) and 30° (Lv1).</li>
+    <li>Below the picture: each marker's id, distance, how far it is off centre and how far it looks turned, the <code>tvec</code> and <code>rvec</code> your program would get, and the marker position worked back from the <code>tvec</code>. <b>Copy reading</b> copies it all.</li>
+    <li>The camera numbers (resolution and focal length) are assumed. On the robot, read the real ones from <code>/camera_main/camera_info</code>.</li>
+  </ul>
+
+  <h2 id="en-play">7. Play and checking a route</h2>
+  <ul>
+    <li><b>Play</b> shows a short <i>Initializing</i> log, then flies the robot along your route; <b>Pause</b> holds it, and the speed menu next to it works during Play too. It flies the clear moves and stops before the first blocked one. When it ends, the robot stays where it stopped until you press <b>Exit play</b>, or <b>Play again</b> to fly it once more.</li>
+    <li>While it plays you see the robot camera and the 3D view (camera on top on a phone held upright). At each waypoint the robot stops for a moment and reads the AR markers. Tap ⤢ Expand to make the camera fill the view.</li>
+    <li>The <b>log</b> (the small dark panel between or under the views) lists what happens: each waypoint the robot heads to, what the camera reads there (<code>[AR] ID 4 · 0.71 m · 0° off centre</code>), whether the checkpoint passes, and the result at the end. While you drive it logs markers coming into and out of view, checkpoint levels and the waypoints you add. Tap ▾ to collapse it to the latest line and ▴ to open it again; on a phone in full screen it starts collapsed.</li>
+    <li>Play starts at 2×. Pick 1× to watch more slowly, or 5× or 10× to go faster.</li>
+    <li>The status bar shows whether the route is clear, the distance, the mission time against the 5-minute limit, and the estimated score.</li>
+  </ul>
+
+  <h2 id="en-practice">8. Practising</h2>
+  <ul>
+    <li>The simulator draws new checkpoints every run, so press <b>New layout</b> in the Mission list (or <b>New random checkpoints</b> in the World tab) and plan again. <b>Back to the sample layout</b> returns to the first one.</li>
+    <li>To try a layout from your own simulator run, paste its <code>/mission/get_checkpoints</code> message into the World JSON box and press <b>Apply</b>.</li>
+    <li><b>Add a Keep-Out Zone</b> in the World tab and route around it.</li>
+    <li>For a harder challenge, your teacher can open the sandbox in practice mode: an empty route and no helpers (no Go to…, Route around it, Fix blocked moves or starter route).</li>
+  </ul>
+
+  <h2 id="en-code">9. Copying the code</h2>
+  <div class="need"><span class="tag">Read this first</span>What a program, Python and the template are: <a href="learn.html#codewords">the programming words in the rules guide</a>.</div>
+  <ul>
+    <li><b>Python</b> is ready to paste between the <code>USER EDIT AREA</code> markers of the official template. It moves to each waypoint and reports each checkpoint as passed.</li>
+    <li><b>C++</b> is the same route for the C++ template.</li>
+    <li>Your final program must read the checkpoints from <code>/mission/get_checkpoints</code>, because they change every run. Use the sandbox to learn the moves, not to copy fixed numbers.</li>
+  </ul>
+
+  <h2 id="en-saves">10. Saves and progress</h2>
+  <ul>
+    <li>Your route, world and progress save automatically in this browser.</li>
+    <li><b>Saves</b> keeps named versions, downloads a backup file to move your work to another device, and loads it back.</li>
+    <li>The Progress list ticks off milestones as you learn: your first waypoint, driving, passing a checkpoint, reading a marker, completing the mission and more.</li>
+  </ul>
+
+  <h2 id="en-phone">11. Phones and full screen</h2>
+  <ul>
+    <li><b>Full screen</b> fills the screen with the views and turns a phone to landscape where the browser allows it. On an iPhone, turn the phone sideways yourself. <b>Exit full screen</b> (or <kbd>Esc</kbd>) leaves it.</li>
+    <li>In full screen the tabs are hidden. <b>☰ Waypoints</b> slides the waypoint list in from the side, with a ✕ to close it.</li>
+    <li>When you drive on a phone, the joysticks also respond to touches near them, so your thumbs don't turn the 3D view by mistake.</li>
+    <li>On a phone held upright, the view buttons (All, 3D, Top, Side, End, Camera) are folded into one button next to the name, which shows the current view; tap it to pick another. That leaves more room for the camera and 3D views.</li>
+    <li>When you start steering (a joystick on a phone, a Drive key on a computer), the page scrolls so the views and their controls sit in the middle of the screen.</li>
+    <li>Messages that pop up have a ✕ to close them, or they go away on their own.</li>
+  </ul>
+
+  <h2 id="en-words">Word list</h2>
+  <dl class="words">
+    <dt>waypoint</dt><dd>One stop on your route.</dd>
+    <dt>route</dt><dd>The path through your waypoints, in order.</dd>
+    <dt>checkpoint</dt><dd>A place where the robot must point its camera at a marker. (<a href="learn.html#checkpoint">rules guide</a>)</dd>
+    <dt>level</dt><dd>How well a checkpoint was passed: Lv1 to Lv3.</dd>
+    <dt>Keep-In / Keep-Out Zone</dt><dd>Where the robot must stay / where it must not go.</dd>
+    <dt>Drive</dt><dd>Flying the robot by hand.</dd>
+    <dt>zero gravity (Zero-g)</dt><dd>The robot floats like on the station; to stop, it has to push the other way.</dd>
+    <dt>HUD, the readout</dt><dd>The lines over the picture: where the robot is, which way it faces, and the nearby checkpoint.</dd>
+    <dt>log</dt><dd>A short diary of what happened.</dd>
+    <dt>quaternion</dt><dd>Four numbers that write an orientation. (<a href="rotations.html#quaternion">Coordinates and rotations</a>)</dd>
+  </dl>
+  <p>Now the last step on the learning path: try it yourself in the <a href="index.html">sandbox</a>.</p>
+
+  <footer>
+    KIBO RPC 7 Nav Sandbox is inspired by the Kibo Robot Programming Challenge (Kibo-RPC). It is not affiliated with or endorsed by JAXA or UNOOSA and uses no JAXA assets.<br>
+    <a href="LICENSE.txt" target="_blank" rel="noopener">License</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">Developed by ihashib</a>
+  </footer>
+</div>
+</main>
+</body>
+</html>

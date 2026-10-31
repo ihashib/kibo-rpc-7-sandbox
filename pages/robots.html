@@ -1,0 +1,1021 @@
+<!doctype html>
+<!-- KIBO RPC 7 Nav Sandbox by ihashib · https://ihashib.github.io -->
+<html lang="bn" data-lang-reload>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>রোবটগুলো: Int-Ball2 আর Astrobee</title>
+  <meta name="title-en" content="The robots: Int-Ball2 and Astrobee">
+  <meta name="description" content="Kibo Robot Programming Challenge-এর দুই উড়ন্ত রোবট Int-Ball2 আর Astrobee: তাদের ক্যামেরা, সেন্সর আর অন্যান্য অংশ থ্রিডিতে, ছবি আর লিংকসহ।">
+  <link rel="stylesheet" href="vendor/fonts.css">
+  <script src="lang.js"></script>
+  <style>
+    /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
+    html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
+    html[data-lang="bn"] body { line-height: 1.75; }
+    html[data-lang="bn"] .bn ol:not(.flow):not(.steps):not(.goals) { list-style-type: bengali; }
+    html[data-lang="bn"] .bn ol.flow > li::before { content: counter(step, bengali); }
+    html[data-lang="bn"] .bn h2.part { letter-spacing: 0; text-transform: none; font-size: 14px; }
+    nav.tabs .langsw { flex: none; margin-left: auto; align-self: center; padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; color: var(--fg); font-size: 13.5px; font-weight: 600; }
+    nav.tabs .langsw:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 480px) { nav.tabs .langsw { flex: none; min-height: 32px; padding: 0 9px; margin: 0 0 0 4px; border-radius: 999px; font-size: 12.5px; } }
+    /* Phones and tablets: the language button sits above the tabs, top right, so the six tabs keep the row. */
+    @media (max-width: 860px) { main { position: relative; } nav.tabs .langsw { position: absolute; top: 1px; right: 16px; margin: 0; min-height: 0; padding: 1px 10px; font-size: 12.5px; line-height: 1.5; } }
+    @media (max-width: 380px) { html[data-lang="en"] nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    :root { color-scheme: dark; --bg: #0d1016; --fg: #e6e9f0; --muted: #9aa3b5; --border: #2c3342; --code: #161a23; --accent: #86a2ff; --soft: #141924; --ok: #3ccf9f; --warn: #f0b54a; --cam: #86a2ff; --move: #f0b54a; --sense: #3ccf9f; --body: #c4a5ff; --view: #1a2030; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+    nav.tabs { display: flex; gap: 2px; margin: 0 0 18px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+    nav.tabs a { flex: none; padding: 8px 14px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; font-size: 15px; text-decoration: none; white-space: nowrap; }
+    nav.tabs a:hover { color: var(--fg); }
+    nav.tabs a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
+    nav.tabs a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    nav.tabs a:active { color: var(--fg); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    /* Phones: the tabs share the row and are full-height touch targets (44px). */
+    @media (max-width: 480px) { nav.tabs { gap: 0; } nav.tabs a { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; box-sizing: border-box; padding: 0 6px; font-size: 14px; border-radius: 8px 8px 0 0; } }
+    @media (max-width: 400px) { nav.tabs a { padding: 0 3px; font-size: 13px; min-width: 44px; flex-shrink: 0; } }
+    @media (max-width: 340px) { nav.tabs { margin-left: -8px; margin-right: -8px; } nav.tabs a { padding: 0 2px; font-size: 12.5px; } }
+    /* Phones and tablets: shorter tab names so all six fit (the full name stays as the link's accessible name). */
+    nav.tabs .ts { display: none; }
+    @media (max-width: 860px) { nav.tabs .tl { display: none; } nav.tabs .ts { display: inline; } }
+    h1 { font-size: 28px; margin: 0 0 4px; }
+    h2 { font-size: 22px; margin: 44px 0 8px; }
+    h3 { font-size: 16px; margin: 22px 0 6px; }
+    p.lead { color: var(--muted); margin: 0 0 18px; }
+    ul { padding-left: 22px; }
+    li { margin: 4px 0; }
+    a { color: var(--accent); }
+    code { font-family: ui-monospace, Menlo, Consolas, "Noto Sans Bengali", monospace; font-size: 0.9em; background: var(--code); border-radius: 4px; padding: 0 3px; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 15px; }
+    th, td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    .wrap { overflow-x: auto; }
+    .note { color: var(--muted); font-size: 15px; }
+    .chip { display: inline-block; font-size: 12px; font-weight: 700; padding: 0 7px; border-radius: 999px; color: var(--bg); background: var(--muted); vertical-align: 2px; }
+    .chip.cam { background: var(--cam); } .chip.move { background: var(--move); } .chip.sense { background: var(--sense); } .chip.body { background: var(--body); }
+
+    /* 3D viewer */
+    .rb[hidden] { display: none; }
+    .rb > h2:first-child { margin-top: 28px; }
+    .viewer { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 14px; margin: 14px 0 6px; }
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; margin: 0 0 10px; }
+    .seg button { font: 600 15px system-ui, "Noto Sans Bengali", sans-serif; border: 0; background: transparent; color: var(--fg); padding: 7px 16px; cursor: pointer; }
+    .seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+    .stage { position: relative; height: 400px; border: 1px solid var(--border); border-radius: 12px; background: radial-gradient(circle at 50% 40%, var(--soft), var(--view)); overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+    .stage.drag { cursor: grabbing; }
+    .stage canvas { display: block; width: 100%; height: 100%; }
+    .stage .tools { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; }
+    .stage .tools button { font: 600 14px system-ui, "Noto Sans Bengali", sans-serif; min-width: 34px; height: 32px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--fg); cursor: pointer; padding: 0 8px; }
+    .stage .hint { position: absolute; left: 10px; bottom: 8px; font-size: 12.5px; color: var(--muted); pointer-events: none; }
+    .stage .fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; text-align: center; padding: 20px; color: var(--muted); }
+    .stage.nogl .fallback { display: flex; }
+    .stage.nogl .tools, .stage.nogl .hint { display: none; }
+    .dot { position: absolute; left: 0; top: 0; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%; border: 2px solid #fff; background: var(--dotc, var(--accent)); color: #fff; font: 700 12px/20px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; padding: 0; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.35); transition: opacity .15s, transform .15s; }
+    .dot.away { opacity: .22; pointer-events: none; }
+    .dot.on { transform: scale(1.3); z-index: 2; box-shadow: 0 0 0 4px color-mix(in srgb, var(--dotc, var(--accent)) 35%, transparent), 0 1px 4px rgba(0,0,0,.35); }
+    .info { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; background: var(--soft); min-height: 132px; }
+    .info h3 { margin: 0 0 4px; font-size: 17px; }
+    .info p { margin: 6px 0 0; font-size: 15px; }
+    ol.parts { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }
+    ol.parts li { margin: 0; }
+    ol.parts button { width: 100%; display: flex; align-items: center; gap: 9px; text-align: left; font: 15px system-ui, "Noto Sans Bengali", sans-serif; color: var(--fg); background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 5px 8px; cursor: pointer; }
+    ol.parts button:hover { border-color: var(--border); }
+    ol.parts button[aria-pressed="true"] { border-color: var(--accent); background: var(--soft); }
+    ol.parts .n { flex: none; width: 22px; height: 22px; border-radius: 50%; color: #fff; font: 700 12px/22px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; background: var(--dotc, var(--accent)); }
+
+    /* Sketches */
+    figure.sketch { margin: 16px 0; border: 1px dashed var(--border); border-radius: 12px; padding: 12px; background: var(--soft); }
+    figure.sketch figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    figure.sketch figcaption b { color: var(--fg); }
+    /* Photos of the real robots: side by side, one above the other on a phone. */
+    figure.photos { margin: 16px 0; }
+    figure.photos .pics { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 10px; align-items: start; }
+    figure.photos img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 12px; border: 1px solid var(--border); background: var(--soft); }
+    figure.photos .pics img:first-child { aspect-ratio: 1; }
+    figure.photos figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    figure.photos figcaption b { color: var(--fg); }
+    @media (max-width: 600px) { figure.photos .pics { grid-template-columns: 1fr; } figure.photos .pics img, figure.photos .pics img:first-child { aspect-ratio: auto; } }
+    .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .duo h4 { margin: 0 0 2px; font-size: 14px; text-align: center; }
+    svg { display: block; width: 100%; height: auto; max-width: 420px; margin: 0 auto; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif; }
+    svg .ln { stroke: var(--fg); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    svg .lead { stroke: var(--muted); fill: none; stroke-width: 1; }
+    svg .shell { fill: var(--bg); stroke: var(--fg); stroke-width: 1.6; }
+    svg .dark { fill: #262a33; }
+    svg .mod { fill: var(--code); stroke: var(--fg); stroke-width: 1.2; }
+    svg .bump { fill: #3d7be0; }
+    svg .led { fill: none; stroke: #2f5bff; stroke-width: 6; }
+    svg .lens { fill: #262a33; stroke: #8a93a6; stroke-width: 1.5; }
+    svg text { fill: var(--fg); font-size: 12.5px; }
+    svg text.m { fill: var(--muted); font-size: 11.5px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; margin: 10px 0; }
+    .card { display: block; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--fg); background: var(--soft); }
+    a.card:hover { border-color: var(--accent); }
+    .card b { color: var(--accent); display: block; }
+    .card small { color: var(--muted); display: block; font-size: 13px; line-height: 1.45; margin-top: 2px; }
+    .box { border: 1px solid var(--border); border-left: 4px solid var(--ok); border-radius: 8px; padding: 10px 14px; margin: 14px 0; background: var(--soft); }
+    .box > :first-child { margin-top: 0; } .box > :last-child { margin-bottom: 0; }
+    footer { margin-top: 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+    @media (max-width: 760px) {
+      .viewer { grid-template-columns: 1fr; }
+      .stage { height: 320px; }
+      .info { min-height: 0; }
+      ol.parts { grid-template-columns: 1fr 1fr; }
+      ol.parts button { font-size: 14px; padding: 5px 6px; }
+    }
+    @media (max-width: 560px) { .duo { grid-template-columns: 1fr; } }
+    /* Learning helpers (the four learning pages): the path through them, what to read first, new words, things to
+       try, quick self-checks and the deeper detail for older students. */
+    .path { display: flex; flex-wrap: wrap; gap: 6px 4px; align-items: center; margin: 6px 0 20px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--soft, #141924); font-size: 14px; }
+    .path > b { flex: 1 0 100%; color: var(--muted); font-size: 13px; font-weight: 600; }
+    .path a, .path .here { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px; border: 1px solid var(--border); color: var(--fg); text-decoration: none; }
+    .path a:hover { border-color: var(--accent); }
+    .path .here { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); font-weight: 700; }
+    .path i { font-style: normal; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--border); color: var(--fg); font-size: 12px; font-weight: 700; }
+    .path .here i { background: var(--accent); color: var(--bg); }
+    .path .arr { color: var(--muted); }
+    /* The page's intro, learning path and contents sit folded in a bar under the title, so the page opens on its content. */
+    details.intro { margin: 10px 0 18px; }
+    details.intro + details.intro { margin-top: -10px; }
+    details.intro > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; min-height: 44px; box-sizing: border-box; padding: 6px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--soft, #141924); cursor: pointer; list-style: none; font-weight: 700; }
+    details.intro > summary::-webkit-details-marker { display: none; }
+    details.intro > summary::before { content: '\25B8'; color: var(--muted); }
+    details.intro[open] > summary::before { content: '\25BE'; }
+    details.intro > summary:hover { border-color: var(--accent); }
+    details.intro > summary small { color: var(--muted); font-size: 13px; font-weight: 400; }
+    details.intro[open] > summary { margin-bottom: 14px; }
+    .need, .word, .try, .check { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin: 14px 0; background: var(--soft, #141924); }
+    .need { border-left: 4px solid var(--warn, #f0b54a); }
+    .word { border-left: 4px solid var(--accent); }
+    .try { border-left: 4px solid var(--ok, #3ccf9f); }
+    .check { border-left: 4px solid #f07ad8; }
+    .need > :last-child, .word > :last-child, .try > :last-child, .check > :last-child { margin-bottom: 0; }
+    .tag { display: block; font-size: 12.5px; font-weight: 700; margin: 0 0 4px; }
+    .need .tag { color: var(--warn, #f0b54a); } .word .tag { color: var(--accent); } .try .tag { color: var(--ok, #3ccf9f); } .check .tag { color: #f07ad8; }
+    .word dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; }
+    .word dt { font-weight: 700; } .word dd { margin: 0; }
+    .check details { border-top: 1px dashed var(--border); padding: 6px 0; }
+    .check details:first-of-type { border-top: 0; }
+    .check summary { cursor: pointer; font-weight: 600; }
+    .check summary::marker { color: #f07ad8; }
+    .check details[open] summary { color: #f07ad8; }
+    .check details > p { margin: 6px 0 2px; }
+    details.deeper { border: 1px dashed var(--border); border-radius: 10px; padding: 8px 14px; margin: 14px 0; }
+    details.deeper > summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+    details.deeper[open] > summary { margin-bottom: 6px; color: var(--fg); }
+    .steps { counter-reset: s; list-style: none; padding: 0; }
+    .steps > li { counter-increment: s; position: relative; padding-left: 34px; margin: 8px 0; }
+    .steps > li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--bg); font: 700 13px/24px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; }
+    html[data-lang="bn"] .bn .steps > li::before { content: counter(s, bengali); }
+    nav.mini { border: 1px solid var(--border); border-radius: 10px; padding: 8px 16px; margin: 0 0 8px; }
+    nav.mini ol { margin: 4px 0; columns: 2 230px; }
+    dl.words { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+    dl.words dt { font-weight: 700; } dl.words dd { margin: 0; }
+    figure.wide { max-width: 640px; margin: 12px auto; }
+    @media (max-width: 560px) { dl.words, .word dl { grid-template-columns: 1fr; gap: 0; } dl.words dd, .word dd { margin-bottom: 8px; } }
+    svg .ff { fill: var(--fg); } svg .fa { fill: var(--accent); } svg .fm { fill: var(--muted); }
+    svg .sa { stroke: var(--accent); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    svg .sm { stroke: var(--muted); fill: none; stroke-width: 1.2; stroke-linecap: round; }
+    svg .dsh { stroke-dasharray: 5 4; }
+    .lesson { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; align-items: start; }
+    .lesson figure, figure.wide { margin: 0; border: 1px dashed var(--border); border-radius: 12px; padding: 10px; background: var(--soft, #141924); }
+    figure.wide { margin: 12px auto; }
+    .lesson figure svg, figure.wide svg { width: 100%; height: auto; display: block; max-width: none; margin: 0; }
+    .lesson figure figcaption, figure.wide figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    @media (max-width: 820px) { .lesson { grid-template-columns: 1fr; } .lesson figure { max-width: 360px; } }
+    svg .ball { fill: var(--bg); stroke: var(--fg); stroke-width: 1.6; }
+    figure.shot { margin: 12px 0; }
+    .shotbox { position: relative; }
+    .shotbox img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; }
+    .pin { position: absolute; transform: translate(-50%, -50%); width: 24px; height: 24px; border-radius: 50%; background: #f0b54a; color: #111; font: 700 13px/24px system-ui, "Noto Sans Bengali", sans-serif; text-align: center; box-shadow: 0 0 0 2px #111, 0 2px 6px rgba(0, 0, 0, .6); pointer-events: none; }
+    figure.shot figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    ol.steps.pins { columns: 2 320px; column-gap: 24px; }
+    ol.steps.pins > li { break-inside: avoid; }
+    ol.steps.pins > li::before { background: #f0b54a; color: #111; }
+    @media (max-width: 560px) { .pin { width: 18px; height: 18px; font-size: 10.5px; line-height: 18px; } }
+  </style>
+</head>
+<body>
+<main>
+  <nav class="tabs" aria-label="পাতাগুলো" data-aria-bn="পাতাগুলো" data-aria-en="Pages"><a href="index.html"><span class="bn">স্যান্ডবক্স</span><span class="en">Sandbox</span></a><a href="robots.html" aria-current="page" aria-label="রোবটগুলো" data-aria-bn="রোবটগুলো" data-aria-en="The robots"><span class="tl"><span class="bn">রোবটগুলো</span><span class="en">The robots</span></span><span class="ts"><span class="bn">রোবট</span><span class="en">Robots</span></span></a><a href="rotations.html" aria-label="স্থানাঙ্ক ও ঘূর্ণন" data-aria-bn="স্থানাঙ্ক ও ঘূর্ণন" data-aria-en="Coordinates and rotations"><span class="tl"><span class="bn">স্থানাঙ্ক ও ঘূর্ণন</span><span class="en">Coordinates &amp; rotations</span></span><span class="ts"><span class="bn">ঘূর্ণন</span><span class="en">Rotations</span></span></a><a href="learn.html" aria-label="নিয়মের গাইড" data-aria-bn="নিয়মের গাইড" data-aria-en="Rules guide"><span class="tl"><span class="bn">নিয়মের গাইড</span><span class="en">Rules guide</span></span><span class="ts"><span class="bn">নিয়ম</span><span class="en">Rules</span></span></a><a href="manual.html" aria-label="ব্যবহারবিধি" data-aria-bn="ব্যবহারবিধি" data-aria-en="How to use"><span class="tl"><span class="bn">ব্যবহারবিধি</span><span class="en">How to use</span></span><span class="ts"><span class="bn">সাহায্য</span><span class="en">Help</span></span></a><a class="langsw bn" href="?lang=en" data-setlang="en" lang="en" title="Read this site in English"><span class="tl">English</span><span class="ts">EN</span></a><a class="langsw en" href="?lang=bn" data-setlang="bn" lang="bn" title="সাইটটি বাংলায় পড়ো"><span class="tl">বাংলা</span><span class="ts">বাং</span></a></nav>
+<div class="bn">
+  <h1>রোবটগুলো: Int-Ball2 আর Astrobee</h1>
+  <details class="intro">
+    <summary>এই পাতা সম্পর্কে<small>শেখার পথ · সূচিপত্র</small></summary>
+    <p class="lead">Kibo-RPC-তে তুমি যে প্রোগ্রাম লিখবে, সেটা চালাবে মহাকাশ স্টেশনের ভেতরের একটা আসল রোবট। ৭ম Kibo-RPC-র রোবট হলো JAXA-র (জাপানের মহাকাশ সংস্থা) <b>Int-Ball2</b>; আগের ছয়বারের রোবট ছিল NASA-র (যুক্তরাষ্ট্রের মহাকাশ সংস্থা) <b>Astrobee</b>। এই পাতায় দেখবে রোবটগুলো দেখতে কেমন, কীভাবে ভেসে ভেসে চলে, আর কীভাবে নিজের পথ চেনে।</p>
+
+    <nav class="path" aria-label="শেখার পথ"><b>শেখার পথ: এখান থেকেই শুরু করো</b><span class="here" aria-current="step"><i>১</i>রোবটকে চেনো</span><span class="arr">→</span><a href="rotations.html"><i>২</i>কোথায় আর কোন দিকে</a><span class="arr">→</span><a href="learn.html"><i>৩</i>খেলার নিয়ম</a><span class="arr">→</span><a href="manual.html"><i>৪</i>স্যান্ডবক্স চালানো</a><span class="arr">→</span><a href="index.html"><i>৫</i>অনুশীলন</a></nav>
+
+    <nav class="mini" aria-label="এই পাতায়">
+      <b>এই পাতায়</b>
+      <ol>
+        <li><a href="#station">মহাকাশ স্টেশন আর Kibo</a></li>
+        <li><a href="#float">ভেসে থাকা রোবট কীভাবে চলে</a></li>
+        <li><a href="#sense">রোবট কীভাবে দেখে আর পথ চেনে</a></li>
+        <li><a href="#ib2">Int-Ball2</a> আর <a href="#astrobee">Astrobee</a></li>
+        <li><a href="#compare">দুটো রোবট পাশাপাশি</a></li>
+        <li><a href="#program">তোমার প্রোগ্রামের জন্য এর মানে কী</a></li>
+        <li><a href="#words">শব্দকোষ</a></li>
+      </ol>
+    </nav>
+  </details>
+</div>
+<div class="en" lang="en">
+  <h1>The robots: Int-Ball2 and Astrobee</h1>
+  <details class="intro">
+    <summary>About this page<small>Learning path · contents</small></summary>
+    <p class="lead">The program you write for Kibo-RPC runs on a real robot inside the space station. The 7th Kibo-RPC robot is JAXA's (Japan's space agency) <b>Int-Ball2</b>; for the six before it, the robot was NASA's (the US space agency) <b>Astrobee</b>. This page shows what the robots look like, how they float and move, and how they find their way.</p>
+
+    <nav class="path" aria-label="Learning path"><b>Learning path: start here</b><span class="here" aria-current="step"><i>1</i>Meet the robot</span><span class="arr">→</span><a href="rotations.html"><i>2</i>Where and which way</a><span class="arr">→</span><a href="learn.html"><i>3</i>The game's rules</a><span class="arr">→</span><a href="manual.html"><i>4</i>Using the sandbox</a><span class="arr">→</span><a href="index.html"><i>5</i>Practise</a></nav>
+
+    <nav class="mini" aria-label="On this page">
+      <b>On this page</b>
+      <ol>
+        <li><a href="#en-station">The space station and Kibo</a></li>
+        <li><a href="#en-float">How a floating robot moves</a></li>
+        <li><a href="#en-sense">How the robot sees and finds its way</a></li>
+        <li><a href="#en-ib2">Int-Ball2</a> and <a href="#en-astrobee">Astrobee</a></li>
+        <li><a href="#en-compare">The two robots side by side</a></li>
+        <li><a href="#en-program">What this means for your program</a></li>
+        <li><a href="#en-words">Word list</a></li>
+      </ol>
+    </nav>
+  </details>
+</div>
+  <section aria-label="3D মডেল" data-aria-bn="3D মডেল" data-aria-en="3D models">
+    <div class="seg" role="group" aria-label="রোবট" data-aria-bn="রোবট" data-aria-en="Robot"><button data-robot="ib2" aria-pressed="true">Int-Ball2 · JAXA</button><button data-robot="ab" aria-pressed="false">Astrobee · NASA</button></div>
+    <div class="viewer">
+      <div class="stage" id="stage">
+        <div class="tools"><button data-zoom="-1" aria-label="ছোট করে দেখো" title="ছোট করে দেখো" data-aria-bn="ছোট করে দেখো" data-aria-en="Zoom out" data-title-bn="ছোট করে দেখো" data-title-en="Zoom out">−</button><button data-zoom="1" aria-label="বড় করে দেখো" title="বড় করে দেখো" data-aria-bn="বড় করে দেখো" data-aria-en="Zoom in" data-title-bn="বড় করে দেখো" data-title-en="Zoom in">+</button><button data-reset title="ভিউ আগের মতো করো" data-title-bn="ভিউ আগের মতো করো" data-title-en="Reset the view"><span class="bn">আগের মতো</span><span class="en">Reset</span></button></div>
+        <div class="hint"><span class="bn">পাশাপাশি টেনে ঘোরাও · কোনো নম্বরে ট্যাপ করো</span><span class="en">Drag sideways to turn · tap a number</span></div>
+        <div class="fallback"><span class="bn">3D মডেলের জন্য WebGL লাগে, এই ব্রাউজারে সেটা নেই। নিচের স্কেচ আর তালিকায় একই অংশগুলো দেখানো আছে।</span><span class="en">The 3D model needs WebGL, which this browser doesn't offer. The sketches and lists below show the same parts.</span></div>
+      </div>
+      <div>
+        <div class="info" aria-live="polite"><h3 id="infoName"></h3><span id="infoKind" class="chip"></span><p id="infoText"></p></div>
+        <ol class="parts" id="parts"></ol>
+      </div>
+    </div>
+    <p class="note bn">3D মডেলগুলো প্রকাশিত বর্ণনা আর ছবি দেখে বানানো সহজ নকশা, অফিশিয়াল CAD মডেল নয়; মাপগুলো মোটামুটি অনুপাতে। রঙের মানে: <span class="chip cam">ক্যামেরা</span> <span class="chip sense">সেন্সর আর মস্তিষ্ক</span> <span class="chip move">চলাফেরা আর শক্তি</span> <span class="chip body">বডি আর মানুষের সঙ্গে যোগাযোগ</span></p>
+    <p class="note en" lang="en">The 3D models are simplified sketches built from the published descriptions and diagrams, not official CAD models; sizes are only roughly to scale. Colours: <span class="chip cam">camera</span> <span class="chip sense">sensing &amp; brain</span> <span class="chip move">moving &amp; power</span> <span class="chip body">body &amp; people</span></p>
+  </section>
+<div class="bn">
+
+  <!-- ===================== Basics ===================== -->
+  <h2 id="station">১. মহাকাশ স্টেশন আর Kibo</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>কিছুই না।</div>
+  <div class="lesson">
+    <div>
+      <p><b>আন্তর্জাতিক মহাকাশ স্টেশন</b> (ইংরেজিতে ISS) পৃথিবী থেকে প্রায় ৪০০ কিলোমিটার ওপরে ঘুরছে: ঢাকা থেকে কক্সবাজার যতটা দূর, মোটামুটি ততটা ওপরে। প্রায় দেড় ঘণ্টায় এটা একবার পুরো পৃথিবী ঘুরে আসে।</p>
+      <p>স্টেশনের ভেতরে নভোচারীরা থাকেন আর বিজ্ঞানের নানা পরীক্ষা করেন। স্টেশনটা অনেকগুলো ঘর জোড়া দিয়ে বানানো; প্রতিটা ঘরকে বলে <b>মডিউল</b>। জাপানের মডিউলটার নাম <b>Kibo</b> (জাপানি ভাষায় মানে “আশা”): লম্বা নলের মতো একটা ঘর, ভেতরটা মোটামুটি একটা বাসের সমান। রোবট উড়ে বেড়ায় এর ভেতরেই।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 300 170" role="img" aria-label="পৃথিবীর ওপরে প্রায় ৪০০ কিলোমিটার উঁচুতে মহাকাশ স্টেশন ঘুরছে">
+        <circle cx="150" cy="420" r="300" style="fill:#1d3557;stroke:#4f7bff;stroke-width:1.5"/>
+        <text x="150" y="152" text-anchor="middle" class="m">পৃথিবী</text>
+        <path class="sm dsh" d="M14 112 A160 90 0 0 1 286 112"/><path class="fm" d="M289 119 l-1 -11 l-8 6 z"/>
+        <path class="ln" d="M118 70 H182"/><g style="fill:var(--accent);opacity:.8"><rect x="120" y="58" width="12" height="24"/><rect x="134" y="58" width="12" height="24"/><rect x="154" y="58" width="12" height="24"/><rect x="168" y="58" width="12" height="24"/></g><rect x="143" y="66" width="14" height="9" rx="2" class="ff"/>
+        <text x="150" y="50" text-anchor="middle">ISS</text>
+        <path class="sa dsh" d="M150 86 V118"/><text x="158" y="108" style="fill:var(--accent)">প্রায় ৪০০ কিমি</text>
+        <text x="10" y="22" class="m">কক্ষপথ: দেড় ঘণ্টায় এক পাক</text>
+      </svg>
+      <figcaption>মহাকাশ স্টেশন পৃথিবীর চারদিকে ঘুরছে (মাপ মিলিয়ে আঁকা নয়)।</figcaption>
+    </figure>
+  </div>
+  <div class="word"><span class="tag">নতুন শব্দ</span><dl>
+    <dt>ISS</dt><dd>International Space Station, আন্তর্জাতিক মহাকাশ স্টেশন।</dd>
+    <dt>মডিউল</dt><dd>স্টেশনের একেকটা ঘর। Kibo জাপানের মডিউল।</dd>
+    <dt>নভোচারী</dt><dd>মহাকাশে যাওয়া মানুষ (অ্যাস্ট্রোনট)।</dd>
+  </dl></div>
+
+  <h2 id="float">২. ভেসে থাকা রোবট কীভাবে চলে</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#station">১ নম্বর অংশ</a>।</div>
+  <p>স্টেশনের ভেতরে সবকিছু ভাসে: কলম, পানির ফোঁটা, মানুষও। কারণ স্টেশন আর তার ভেতরের সবকিছু একসঙ্গে পৃথিবীর চারদিকে “পড়ছে”, কেউ কারও চেয়ে জোরে পড়ছে না, তাই মনে হয় কারও ওজন নেই। একে বলে <b>মাইক্রোগ্র্যাভিটি</b> (প্রায় শূন্য মাধ্যাকর্ষণ)।</p>
+  <div class="lesson">
+    <div>
+      <p>তাহলে রোবট চলে কীভাবে? চাকা কাজ করবে না, কারণ ভাসমান রোবট মেঝেই ছোঁয় না! বেলুনের কথা ভাবো: ফুলিয়ে মুখটা ছেড়ে দিলে বাতাস পেছন দিয়ে বেরোয়, আর বেলুন ছোটে সামনে।</p>
+      <p>Int-Ball2-ও তাই করে: এর ভেতরের ছোট ছোট পাখা বাতাস এক দিকে ঠেলে দেয়, আর রোবট সরে যায় উল্টো দিকে। আলাদা আলাদা পাখা চালিয়ে রোবট যেকোনো দিকে সরতে আর ঘুরতে পারে।</p>
+      <p>আরেকটা মজার ব্যাপার: একবার চলতে শুরু করলে রোবট নিজে থেকে প্রায় থামেই না; থামাতে হলে উল্টো দিকে ঠেলতে হয়। <a href="index.html">স্যান্ডবক্সে</a> ড্রাইভ খুলে Zero-g চালু করে নিজে অনুভব করে দেখো!</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 300 130" role="img" aria-label="বেলুন আর রোবট: বাতাস এক দিকে বেরোয়, জিনিসটা উল্টো দিকে যায়">
+        <ellipse cx="96" cy="58" rx="30" ry="38" style="fill:var(--accent);opacity:.25;stroke:var(--accent);stroke-width:1.5"/><path class="ff" d="M66 58 l-8 -6 v12 z"/>
+        <path class="sm dsh" d="M52 50 H20 M52 58 H14 M52 66 H20"/>
+        <path class="sa" d="M132 58 H158"/><path class="fa" d="M166 58 l-10 -6 v12 z"/>
+        <text x="26" y="88" class="m">বাতাস ←</text><text x="96" y="114" text-anchor="middle">বেলুন →</text>
+        <circle cx="236" cy="58" r="26" class="ball"/><circle cx="210" cy="58" r="8" class="ln" style="fill:var(--bg)"/>
+        <path class="sm dsh" d="M198 50 H180 M198 58 H174 M198 66 H180"/>
+        <path class="sa" d="M266 58 H284"/><path class="fa" d="M292 58 l-10 -6 v12 z"/>
+        <text x="236" y="114" text-anchor="middle">রোবট →</text>
+      </svg>
+      <figcaption>বাতাস যেদিকে যায়, বেলুন আর রোবট যায় তার উল্টো দিকে।</figcaption>
+    </figure>
+  </div>
+  <div class="try"><span class="tag">নিজে করে দেখো</span>একটা বেলুন ফুলিয়ে মুখ চেপে ধরো, তারপর ছেড়ে দাও। বাতাস কোন দিকে বেরোল, আর বেলুন কোন দিকে ছুটল?</div>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>মহাকাশ স্টেশনে চাকাওয়ালা রোবট কেন চলতে পারবে না?</summary><p>চাকা ঘুরে মেঝেতে চাপ দিয়ে এগোয়। কিন্তু ভাসমান রোবট মেঝে ছোঁয় না, তাই চাকা শুধু শূন্যে ঘুরবে।</p></details>
+    <details><summary>রোবটকে বাঁয়ে সরাতে পাখাগুলো বাতাস কোন দিকে ঠেলবে?</summary><p>ডানে। বাতাস যেদিকে যায়, রোবট যায় তার উল্টো দিকে।</p></details>
+  </div>
+
+  <h2 id="sense">৩. রোবট কীভাবে দেখে আর পথ চেনে</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span><a href="#float">২ নম্বর অংশ</a>।</div>
+  <p>চোখ বন্ধ করে ঘরের ভেতর হাঁটলে তুমি আন্দাজ করো কতটা হাঁটলে আর কতটা ঘুরলে। চোখ খুললে চেনা জিনিস (বোর্ড, জানালা) দেখে নিশ্চিত হও ঠিক কোথায় আছ। Int-Ball2-ও ঠিক এভাবেই নিজের জায়গা বোঝে:</p>
+  <div class="lesson">
+    <div>
+      <ul>
+        <li><b>IMU</b> (চোখ বন্ধ করে আন্দাজ): ছোট্ট একটা সেন্সর, যেটা টের পায় রোবট কতটা ঘুরছে আর কতটা জোরে গতি বাড়াচ্ছে বা কমাচ্ছে। তোমার কানের ভেতরে ভারসাম্য বোঝার যে অংশ আছে, অনেকটা সেরকম।</li>
+        <li><b>স্টেরিও ক্যামেরা</b> (চোখ খুলে দেখা): পাশাপাশি দুটো ক্যামেরা, তোমার দুই চোখের মতো। দুই চোখে দেখলে বোঝা যায় কোন জিনিস কত দূরে। রোবট এগুলো দিয়ে মডিউলের একটা ম্যাপ বানায়, আর সেই ম্যাপে নিজেকে খুঁজে নেয়।</li>
+        <li><b>মূল ক্যামেরা</b>: সামনের দিকের ক্যামেরা, যেটা ছবি আর ভিডিও তোলে। Kibo-RPC-তে এটা দিয়েই <b>AR মার্কার</b> পড়তে হয়।</li>
+      </ul>
+      <p><b>AR মার্কার</b> দেখতে QR কোডের মতো সাদাকালো চৌকো ছবি। প্রতিটায় একটা নম্বর (ID) লুকানো থাকে, আর ক্যামেরার ছবি থেকে হিসাব করা যায় মার্কারটা কত দূরে আর কোন দিকে। Kibo-র ভেতরে এমন ১২টা মার্কার লাগানো আছে।</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 300 140" role="img" aria-label="দুই চোখ দিয়ে দূরত্ব বোঝা, আর একটা AR মার্কারের মতো সাদাকালো চৌকো ছবি">
+        <circle cx="46" cy="34" r="12" class="ball"/><circle cx="46" cy="36" r="4" class="ff"/><circle cx="92" cy="34" r="12" class="ball"/><circle cx="92" cy="36" r="4" class="ff"/>
+        <path class="sa dsh" d="M46 46 L69 104 M92 46 L69 104"/><circle cx="69" cy="108" r="6" class="fa"/>
+        <text x="69" y="132" text-anchor="middle" class="m">দুই চোখে দূরত্ব বোঝা যায়</text>
+        <rect x="190" y="14" width="96" height="96" rx="3" style="fill:#fff"/><rect x="196" y="20" width="84" height="84" style="fill:#111"/>
+        <g style="fill:#fff"><rect x="210" y="34" width="14" height="14"/><rect x="238" y="34" width="14" height="14"/><rect x="224" y="48" width="14" height="14"/><rect x="252" y="48" width="14" height="14"/><rect x="210" y="62" width="14" height="14"/><rect x="224" y="62" width="14" height="14"/><rect x="238" y="76" width="14" height="14"/><rect x="252" y="76" width="14" height="14"/></g>
+        <text x="238" y="132" text-anchor="middle" class="m">AR মার্কার (নমুনা)</text>
+      </svg>
+      <figcaption>বাঁয়ে: দুই চোখ (বা দুই ক্যামেরা) দূরত্ব বোঝায়। ডানে: AR মার্কারের মতো একটা ছবি।</figcaption>
+    </figure>
+  </div>
+  <p>IMU আর স্টেরিও ক্যামেরা মিলিয়ে রোবট সবসময় জানে সে কোথায় আছে আর কোন দিকে মুখ করে আছে। “কোথায়” আর “কোন দিকে” কীভাবে সংখ্যায় লেখা হয়, তা শিখবে শেখার পথের পরের ধাপে: <a href="rotations.html">স্থানাঙ্ক ও ঘূর্ণন</a>।</p>
+  <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
+    <details><summary>IMU কী টের পায়?</summary><p>রোবট কতটা ঘুরছে, আর কতটা জোরে গতি বাড়াচ্ছে বা কমাচ্ছে।</p></details>
+    <details><summary>পাশাপাশি দুটো ক্যামেরা থাকলে কী সুবিধা?</summary><p>কোন জিনিস কত দূরে, তা বোঝা যায়, ঠিক আমাদের দুই চোখের মতো।</p></details>
+    <details><summary>Kibo-RPC-তে AR মার্কার পড়তে কোন ক্যামেরা লাগে?</summary><p>মূল ক্যামেরা, যেটা রোবটের সামনের দিকে।</p></details>
+  </div>
+
+  <!-- ===================== Int-Ball2 ===================== -->
+  <section class="rb" data-rb="ib2">
+  <h2 id="ib2">Int-Ball2 (JAXA)</h2>
+  <p>Int-Ball2 (JEM Internal Ball Camera 2) বলের মতো গোল একটা উড়ুক্কু ক্যামেরা রোবট, আকারে মোটামুটি একটা ফুটবলের সমান; ২০২৩ সালের জুন থেকে Kibo-র ভেতরে কাজ করছে। মাটি থেকে কন্ট্রোলাররা এটা উড়িয়ে ছবি আর ভিডিও তোলেন, যাতে নভোচারীদের ক্যামেরা হাতে কম সময় কাটাতে হয়। এটা অন্য দলের লেখা প্রোগ্রামও চালাতে পারে; Kibo-RPC 7-এর প্রোগ্রাম এভাবেই কক্ষপথে পৌঁছায়।</p>
+  <figure class="sketch">
+    <div class="duo">
+      <div>
+        <h4>সামনে</h4>
+        <svg viewBox="-44 0 344 250" role="img" aria-label="সামনে থেকে Int-Ball2">
+          <circle class="shell" cx="150" cy="125" r="90"/>
+          <path class="dark" d="M88 84 Q150 52 212 84 L214 168 Q150 196 86 168 Z" opacity=".92"/>
+          <circle class="led" cx="114" cy="118" r="21"/><circle class="led" cx="186" cy="118" r="21"/>
+          <circle class="lens" cx="150" cy="146" r="11"/><circle cx="150" cy="146" r="4" fill="#59627a"/>
+          <circle cx="150" cy="72" r="2.6" fill="#262a33"/>
+          <g class="dark"><ellipse cx="96" cy="66" rx="17" ry="12" transform="rotate(-38 96 66)"/><ellipse cx="204" cy="66" rx="17" ry="12" transform="rotate(38 204 66)"/><ellipse cx="96" cy="186" rx="17" ry="12" transform="rotate(38 96 186)"/><ellipse cx="204" cy="186" rx="17" ry="12" transform="rotate(-38 204 186)"/></g>
+          <rect x="58" y="114" width="7" height="22" rx="2" fill="#c9ced8" stroke="#8a93a6"/>
+          <path class="lead" d="M150 70 L150 22 L126 22"/><text x="122" y="26" text-anchor="end">মাইক্রোফোন</text>
+          <path class="lead" d="M206 62 L236 30"/><text x="214" y="22" class="m">পাখা (মোট ৮টা)</text>
+          <path class="lead" d="M207 118 L248 118"/><text x="252" y="122">LED ×২</text>
+          <path class="lead" d="M150 158 L150 232"/><text x="156" y="236">মূল ক্যামেরা</text>
+          <path class="lead" d="M58 125 L44 125"/><text x="40" y="121" class="m" text-anchor="end">ভেলক্রো,</text><text x="40" y="136" class="m" text-anchor="end">মাইক্রো USB</text>
+        </svg>
+      </div>
+      <div>
+        <h4>পেছনে</h4>
+        <svg viewBox="-44 0 344 250" role="img" aria-label="পেছন থেকে Int-Ball2">
+          <circle class="shell" cx="150" cy="125" r="90"/>
+          <path class="dark" d="M150 36 A89 89 0 0 1 150 214 A60 89 0 0 0 150 36 Z" opacity=".92"/>
+          <circle class="lens" cx="186" cy="150" r="13"/><circle cx="186" cy="150" r="5" fill="#59627a"/>
+          <circle class="lens" cx="70" cy="110" r="6"/><circle class="lens" cx="70" cy="140" r="6"/>
+          <g class="dark"><ellipse cx="96" cy="66" rx="17" ry="12" transform="rotate(-38 96 66)"/><ellipse cx="204" cy="66" rx="17" ry="12" transform="rotate(38 204 66)"/><ellipse cx="96" cy="186" rx="17" ry="12" transform="rotate(38 96 186)"/><ellipse cx="204" cy="186" rx="17" ry="12" transform="rotate(-38 204 186)"/></g>
+          <path class="lead" d="M64 110 L52 124"/><path class="lead" d="M64 140 L52 124"/><text x="48" y="122" text-anchor="end">স্টেরিও ক্যামেরা</text><text x="48" y="138" class="m" text-anchor="end">(পথ চেনার জন্য)</text>
+          <path class="lead" d="M196 160 L240 214"/><text x="200" y="232">ডকিং প্লাগ</text>
+        </svg>
+      </div>
+    </div>
+    <figcaption><b>স্কেচ ১।</b> Int-Ball2, JAXA-র <a href="https://github.com/jaxa/int-ball2_simulator" target="_blank" rel="noopener">সিমুলেটর রিপোজিটরির</a> হার্ডওয়্যার ডায়াগ্রাম থেকে নতুন করে আঁকা। স্টেরিও জোড়াটা রোবটের বাঁ পাশে (JAXA-র সিমুলেটর মডেলে লেন্স দুটোর মধ্যে ৫ সেমি ফাঁক)।</figcaption>
+  </figure>
+  <div class="wrap"><table>
+    <tr><th>আকার</th><td>মোটামুটি ২০ সেমি চওড়া একটা বল</td></tr>
+    <tr><th>ভর</th><td>প্রায় ৩.৩ কেজি</td></tr>
+    <tr><th>চলে যা দিয়ে</th><td>নালির ভেতরে বসানো ৮টা ছোট প্রপেলার, কোণাকুণি বাইরের দিকে মুখ করা; অর্ধেক ঘোরে ঘড়ির কাঁটার দিকে, অর্ধেক উল্টো দিকে। সব মিলিয়ে এরা রোবটকে যেকোনো দিকে ঠেলতে আর ঘোরাতে পারে (একে বলে ৬ ডিগ্রি অব ফ্রিডম: তিন দিকে সরা, আর তিন রকম ঘোরা)।</td></tr>
+    <tr><th>সবচেয়ে জোরালো ঠেলা</th><td>সামনে বা পেছনে ১৫৫ mN, ওপরে বা নিচে ৯৫ mN, পাশে ৫৭ mN (মেপে দেখা; mN, মানে মিলিনিউটন, হলো বলের একক)। পৃথিবীতে ১৬ গ্রামের একটা জিনিসের ওজন মোটামুটি এতটুকু, তিনটা A4 কাগজের মতো। তাই এটা ধীরেসুস্থে গতি বাড়ায় আর থামে।</td></tr>
+    <tr><th>ক্যামেরা</th><td>সামনে ছবি আর ভিডিওর জন্য <b>মূল ক্যামেরা</b>। পথ চেনার জন্য <b>স্টেরিও ক্যামেরা</b> (দুটো লেন্স)।</td></tr>
+    <tr><th>নিজের অবস্থান বোঝে</th><td>(সহজ কথায় <a href="#sense">৩ নম্বর অংশে</a>) স্টেরিও ক্যামেরায় ভিজ্যুয়াল SLAM দিয়ে (মডিউলের ম্যাপ বানায় আর সেই ম্যাপে নিজেকে খুঁজে নেয়), সঙ্গে একটা <b>IMU</b> (Epson-এর ইনারশিয়াল মেজারমেন্ট ইউনিট: জাইরোস্কোপ আর অ্যাক্সেলেরোমিটার)।</td></tr>
+    <tr><th>মস্তিষ্ক</th><td>Linux আর ROS চালানো একটা NVIDIA Jetson TX2। ইউজারদের প্রোগ্রাম চলে Docker কন্টেইনারে, ওড়ার সফটওয়্যার থেকে আলাদা হয়ে।</td></tr>
+    <tr><th>শক্তি</th><td>রিচার্জেবল ব্যাটারি; চার্জ নিতে নিজেই ডকিং স্টেশনে গিয়ে বসে।</td></tr>
+    <tr><th>মানুষের সঙ্গে</th><td>নিজের অবস্থা বোঝাতে দুটো LED রিং, আর একটা মাইক্রোফোন।</td></tr>
+  </table></div>
+  <div class="cards">
+    <a class="card" href="https://github.com/jaxa/int-ball2_simulator" target="_blank" rel="noopener"><b>GitHub: jaxa/int-ball2_simulator</b><small>JAXA-র অফিশিয়াল ROS/Gazebo সিমুলেটর আর ইউজার ম্যানুয়াল (Apache-2.0)।</small></a>
+    <a class="card" href="https://humans-in-space.jaxa.jp/en/biz-lab/news/detail/004595.html" target="_blank" rel="noopener"><b>JAXA: Int-Ball2 ROS/Gazebo Simulator Released</b><small>JAXA-র খবর, ২৭ মার্চ ২০২৫।</small></a>
+    <a class="card" href="https://jaxa.repo.nii.ac.jp/record/2000520/files/SA6000193042.pdf" target="_blank" rel="noopener"><b>গবেষণাপত্র: Int-Ball2-এর চালনব্যবস্থা (PDF)</b><small>JAXA, ২০২৩: ৮ প্রপেলারের নকশা, থ্রাস্ট আর ভর।</small></a>
+    <a class="card" href="https://ieeexplore.ieee.org/document/10688008" target="_blank" rel="noopener"><b>গবেষণাপত্র: নকশা আর প্রথম দফার পরীক্ষা</b><small>IEEE, ২০২৪ (লাইব্রেরির লগইন লাগতে পারে)।</small></a>
+  </div>
+
+  </section>
+
+  <!-- ===================== Astrobee ===================== -->
+  <section class="rb" data-rb="ab" hidden>
+  <h2 id="astrobee">Astrobee (NASA)</h2>
+  <p>Astrobee হলো NASA-র ঘনকের মতো দেখতে উড়ুক্কু রোবট। Bumble, Honey আর Queen নামের তিনটা Astrobee ২০১৯ সাল থেকে ISS-এর ভেতরে উড়ছে। এরা ক্রুদের কাজের ভিডিও করে, পরীক্ষার যন্ত্রপাতি বয়ে বেড়ায় আর জরিপ করে; ১ম থেকে ৬ষ্ঠ Kibo-RPC-র রোবটও ছিল এরাই।</p>
+  <figure class="sketch">
+    <div class="duo">
+      <div>
+        <h4>সামনে</h4>
+        <svg viewBox="-26 0 346 250" role="img" aria-label="সামনে থেকে Astrobee">
+          <rect class="mod" x="60" y="40" width="34" height="170"/><rect class="mod" x="206" y="40" width="34" height="170"/>
+          <rect class="shell" x="94" y="40" width="112" height="170"/>
+          <g fill="#262a33"><rect x="70" y="78" width="14" height="5"/><rect x="70" y="166" width="14" height="5"/><rect x="216" y="78" width="14" height="5"/><rect x="216" y="166" width="14" height="5"/></g>
+          <g class="bump"><rect x="52" y="32" width="22" height="22" rx="7"/><rect x="226" y="32" width="22" height="22" rx="7"/><rect x="52" y="196" width="22" height="22" rx="7"/><rect x="226" y="196" width="22" height="22" rx="7"/></g>
+          <circle class="lens" cx="118" cy="78" r="9"/><circle class="lens" cx="150" cy="78" r="12"/><rect class="lens" x="172" y="69" width="18" height="18" rx="3"/>
+          <circle class="lens" cx="182" cy="122" r="6"/>
+          <circle cx="114" cy="112" r="3" fill="#e0453a"/><circle cx="114" cy="126" r="5" fill="#fff4c2" stroke="#8a93a6"/>
+          <rect x="120" y="148" width="60" height="34" rx="3" fill="#1d3557"/>
+          <rect x="112" y="194" width="76" height="5" rx="2" fill="#3ccf9f"/>
+          <path class="lead" d="M118 69 L104 18"/><text x="64" y="14">NavCam</text>
+          <path class="lead" d="M150 66 L150 18"/><text x="134" y="14">SciCam</text>
+          <path class="lead" d="M182 69 L204 18"/><text x="196" y="14">HazCam</text>
+          <path class="lead" d="M188 122 L262 116"/><text x="246" y="106">SpeedCam</text>
+          <path class="lead" d="M110 112 L52 104"/><text x="48" y="97" class="m" text-anchor="end">লেজার</text><text x="48" y="111" class="m" text-anchor="end">পয়েন্টার</text>
+          <path class="lead" d="M109 126 L52 134"/><text x="48" y="138" class="m" text-anchor="end">টর্চ</text>
+          <path class="lead" d="M180 168 L262 160"/><text x="244" y="176">টাচ</text><text x="244" y="190">স্ক্রিন</text>
+          <path class="lead" d="M150 199 L150 232"/><text x="114" y="244" class="m">সংকেত বাতি</text>
+          <path class="lead" d="M240 80 L282 70"/><text x="252" y="62" class="m">নজল</text>
+        </svg>
+      </div>
+      <div>
+        <h4>পেছনে</h4>
+        <svg viewBox="-26 0 346 250" role="img" aria-label="পেছন থেকে Astrobee">
+          <rect class="mod" x="60" y="40" width="34" height="170"/><rect class="mod" x="206" y="40" width="34" height="170"/>
+          <rect class="shell" x="94" y="40" width="112" height="170"/>
+          <g class="bump"><rect x="52" y="32" width="22" height="22" rx="7"/><rect x="226" y="32" width="22" height="22" rx="7"/><rect x="52" y="196" width="22" height="22" rx="7"/><rect x="226" y="196" width="22" height="22" rx="7"/></g>
+          <circle class="lens" cx="122" cy="76" r="9"/><rect class="lens" x="168" y="67" width="18" height="18" rx="3"/>
+          <circle cx="150" cy="76" r="6" fill="#fff4c2" stroke="#8a93a6"/>
+          <rect x="104" y="160" width="92" height="12" rx="5" class="mod"/><rect x="104" y="172" width="22" height="22" rx="3" class="mod"/><path class="ln" d="M180 172 v18 m10 -18 v18"/>
+          <path class="lead" d="M122 67 L104 18"/><text x="70" y="14">DockCam</text>
+          <path class="lead" d="M177 67 L204 18"/><text x="190" y="14">PerchCam</text>
+          <path class="lead" d="M150 82 L150 120 L222 120"/><text x="226" y="124" class="m">AR টর্চ</text>
+          <path class="lead" d="M150 172 L150 232"/><text x="104" y="244">পার্চিং আর্ম (ভাঁজ করা)</text>
+          <path class="lead" d="M60 120 L42 120"/><text x="38" y="116" class="m" text-anchor="end">পাখার</text><text x="38" y="131" class="m" text-anchor="end">মডিউল</text>
+        </svg>
+      </div>
+    </div>
+    <figcaption><b>স্কেচ ২।</b> Astrobee, NASA-র <a href="https://www.nasa.gov/wp-content/uploads/2017/12/irg-ff029-astrobee-guest-science-guide.pdf" target="_blank" rel="noopener">Astrobee Guest Science Guide</a>-এর নাম লেখা ছবি থেকে নতুন করে আঁকা। পাশের বাক্স দুটো হলো দুটো পাখার (চালনার) মডিউল।</figcaption>
+  </figure>
+  <div class="wrap"><table>
+    <tr><th>আকার</th><td>৩২ সেমি (১২.৫ ইঞ্চি) চওড়া একটা ঘনক, কোণে নরম বাম্পার</td></tr>
+    <tr><th>ভর</th><td>প্রায় ১০ কেজি</td></tr>
+    <tr><th>চলে যা দিয়ে</th><td>পাশের দুটো মডিউল, প্রতিটায় একটা পাখা (ইমপেলার), যেটা মডিউলটাকে বাতাসে ভরে রাখে। নাড়ানো যায় এমন ১২টা নজল দিয়ে বাতাস বেরোয়, তাই এটা যেকোনো দিকে ঠেলতে আর ঘুরতে পারে (৬ ডিগ্রি অব ফ্রিডম)।</td></tr>
+    <tr><th>ঠেলা</th><td>সামনে বা পেছনে অন্তত ০.৬ N, আর অন্য দিকগুলোতে ০.৩ N (নকশার শর্ত)।</td></tr>
+    <tr><th>ক্যামেরা</th><td>ছয়টা: <b>NavCam</b> (ওয়াইড অ্যাঙ্গেল, পথ চেনার জন্য), <b>SciCam</b> (HD ভিডিও), <b>HazCam</b> (গভীরতা মাপে, বাধা এড়াতে), <b>SpeedCam</b> (গতি মাপে), <b>DockCam</b> (ডকের AR মার্কার খোঁজে) আর <b>PerchCam</b> (গভীরতা মাপে, হাতল খোঁজে)।</td></tr>
+    <tr><th>নিজের অবস্থান বোঝে</th><td>NavCam যা দেখে, তা ISS-এর একটা ম্যাপের সঙ্গে মিলিয়ে; সঙ্গে IMU, গভীরতার ক্যামেরা আর SpeedCam।</td></tr>
+    <tr><th>মস্তিষ্ক</th><td>তিনটা কম্পিউটার: লো-, মিড- আর হাই-লেভেল প্রসেসর (LLP, MLP, HLP)। HLP-তে চলে Android, আর গেস্ট-সায়েন্স অ্যাপগুলো চলে সেখানেই।</td></tr>
+    <tr><th>হাত আর যন্ত্রপাতি</th><td>গ্রিপারওয়ালা দুই জোড়ের একটা পার্চিং আর্ম হাতল আঁকড়ে ধরে, যাতে রোবট স্থির থাকতে আর শক্তি বাঁচাতে পারে। তিনটা পেলোড বে-তে পরীক্ষার যন্ত্রপাতি বসানো যায়।</td></tr>
+    <tr><th>শক্তি</th><td>সর্বোচ্চ চারটা ব্যাটারি, মোটামুটি ২ ঘণ্টা ওড়ার মতো; রিচার্জ করতে নিজেই ডকে গিয়ে বসে।</td></tr>
+    <tr><th>মানুষের সঙ্গে</th><td>টাচ স্ক্রিন, স্পিকার আর মাইক্রোফোন, সংকেত বাতি, লেজার পয়েন্টার আর টর্চ।</td></tr>
+  </table></div>
+  <div class="cards">
+    <a class="card" href="https://www.nasa.gov/astrobee" target="_blank" rel="noopener"><b>NASA: Astrobee</b><small>NASA-র Astrobee হোম পেজ।</small></a>
+    <a class="card" href="https://github.com/nasa/astrobee" target="_blank" rel="noopener"><b>GitHub: nasa/astrobee</b><small>ওড়ার সফটওয়্যার আর সিমুলেটর (C++, ROS, Apache-2.0)।</small></a>
+    <a class="card" href="https://github.com/nasa/astrobee_android" target="_blank" rel="noopener"><b>GitHub: nasa/astrobee_android</b><small>হাই-লেভেল প্রসেসরের Android অ্যাপ, আর গেস্ট-সায়েন্সের উদাহরণ।</small></a>
+    <a class="card" href="https://nasa.github.io/astrobee/documentation.html" target="_blank" rel="noopener"><b>Astrobee ডকুমেন্টেশন</b><small>রিপোজিটরি থেকে তৈরি: হার্ডওয়্যার, লোকালাইজেশন, কমান্ড।</small></a>
+  </div>
+
+  </section>
+
+  <!-- ===================== Compare ===================== -->
+  <h2 id="compare">পাশাপাশি তুলনা</h2>
+  <div class="wrap"><table>
+    <tr><th></th><th>Int-Ball2</th><th>Astrobee</th></tr>
+    <tr><td>কোথাকার</td><td>JAXA (জাপান)</td><td>NASA (যুক্তরাষ্ট্র)</td></tr>
+    <tr><td>ISS-এ আছে</td><td>২০২৩ থেকে, Kibo-তে</td><td>২০১৯ থেকে, তিনটা রোবট</td></tr>
+    <tr><td>আকৃতি, আকার</td><td>বল, প্রায় ২০ সেমি</td><td>ঘনক, ৩২ সেমি</td></tr>
+    <tr><td>ভর</td><td>প্রায় ৩.৩ কেজি</td><td>প্রায় ১০ কেজি</td></tr>
+    <tr><td>ওড়ে যা দিয়ে</td><td>৮টা প্রপেলার</td><td>২টা পাখা আর ১২টা নজল</td></tr>
+    <tr><td>ক্যামেরা</td><td>২টা (মূল আর স্টেরিও)</td><td>৬টা</td></tr>
+    <tr><td>নিজেকে খুঁজে পায়</td><td>স্টেরিও ভিজ্যুয়াল SLAM আর IMU দিয়ে</td><td>NavCam-এর ম্যাপ মেলানো, IMU, গভীরতা আর গতির সেন্সর দিয়ে</td></tr>
+    <tr><td>কিছু ধরতে পারে</td><td>না</td><td>পার্চিং আর্ম দিয়ে</td></tr>
+    <tr><td>কম্পিউটার</td><td>NVIDIA Jetson TX2</td><td>তিনটা প্রসেসর (একটায় চলে Android)</td></tr>
+    <tr><td>Kibo-RPC</td><td>৭ম</td><td>১ম থেকে ৬ষ্ঠ</td></tr>
+    <tr><td>ওপেন সোর্স</td><td><a href="https://github.com/jaxa/int-ball2_simulator" target="_blank" rel="noopener">jaxa/int-ball2_simulator</a></td><td><a href="https://github.com/nasa/astrobee" target="_blank" rel="noopener">nasa/astrobee</a></td></tr>
+  </table></div>
+  <p class="note">৫ম Kibo-RPC-র ফাইনালে Int-Ball2 Astrobee-র রানগুলোর ভিডিও করেছিল: সেবারই প্রথম দুটো রোবট একসঙ্গে উড়েছিল (<a href="https://humans-in-space.jaxa.jp/en/biz-lab/news/detail/004234.html" target="_blank" rel="noopener">JAXA-র খবর</a>)।</p>
+
+  <h2 id="program">তোমার প্রোগ্রামের জন্য এর মানে কী</h2>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>এই পাতার <a href="#station">১</a> থেকে <a href="#sense">৩ নম্বর অংশ</a>। নিচের কিছু শব্দ (<code>/sensor_fusion/navigation</code>-এর মতো) রোবটের প্রোগ্রামের কমান্ডের নাম; এগুলোর মানে আছে <a href="learn.html">নিয়মের গাইডে</a>।</div>
+  <ul>
+    <li><b>মার্কার পড়বে মূল ক্যামেরা দিয়ে।</b> এটা সোজা সামনের দিকে তাকায়, কেন্দ্র থেকে ০.১৪ মি সামনে বসানো (প্রোগ্রামিং ম্যানুয়াল আর স্যান্ডবক্সেও একই সংখ্যা)। মার্কারের দিকে মুখ করাতে রোবটকে ঘোরাও; এটা পাশে বা পেছনে দেখতে পায় না।</li>
+    <li><b>“আমি কোথায়”, সেটা একটা আন্দাজ মাত্র।</b> <code>/sensor_fusion/navigation</code> আসে স্টেরিও ক্যামেরা আর IMU থেকে। AR মার্কার পড়লে বোঝা যায় ক্যামেরার তুলনায় মার্কারটা আসলে কোথায় আছে, তাই বিচার চাওয়ার আগে এটা দিয়ে মিলিয়ে নাও।</li>
+    <li><b>ঠেলা খুব সামান্য।</b> ৩.৩ কেজির রোবটে সর্বোচ্চ ১৫৫ mN ঠেলা মানে প্রতি সেকেন্ডে গতি বাড়ে বড়জোর সেকেন্ডে ৫ সেন্টিমিটার করে (ত্বরণ ০.০৫ মি/সে²-এর কম)। লম্বা ঘুরপথে সময় নষ্ট হয়, আর থেমে স্থির হতে রোবটের একটু সময় লাগে: <code>/event/checkpoint_passed</code> চাওয়ার আগে একটু অপেক্ষা করো।</li>
+    <li><b>এটা আসল মডিউলে আসল যন্ত্র।</b> যে প্রোগ্রাম আটকে যায় বা জিনিসপত্রে ধাক্কা খায়, তার রান নষ্ট হয়; এ কারণেই ফাইনালের আগে JAXA কোড যাচাই করে।</li>
+  </ul>
+  <div class="box"><p><b>এরপর কী?</b> শেখার পথের পরের ধাপ <a href="rotations.html">স্থানাঙ্ক ও ঘূর্ণন</a>: রোবট কোথায় আর কোন দিকে মুখ করে, তা সংখ্যায় লেখা শেখো। চাইলে আগে <a href="index.html">স্যান্ডবক্সে</a> রোবটটা নিজে চালিয়েও দেখতে পারো। <a href="index.html">স্যান্ডবক্সের</a> ক্যামেরাও কেন্দ্র থেকে ০.১৪ মি সামনে, ঠিক Int-Ball2-এর মূল ক্যামেরার মতো।</p></div>
+
+  <h2 id="words">শব্দকোষ</h2>
+  <dl class="words">
+    <dt>ISS</dt><dd>আন্তর্জাতিক মহাকাশ স্টেশন। (<a href="#station">অংশ ১</a>)</dd>
+    <dt>Kibo</dt><dd>ISS-এ জাপানের মডিউল (ঘর); রোবট এর ভেতরে ওড়ে। (<a href="#station">অংশ ১</a>)</dd>
+    <dt>মাইক্রোগ্র্যাভিটি</dt><dd>প্রায় শূন্য মাধ্যাকর্ষণ: সবকিছু ভেসে থাকে। (<a href="#float">অংশ ২</a>)</dd>
+    <dt>প্রপেলার / পাখা</dt><dd>বাতাস ঠেলে রোবটকে উল্টো দিকে সরায়। (<a href="#float">অংশ ২</a>)</dd>
+    <dt>IMU</dt><dd>যে সেন্সর রোবটের ঘোরা আর গতি বদলানো টের পায়। (<a href="#sense">অংশ ৩</a>)</dd>
+    <dt>স্টেরিও ক্যামেরা</dt><dd>পাশাপাশি দুটো ক্যামেরা, দূরত্ব বোঝার জন্য। (<a href="#sense">অংশ ৩</a>)</dd>
+    <dt>SLAM</dt><dd>ম্যাপ বানানো আর একই সঙ্গে সেই ম্যাপে নিজেকে খুঁজে নেওয়া। (<a href="#sense">অংশ ৩</a>)</dd>
+    <dt>AR মার্কার</dt><dd>QR কোডের মতো সাদাকালো চৌকো ছবি, যাতে একটা নম্বর লুকানো থাকে। (<a href="#sense">অংশ ৩</a>)</dd>
+    <dt>ডকিং স্টেশন</dt><dd>রোবটের “বাসা”: এখানে বসে সে চার্জ নেয়, খেলাও এখান থেকে শুরু।</dd>
+  </dl>
+
+  <footer>
+    তথ্যের উৎস: JAXA-র <a href="https://github.com/jaxa/int-ball2_simulator" target="_blank" rel="noopener">Int-Ball2 সিমুলেটর রিপোজিটরি</a> আর চালনব্যবস্থার গবেষণাপত্র, <a href="https://corporate-origin.epson.biz/en/news/2024/240409.html" target="_blank" rel="noopener">Epson-এর IMU ঘোষণা</a>, NASA-র <a href="https://www.nasa.gov/wp-content/uploads/2017/12/irg-ff029-astrobee-guest-science-guide.pdf" target="_blank" rel="noopener">Astrobee Guest Science Guide</a> আর <a href="https://github.com/nasa/astrobee" target="_blank" rel="noopener">Astrobee রিপোজিটরি</a>। স্কেচ আর 3D মডেলগুলো সহজ করে আঁকা, অফিশিয়াল ছবি নয়। JAXA, NASA বা UNOOSA-র সঙ্গে যুক্ত নয়, তাদের অনুমোদিতও নয়।<br>
+    <a href="LICENSE.txt" target="_blank" rel="noopener">লাইসেন্স</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">ihashib-এর তৈরি</a>
+  </footer>
+</div>
+<div class="en" lang="en">
+
+  <!-- ===================== Basics ===================== -->
+  <h2 id="en-station">1. The space station and Kibo</h2>
+  <div class="need"><span class="tag">Read this first</span>Nothing.</div>
+  <div class="lesson">
+    <div>
+      <p>The <b>International Space Station</b> (ISS) circles the Earth about 400 kilometres up: if you could drive straight up on a motorway, you'd get there in about four hours. It goes all the way round the Earth in about an hour and a half.</p>
+      <p>Astronauts live inside it and do science experiments. The station is made of many rooms joined together; each room is called a <b>module</b>. Japan's module is called <b>Kibo</b> (Japanese for "hope"): a long room shaped like a tube, with about as much space inside as a bus. That's where the robot flies.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 300 170" role="img" aria-label="The space station circling about 400 kilometres above the Earth">
+        <circle cx="150" cy="420" r="300" style="fill:#1d3557;stroke:#4f7bff;stroke-width:1.5"/>
+        <text x="150" y="152" text-anchor="middle" class="m">Earth</text>
+        <path class="sm dsh" d="M14 112 A160 90 0 0 1 286 112"/><path class="fm" d="M289 119 l-1 -11 l-8 6 z"/>
+        <path class="ln" d="M118 70 H182"/><g style="fill:var(--accent);opacity:.8"><rect x="120" y="58" width="12" height="24"/><rect x="134" y="58" width="12" height="24"/><rect x="154" y="58" width="12" height="24"/><rect x="168" y="58" width="12" height="24"/></g><rect x="143" y="66" width="14" height="9" rx="2" class="ff"/>
+        <text x="150" y="50" text-anchor="middle">ISS</text>
+        <path class="sa dsh" d="M150 86 V118"/><text x="158" y="108" style="fill:var(--accent)">about 400 km</text>
+        <text x="10" y="22" class="m">orbit: once round in 1½ hours</text>
+      </svg>
+      <figcaption>The space station circling the Earth (not drawn to scale).</figcaption>
+    </figure>
+  </div>
+  <div class="word"><span class="tag">New words</span><dl>
+    <dt>ISS</dt><dd>The International Space Station.</dd>
+    <dt>module</dt><dd>One of the station's rooms. Kibo is Japan's module.</dd>
+    <dt>astronaut</dt><dd>A person who travels to space.</dd>
+  </dl></div>
+
+  <h2 id="en-float">2. How a floating robot moves</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-station">Part 1</a>.</div>
+  <p>Inside the station everything floats: pens, drops of water, people too. That's because the station and everything inside it are all "falling" around the Earth together, none faster than the others, so nothing seems to weigh anything. This is called <b>microgravity</b> (almost no gravity).</p>
+  <div class="lesson">
+    <div>
+      <p>So how does the robot move? Wheels are no use, because a floating robot doesn't even touch the floor! Think of a balloon: blow it up and let go, and the air rushes out of the back while the balloon shoots forward.</p>
+      <p>Int-Ball2 does the same: small fans inside it push air one way, and the robot moves the other way. By running different fans, it can move and turn in any direction.</p>
+      <p>Here's a strange thing: once it starts moving, the robot hardly slows down by itself; to stop, it has to push the other way. Open Drive in the <a href="index.html">sandbox</a>, turn on Zero-g and feel it for yourself!</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 300 130" role="img" aria-label="A balloon and the robot: air goes one way, the object goes the other way">
+        <ellipse cx="96" cy="58" rx="30" ry="38" style="fill:var(--accent);opacity:.25;stroke:var(--accent);stroke-width:1.5"/><path class="ff" d="M66 58 l-8 -6 v12 z"/>
+        <path class="sm dsh" d="M52 50 H20 M52 58 H14 M52 66 H20"/>
+        <path class="sa" d="M132 58 H158"/><path class="fa" d="M166 58 l-10 -6 v12 z"/>
+        <text x="26" y="88" class="m">air ←</text><text x="96" y="114" text-anchor="middle">balloon →</text>
+        <circle cx="236" cy="58" r="26" class="ball"/><circle cx="210" cy="58" r="8" class="ln" style="fill:var(--bg)"/>
+        <path class="sm dsh" d="M198 50 H180 M198 58 H174 M198 66 H180"/>
+        <path class="sa" d="M266 58 H284"/><path class="fa" d="M292 58 l-10 -6 v12 z"/>
+        <text x="236" y="114" text-anchor="middle">robot →</text>
+      </svg>
+      <figcaption>The air goes one way; the balloon and the robot go the other.</figcaption>
+    </figure>
+  </div>
+  <div class="try"><span class="tag">Try it yourself</span>Blow up a balloon, pinch the neck, then let go. Which way did the air rush out, and which way did the balloon fly?</div>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>Why can't a robot with wheels move around the space station?</summary><p>Wheels move by pushing against the floor. A floating robot doesn't touch the floor, so the wheels would just spin in the air.</p></details>
+    <details><summary>To move the robot to the left, which way do the fans push the air?</summary><p>To the right. The robot always goes the opposite way to the air.</p></details>
+  </div>
+
+  <h2 id="en-sense">3. How the robot sees and finds its way</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-float">Part 2</a>.</div>
+  <p>If you walk round a room with your eyes shut, you guess how far you've walked and turned. When you open your eyes, you look at things you know (the board, the windows) to check exactly where you are. Int-Ball2 works out where it is in just the same way:</p>
+  <div class="lesson">
+    <div>
+      <ul>
+        <li><b>IMU</b> (guessing with your eyes shut): a tiny sensor that feels how much the robot turns and how hard it speeds up or slows down. It's a bit like the part inside your ear that keeps your balance.</li>
+        <li><b>Stereo camera</b> (opening your eyes): two cameras side by side, like your two eyes. With two eyes you can tell how far away things are. The robot uses them to make a map of the module and find itself on that map.</li>
+        <li><b>Main camera</b>: the camera at the front that takes photos and video. In Kibo-RPC, this is the one that reads the <b>AR markers</b>.</li>
+      </ul>
+      <p>An <b>AR marker</b> is a black-and-white square picture, a bit like a QR code. Each one hides a number (its ID), and from the camera picture you can work out how far away the marker is and which way it faces. Kibo has 12 of these inside it.</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 300 140" role="img" aria-label="Two eyes judging distance, and a black-and-white square like an AR marker">
+        <circle cx="46" cy="34" r="12" class="ball"/><circle cx="46" cy="36" r="4" class="ff"/><circle cx="92" cy="34" r="12" class="ball"/><circle cx="92" cy="36" r="4" class="ff"/>
+        <path class="sa dsh" d="M46 46 L69 104 M92 46 L69 104"/><circle cx="69" cy="108" r="6" class="fa"/>
+        <text x="69" y="132" text-anchor="middle" class="m">two eyes judge distance</text>
+        <rect x="190" y="14" width="96" height="96" rx="3" style="fill:#fff"/><rect x="196" y="20" width="84" height="84" style="fill:#111"/>
+        <g style="fill:#fff"><rect x="210" y="34" width="14" height="14"/><rect x="238" y="34" width="14" height="14"/><rect x="224" y="48" width="14" height="14"/><rect x="252" y="48" width="14" height="14"/><rect x="210" y="62" width="14" height="14"/><rect x="224" y="62" width="14" height="14"/><rect x="238" y="76" width="14" height="14"/><rect x="252" y="76" width="14" height="14"/></g>
+        <text x="238" y="132" text-anchor="middle" class="m">an AR marker (example)</text>
+      </svg>
+      <figcaption>Left: two eyes (or two cameras) tell how far things are. Right: a picture like an AR marker.</figcaption>
+    </figure>
+  </div>
+  <p>Using the IMU and the stereo camera together, the robot always knows where it is and which way it faces. How "where" and "which way" are written as numbers is the next step on the learning path: <a href="rotations.html">Coordinates and rotations</a>.</p>
+  <div class="check"><span class="tag">Check yourself</span>
+    <details><summary>What does the IMU feel?</summary><p>How much the robot turns, and how hard it speeds up or slows down.</p></details>
+    <details><summary>Why is it useful to have two cameras side by side?</summary><p>They show how far away things are, just like our two eyes.</p></details>
+    <details><summary>Which camera reads the AR markers in Kibo-RPC?</summary><p>The main camera, at the front of the robot.</p></details>
+  </div>
+
+  <!-- ===================== Int-Ball2 ===================== -->
+  <section class="rb" data-rb="ib2">
+  <h2 id="en-ib2">Int-Ball2 (JAXA)</h2>
+  <p>Int-Ball2 (JEM Internal Ball Camera 2) is a ball-shaped flying camera robot, about the size of a football, that has worked inside Kibo since June 2023. Ground controllers fly it to take photos and video, so astronauts spend less time holding cameras. It can also run programs written by other teams, which is how Kibo-RPC 7 programs reach orbit.</p>
+  <figure class="sketch">
+    <div class="duo">
+      <div>
+        <h4>Front</h4>
+        <svg viewBox="-44 0 344 250" role="img" aria-label="Int-Ball2 from the front">
+          <circle class="shell" cx="150" cy="125" r="90"/>
+          <path class="dark" d="M88 84 Q150 52 212 84 L214 168 Q150 196 86 168 Z" opacity=".92"/>
+          <circle class="led" cx="114" cy="118" r="21"/><circle class="led" cx="186" cy="118" r="21"/>
+          <circle class="lens" cx="150" cy="146" r="11"/><circle cx="150" cy="146" r="4" fill="#59627a"/>
+          <circle cx="150" cy="72" r="2.6" fill="#262a33"/>
+          <g class="dark"><ellipse cx="96" cy="66" rx="17" ry="12" transform="rotate(-38 96 66)"/><ellipse cx="204" cy="66" rx="17" ry="12" transform="rotate(38 204 66)"/><ellipse cx="96" cy="186" rx="17" ry="12" transform="rotate(38 96 186)"/><ellipse cx="204" cy="186" rx="17" ry="12" transform="rotate(-38 204 186)"/></g>
+          <rect x="58" y="114" width="7" height="22" rx="2" fill="#c9ced8" stroke="#8a93a6"/>
+          <path class="lead" d="M150 70 L150 22 L126 22"/><text x="122" y="26" text-anchor="end">Microphone</text>
+          <path class="lead" d="M206 62 L236 30"/><text x="214" y="22" class="m">fan (8 in all)</text>
+          <path class="lead" d="M207 118 L248 118"/><text x="252" y="122">LED ×2</text>
+          <path class="lead" d="M150 158 L150 232"/><text x="156" y="236">Main camera</text>
+          <path class="lead" d="M58 125 L44 125"/><text x="40" y="121" class="m" text-anchor="end">Velcro,</text><text x="40" y="136" class="m" text-anchor="end">micro USB</text>
+        </svg>
+      </div>
+      <div>
+        <h4>Back</h4>
+        <svg viewBox="-44 0 344 250" role="img" aria-label="Int-Ball2 from the back">
+          <circle class="shell" cx="150" cy="125" r="90"/>
+          <path class="dark" d="M150 36 A89 89 0 0 1 150 214 A60 89 0 0 0 150 36 Z" opacity=".92"/>
+          <circle class="lens" cx="186" cy="150" r="13"/><circle cx="186" cy="150" r="5" fill="#59627a"/>
+          <circle class="lens" cx="70" cy="110" r="6"/><circle class="lens" cx="70" cy="140" r="6"/>
+          <g class="dark"><ellipse cx="96" cy="66" rx="17" ry="12" transform="rotate(-38 96 66)"/><ellipse cx="204" cy="66" rx="17" ry="12" transform="rotate(38 204 66)"/><ellipse cx="96" cy="186" rx="17" ry="12" transform="rotate(38 96 186)"/><ellipse cx="204" cy="186" rx="17" ry="12" transform="rotate(-38 204 186)"/></g>
+          <path class="lead" d="M64 110 L52 124"/><path class="lead" d="M64 140 L52 124"/><text x="48" y="122" text-anchor="end">Stereo camera</text><text x="48" y="138" class="m" text-anchor="end">(navigation)</text>
+          <path class="lead" d="M196 160 L240 214"/><text x="200" y="232">Docking plug</text>
+        </svg>
+      </div>
+    </div>
+    <figcaption><b>Sketch 1.</b> Int-Ball2, redrawn from the hardware diagram in JAXA's <a href="https://github.com/jaxa/int-ball2_simulator" target="_blank" rel="noopener">simulator repository</a>. The stereo pair sits on the robot's left side (in JAXA's simulator model the two lenses are 5 cm apart).</figcaption>
+  </figure>
+  <div class="wrap"><table>
+    <tr><th>Size</th><td>A ball about 20 cm across</td></tr>
+    <tr><th>Mass</th><td>About 3.3 kg</td></tr>
+    <tr><th>Moves with</th><td>8 small propellers in ducts, pointing out at angles; half spin clockwise, half anticlockwise. Together they push and turn it in any direction (this is called 6 degrees of freedom: moving three ways, and turning three ways).</td></tr>
+    <tr><th>Strongest push</th><td>155 mN forward or back, 95 mN up or down, 57 mN sideways (measured; mN, millinewtons, measure force). That's about what a 16 g object weighs on Earth, about three sheets of A4 paper, so it speeds up and stops gently.</td></tr>
+    <tr><th>Cameras</th><td><b>Main camera</b> at the front for photos and video. <b>Stereo camera</b> (two lenses) for navigation.</td></tr>
+    <tr><th>Knows where it is by</th><td>(in simple words in <a href="#en-sense">part 3</a>) Visual SLAM on the stereo camera (it maps the module and finds itself in the map), combined with an <b>IMU</b> (an Epson inertial measurement unit: gyroscopes and accelerometers).</td></tr>
+    <tr><th>Brain</th><td>An NVIDIA Jetson TX2 running Linux and ROS. User programs run in Docker containers, separate from the flight software.</td></tr>
+    <tr><th>Power</th><td>A rechargeable battery; it docks itself on its docking station to charge.</td></tr>
+    <tr><th>With people</th><td>Two LED rings that show its state, and a microphone.</td></tr>
+  </table></div>
+  <div class="cards">
+    <a class="card" href="https://github.com/jaxa/int-ball2_simulator" target="_blank" rel="noopener"><b>GitHub: jaxa/int-ball2_simulator</b><small>JAXA's official ROS/Gazebo simulator and user's manual (Apache-2.0).</small></a>
+    <a class="card" href="https://humans-in-space.jaxa.jp/en/biz-lab/news/detail/004595.html" target="_blank" rel="noopener"><b>JAXA: Int-Ball2 ROS/Gazebo Simulator Released</b><small>JAXA news, March 27, 2025.</small></a>
+    <a class="card" href="https://jaxa.repo.nii.ac.jp/record/2000520/files/SA6000193042.pdf" target="_blank" rel="noopener"><b>Paper: Int-Ball2's propulsion (PDF)</b><small>JAXA, 2023: the 8-propeller design, thrust and mass.</small></a>
+    <a class="card" href="https://ieeexplore.ieee.org/document/10688008" target="_blank" rel="noopener"><b>Paper: design and initial checkout</b><small>IEEE, 2024 (may need a library login).</small></a>
+  </div>
+
+  </section>
+
+  <!-- ===================== Astrobee ===================== -->
+  <section class="rb" data-rb="ab" hidden>
+  <h2 id="en-astrobee">Astrobee (NASA)</h2>
+  <p>Astrobee is NASA's cube-shaped free-flyer. Three of them, named Bumble, Honey and Queen, have flown inside the ISS since 2019. They film crew work, carry experiments and take surveys, and they were the robots of the 1st to 6th Kibo-RPC.</p>
+  <figure class="sketch">
+    <div class="duo">
+      <div>
+        <h4>Front</h4>
+        <svg viewBox="-26 0 346 250" role="img" aria-label="Astrobee from the front">
+          <rect class="mod" x="60" y="40" width="34" height="170"/><rect class="mod" x="206" y="40" width="34" height="170"/>
+          <rect class="shell" x="94" y="40" width="112" height="170"/>
+          <g fill="#262a33"><rect x="70" y="78" width="14" height="5"/><rect x="70" y="166" width="14" height="5"/><rect x="216" y="78" width="14" height="5"/><rect x="216" y="166" width="14" height="5"/></g>
+          <g class="bump"><rect x="52" y="32" width="22" height="22" rx="7"/><rect x="226" y="32" width="22" height="22" rx="7"/><rect x="52" y="196" width="22" height="22" rx="7"/><rect x="226" y="196" width="22" height="22" rx="7"/></g>
+          <circle class="lens" cx="118" cy="78" r="9"/><circle class="lens" cx="150" cy="78" r="12"/><rect class="lens" x="172" y="69" width="18" height="18" rx="3"/>
+          <circle class="lens" cx="182" cy="122" r="6"/>
+          <circle cx="114" cy="112" r="3" fill="#e0453a"/><circle cx="114" cy="126" r="5" fill="#fff4c2" stroke="#8a93a6"/>
+          <rect x="120" y="148" width="60" height="34" rx="3" fill="#1d3557"/>
+          <rect x="112" y="194" width="76" height="5" rx="2" fill="#3ccf9f"/>
+          <path class="lead" d="M118 69 L104 18"/><text x="64" y="14">NavCam</text>
+          <path class="lead" d="M150 66 L150 18"/><text x="134" y="14">SciCam</text>
+          <path class="lead" d="M182 69 L204 18"/><text x="196" y="14">HazCam</text>
+          <path class="lead" d="M188 122 L262 116"/><text x="246" y="106">SpeedCam</text>
+          <path class="lead" d="M110 112 L52 104"/><text x="48" y="104" class="m" text-anchor="end">laser pointer</text>
+          <path class="lead" d="M109 126 L52 134"/><text x="48" y="138" class="m" text-anchor="end">flashlight</text>
+          <path class="lead" d="M180 168 L262 160"/><text x="244" y="176">touch</text><text x="244" y="190">screen</text>
+          <path class="lead" d="M150 199 L150 232"/><text x="114" y="244" class="m">signal lights</text>
+          <path class="lead" d="M240 80 L282 70"/><text x="252" y="62" class="m">nozzles</text>
+        </svg>
+      </div>
+      <div>
+        <h4>Back</h4>
+        <svg viewBox="-26 0 346 250" role="img" aria-label="Astrobee from the back">
+          <rect class="mod" x="60" y="40" width="34" height="170"/><rect class="mod" x="206" y="40" width="34" height="170"/>
+          <rect class="shell" x="94" y="40" width="112" height="170"/>
+          <g class="bump"><rect x="52" y="32" width="22" height="22" rx="7"/><rect x="226" y="32" width="22" height="22" rx="7"/><rect x="52" y="196" width="22" height="22" rx="7"/><rect x="226" y="196" width="22" height="22" rx="7"/></g>
+          <circle class="lens" cx="122" cy="76" r="9"/><rect class="lens" x="168" y="67" width="18" height="18" rx="3"/>
+          <circle cx="150" cy="76" r="6" fill="#fff4c2" stroke="#8a93a6"/>
+          <rect x="104" y="160" width="92" height="12" rx="5" class="mod"/><rect x="104" y="172" width="22" height="22" rx="3" class="mod"/><path class="ln" d="M180 172 v18 m10 -18 v18"/>
+          <path class="lead" d="M122 67 L104 18"/><text x="70" y="14">DockCam</text>
+          <path class="lead" d="M177 67 L204 18"/><text x="190" y="14">PerchCam</text>
+          <path class="lead" d="M150 82 L150 120 L222 120"/><text x="226" y="124" class="m">AR flashlight</text>
+          <path class="lead" d="M150 172 L150 232"/><text x="104" y="244">Perching arm (folded)</text>
+          <path class="lead" d="M60 120 L42 120"/><text x="38" y="116" class="m" text-anchor="end">fan</text><text x="38" y="131" class="m" text-anchor="end">module</text>
+        </svg>
+      </div>
+    </div>
+    <figcaption><b>Sketch 2.</b> Astrobee, redrawn from the labelled figure in NASA's <a href="https://www.nasa.gov/wp-content/uploads/2017/12/irg-ff029-astrobee-guest-science-guide.pdf" target="_blank" rel="noopener">Astrobee Guest Science Guide</a>. The side boxes are the two fan (propulsion) modules.</figcaption>
+  </figure>
+  <div class="wrap"><table>
+    <tr><th>Size</th><td>A cube 32 cm (12.5 inches) wide, with soft corner bumpers</td></tr>
+    <tr><th>Mass</th><td>About 10 kg</td></tr>
+    <tr><th>Moves with</th><td>Two side modules, each with a fan (impeller) that fills it with air. 12 adjustable nozzles let the air out, so it can push and turn in any direction (6 degrees of freedom).</td></tr>
+    <tr><th>Push</th><td>At least 0.6 N forward or back and 0.3 N in the other directions (the design requirement).</td></tr>
+    <tr><th>Cameras</th><td>Six: <b>NavCam</b> (wide angle, for navigation), <b>SciCam</b> (HD video), <b>HazCam</b> (depth, for obstacles), <b>SpeedCam</b> (measures speed), <b>DockCam</b> (finds the AR markers on its dock) and <b>PerchCam</b> (depth, finds handrails).</td></tr>
+    <tr><th>Knows where it is by</th><td>Matching what the NavCam sees to a map of the ISS, combined with an IMU, its depth cameras and the SpeedCam.</td></tr>
+    <tr><th>Brain</th><td>Three computers: low-, mid- and high-level processors (LLP, MLP, HLP). The HLP runs Android, and guest-science apps run there.</td></tr>
+    <tr><th>Arm and payloads</th><td>A two-joint perching arm with a gripper grabs handrails, so it can hold still and save power. Three payload bays carry experiment hardware.</td></tr>
+    <tr><th>Power</th><td>Up to four batteries, about 2 hours of flying; it docks itself to recharge.</td></tr>
+    <tr><th>With people</th><td>Touch screen, speaker and microphone, signal lights, laser pointer and flashlights.</td></tr>
+  </table></div>
+  <div class="cards">
+    <a class="card" href="https://www.nasa.gov/astrobee" target="_blank" rel="noopener"><b>NASA: Astrobee</b><small>NASA's Astrobee home page.</small></a>
+    <a class="card" href="https://github.com/nasa/astrobee" target="_blank" rel="noopener"><b>GitHub: nasa/astrobee</b><small>The flight software and simulator (C++, ROS, Apache-2.0).</small></a>
+    <a class="card" href="https://github.com/nasa/astrobee_android" target="_blank" rel="noopener"><b>GitHub: nasa/astrobee_android</b><small>Android apps for the high-level processor, and guest-science examples.</small></a>
+    <a class="card" href="https://nasa.github.io/astrobee/documentation.html" target="_blank" rel="noopener"><b>Astrobee documentation</b><small>Generated from the repository: hardware, localization, commands.</small></a>
+  </div>
+
+  </section>
+
+  <!-- ===================== Compare ===================== -->
+  <h2 id="en-compare">Side by side</h2>
+  <div class="wrap"><table>
+    <tr><th></th><th>Int-Ball2</th><th>Astrobee</th></tr>
+    <tr><td>From</td><td>JAXA (Japan)</td><td>NASA (USA)</td></tr>
+    <tr><td>On the ISS since</td><td>2023, in Kibo</td><td>2019, three robots</td></tr>
+    <tr><td>Shape, size</td><td>Ball, about 20 cm</td><td>Cube, 32 cm</td></tr>
+    <tr><td>Mass</td><td>About 3.3 kg</td><td>About 10 kg</td></tr>
+    <tr><td>Flies with</td><td>8 propellers</td><td>2 fans and 12 nozzles</td></tr>
+    <tr><td>Cameras</td><td>2 (main and stereo)</td><td>6</td></tr>
+    <tr><td>Finds itself with</td><td>Stereo Visual SLAM and an IMU</td><td>NavCam map matching, IMU, depth and speed sensors</td></tr>
+    <tr><td>Grabs things</td><td>No</td><td>Perching arm</td></tr>
+    <tr><td>Computer</td><td>NVIDIA Jetson TX2</td><td>Three processors (one runs Android)</td></tr>
+    <tr><td>Kibo-RPC</td><td>7th</td><td>1st to 6th</td></tr>
+    <tr><td>Open source</td><td><a href="https://github.com/jaxa/int-ball2_simulator" target="_blank" rel="noopener">jaxa/int-ball2_simulator</a></td><td><a href="https://github.com/nasa/astrobee" target="_blank" rel="noopener">nasa/astrobee</a></td></tr>
+  </table></div>
+  <p class="note">In the 5th Kibo-RPC final, Int-Ball2 filmed Astrobee's runs: the first time the two robots flew together (<a href="https://humans-in-space.jaxa.jp/en/biz-lab/news/detail/004234.html" target="_blank" rel="noopener">JAXA news</a>).</p>
+
+  <h2 id="en-program">What this means for your program</h2>
+  <div class="need"><span class="tag">Read this first</span><a href="#en-station">Parts 1</a> to <a href="#en-sense">3</a> on this page. Some words below (such as <code>/sensor_fusion/navigation</code>) are names of commands in the robot's program; the <a href="learn.html">rules guide</a> explains them.</div>
+  <ul>
+    <li><b>You read markers with the main camera.</b> It looks straight out of the front, 0.14 m from the centre (the same number as in the Programming Manual and the sandbox). Turn the robot to face a marker; it can't see sideways or behind.</li>
+    <li><b>"Where am I" is an estimate.</b> <code>/sensor_fusion/navigation</code> comes from the stereo camera and the IMU. Reading the AR marker tells you how the marker really sits relative to the camera, so use it to check before you ask the judge.</li>
+    <li><b>The push is small.</b> At most 155 mN on a 3.3 kg robot means its speed grows by no more than 5 centimetres per second, each second (under 0.05 m/s² of acceleration). Long detours cost time, and the robot needs a moment to stop and settle: wait before asking <code>/event/checkpoint_passed</code>.</li>
+    <li><b>It's a real machine in a real module.</b> A program that gets stuck or bumps into things loses the run, which is why JAXA reviews code before the final round.</li>
+  </ul>
+  <div class="box"><p><b>What next?</b> The next step on the learning path is <a href="rotations.html">Coordinates and rotations</a>: how to write where the robot is and which way it faces as numbers. Or drive the robot yourself first in the <a href="index.html">sandbox</a>. The <a href="index.html">sandbox</a>'s camera also sits 0.14 m in front of the centre, just like Int-Ball2's main camera.</p></div>
+
+  <h2 id="en-words">Word list</h2>
+  <dl class="words">
+    <dt>ISS</dt><dd>The International Space Station. (<a href="#en-station">part 1</a>)</dd>
+    <dt>Kibo</dt><dd>Japan's module (room) on the ISS; the robot flies inside it. (<a href="#en-station">part 1</a>)</dd>
+    <dt>microgravity</dt><dd>Almost no gravity: everything floats. (<a href="#en-float">part 2</a>)</dd>
+    <dt>propeller / fan</dt><dd>Pushes air so the robot moves the other way. (<a href="#en-float">part 2</a>)</dd>
+    <dt>IMU</dt><dd>The sensor that feels the robot turning and changing speed. (<a href="#en-sense">part 3</a>)</dd>
+    <dt>stereo camera</dt><dd>Two cameras side by side, for judging distance. (<a href="#en-sense">part 3</a>)</dd>
+    <dt>SLAM</dt><dd>Making a map and finding yourself on it at the same time. (<a href="#en-sense">part 3</a>)</dd>
+    <dt>AR marker</dt><dd>A black-and-white square picture, like a QR code, with a number hidden in it. (<a href="#en-sense">part 3</a>)</dd>
+    <dt>docking station</dt><dd>The robot's "home": it charges there, and every game starts there.</dd>
+  </dl>
+
+  <footer>
+    Facts from JAXA's <a href="https://github.com/jaxa/int-ball2_simulator" target="_blank" rel="noopener">Int-Ball2 simulator repository</a> and propulsion paper, <a href="https://corporate-origin.epson.biz/en/news/2024/240409.html" target="_blank" rel="noopener">Epson's IMU announcement</a>, NASA's <a href="https://www.nasa.gov/wp-content/uploads/2017/12/irg-ff029-astrobee-guest-science-guide.pdf" target="_blank" rel="noopener">Astrobee Guest Science Guide</a> and the <a href="https://github.com/nasa/astrobee" target="_blank" rel="noopener">Astrobee repository</a>. Sketches and 3D models are simplified drawings, not official images. Not affiliated with or endorsed by JAXA, NASA or UNOOSA.<br>
+    <a href="LICENSE.txt" target="_blank" rel="noopener">License</a> · <a href="https://ihashib.github.io" target="_blank" rel="noopener">Developed by ihashib</a>
+  </footer>
+</div>
+</main>
+
+<script src="vendor/three.min.js"></script>
+<script src="dist/kibo-nav-sandbox.js"></script>
+<script>
+(function () {
+  'use strict';
+  // Parts: pos = where the number sits (model units), n = which way that spot faces, inside = no facing check.
+  // Int-Ball2's, in the page's language, come from the shared bundle.
+  var NS = window.KiboNavSandbox;
+  // Int-Ball2: radius 1 = about 10 cm. Astrobee: half-width 1 = 16 cm. Front is +z, up is +y, the robot's left is +x.
+  var ROBOTS = {
+    ib2: {
+      name: 'Int-Ball2', dist: 4.7,
+      parts: NS ? NS.ballParts() : [] // from dist/kibo-nav-sandbox.js
+    },
+    ab: {
+      name: 'Astrobee', dist: 6.5,
+      parts: [
+        { id: 'navcam', kind: 'cam', name: 'NavCam', pos: [-0.32, 0.48, 0.95], n: [0, 0, 1], text: 'A wide-angle camera that spots features of the ISS and matches them to a map, so Astrobee knows where it is.' },
+        { id: 'scicam', kind: 'cam', name: 'SciCam', pos: [0, 0.48, 0.95], n: [0, 0, 1], text: 'An HD colour camera with autofocus, for live video to the ground.' },
+        { id: 'hazcam', kind: 'cam', name: 'HazCam', pos: [0.32, 0.48, 0.95], n: [0, 0, 1], text: 'A depth camera (time of flight): instead of colours it measures how far away things are, to avoid obstacles.' },
+        { id: 'speedcam', kind: 'sense', name: 'SpeedCam', pos: [0.3, -0.05, 0.95], n: [0, 0, 1], text: 'Measures how fast Astrobee moves: a small optical-flow camera with a laser distance sensor and its own processor (a modified PX4FLOW).' },
+        { id: 'people', kind: 'body', name: 'Screen, lights, laser', pos: [-0.12, -0.42, 0.95], n: [0, 0, 1], text: 'A touch screen, speaker and microphone, signal lights, a laser pointer and a flashlight, so astronauts can see what it is doing and it can point things out.' },
+        { id: 'prop', kind: 'move', name: 'Fan modules and nozzles', pos: [1.02, 0, 0], n: [1, 0, 0], text: 'Two side modules, each with a fan (impeller) that fills it with air. Twelve adjustable nozzles let the air out to push and turn it any way: at least 0.6 N forward and 0.3 N sideways.' },
+        { id: 'dockcam', kind: 'cam', name: 'DockCam', pos: [-0.3, 0.45, -0.95], n: [0, 0, -1], text: 'Looks backwards and finds the AR markers on the dock, so Astrobee can back in and recharge by itself.' },
+        { id: 'perchcam', kind: 'cam', name: 'PerchCam', pos: [0.3, 0.45, -0.95], n: [0, 0, -1], text: 'A second depth camera, facing back. It finds ISS handrails for the arm to grab.' },
+        { id: 'arm', kind: 'move', name: 'Perching arm', pos: [0, -0.62, -1.02], n: [0, -0.3, -1], text: 'A two-joint arm with a gripper. It grabs a handrail so Astrobee can hold still and save power, and it can tilt and turn the robot like a camera mount.' },
+        { id: 'bump', kind: 'body', name: 'Corner bumpers', pos: [0.97, 0.97, 0.97], n: [1, 1, 1], text: 'Soft bumpers protect the robot and the station. With them, Astrobee fits in a 32 cm cube.' },
+        { id: 'bays', kind: 'body', name: 'Payload bays', pos: [0, 0.97, 0.35], n: [0, 1, 0.25], text: 'Three bays give experiment hardware power and data.' },
+        { id: 'inside', kind: 'sense', name: 'Inside: computers, IMU, batteries', pos: [0, 0, 0], n: [0.2, 0.45, 1], inside: true, text: 'Three processors (LLP, MLP and HLP; the HLP runs Android for guest-science apps), an IMU, and up to four batteries for about two hours of flying.' }
+      ]
+    }
+  };
+  var KIND = { cam: 'camera', sense: 'sensing & brain', move: 'moving & power', body: 'body & people' };
+
+  // In Bangla (the site's default; switching language reloads the page): each Astrobee part's name and text, the
+  // colour key and Bangla digits on the numbers.
+  var BN = document.documentElement.getAttribute('data-lang') === 'bn';
+  var BN_PARTS = {
+    ab: {
+      navcam: ['NavCam', 'ওয়াইড অ্যাঙ্গেল ক্যামেরা: ISS-এর নানা চিহ্ন চিনে সেগুলো ম্যাপের সঙ্গে মেলায়, তাতে Astrobee বোঝে সে কোথায় আছে।'],
+      scicam: ['SciCam', 'অটোফোকাসওয়ালা HD রঙিন ক্যামেরা, মাটিতে সরাসরি ভিডিও পাঠানোর জন্য।'],
+      hazcam: ['HazCam', 'গভীরতা মাপার ক্যামেরা (টাইম অব ফ্লাইট): রঙের বদলে মাপে জিনিসগুলো কত দূরে, যাতে বাধা এড়ানো যায়।'],
+      speedcam: ['SpeedCam', 'Astrobee কত জোরে চলছে, তা মাপে: লেজারে দূরত্ব মাপার সেন্সর আর নিজস্ব প্রসেসরসহ ছোট একটা অপটিক্যাল-ফ্লো ক্যামেরা (বদলে নেওয়া PX4FLOW)।'],
+      people: ['স্ক্রিন, বাতি, লেজার', 'টাচ স্ক্রিন, স্পিকার আর মাইক্রোফোন, সংকেত বাতি, লেজার পয়েন্টার আর টর্চ, যাতে নভোচারীরা দেখতে পান এটা কী করছে, আর এটাও কোনো জিনিস দেখিয়ে দিতে পারে।'],
+      prop: ['পাখার মডিউল আর নজল', 'পাশের দুটো মডিউল, প্রতিটায় একটা পাখা (ইমপেলার), যেটা মডিউলটাকে বাতাসে ভরে রাখে। নাড়ানো যায় এমন বারোটা নজল দিয়ে বাতাস বেরিয়ে রোবটকে যেকোনো দিকে ঠেলে আর ঘোরায়: সামনে অন্তত ০.৬ N, পাশে ০.৩ N।'],
+      dockcam: ['DockCam', 'পেছনে তাকায় আর ডকের AR মার্কার খোঁজে, যাতে Astrobee পিছিয়ে ঢুকে নিজেই রিচার্জ করতে পারে।'],
+      perchcam: ['PerchCam', 'পেছনমুখী দ্বিতীয় গভীরতার ক্যামেরা। আর্ম দিয়ে ধরার জন্য ISS-এর হাতল খুঁজে বের করে।'],
+      arm: ['পার্চিং আর্ম', 'গ্রিপারওয়ালা দুই জোড়ের একটা হাত। হাতল আঁকড়ে ধরে, যাতে Astrobee স্থির থাকতে আর শক্তি বাঁচাতে পারে; ক্যামেরা স্ট্যান্ডের মতো রোবটকে কাত করতে আর ঘোরাতেও পারে।'],
+      bump: ['কোণের বাম্পার', 'নরম বাম্পারগুলো রোবট আর স্টেশন, দুটোকেই রক্ষা করে। এগুলোসহ Astrobee একটা ৩২ সেমির ঘনকের ভেতরে এঁটে যায়।'],
+      bays: ['পেলোড বে', 'তিনটা বে পরীক্ষার যন্ত্রপাতিকে বিদ্যুৎ আর ডেটা দেয়।'],
+      inside: ['ভেতরে: কম্পিউটার, IMU, ব্যাটারি', 'তিনটা প্রসেসর (LLP, MLP আর HLP; গেস্ট-সায়েন্স অ্যাপের জন্য HLP-তে চলে Android), একটা IMU, আর প্রায় দুই ঘণ্টা ওড়ার মতো সর্বোচ্চ চারটা ব্যাটারি।']
+    }
+  };
+  if (BN) {
+    Object.keys(BN_PARTS).forEach(function (r) { ROBOTS[r].parts.forEach(function (p) { var t = BN_PARTS[r][p.id]; if (t) { p.name = t[0]; p.text = t[1]; } }); });
+    KIND = { cam: 'ক্যামেরা', sense: 'সেন্সর আর মস্তিষ্ক', move: 'চলাফেরা আর শক্তি', body: 'বডি আর মানুষের সঙ্গে যোগাযোগ' };
+  }
+  function num(n) { return BN ? String(n).replace(/[0-9]/g, function (d) { return '০১২৩৪৫৬৭৮৯'[+d]; }) : String(n); }
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var stage = document.getElementById('stage'), partsEl = document.getElementById('parts');
+  var cur = 'ib2', sel = null, yaw = 0.65, pitch = 0.22, goal = null, zoom = 1, idle = true;
+  var THREE = window.THREE, renderer, scene, camera, groups = {}, spinners = [], shells = [], dots = [];
+
+  function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function kindColor(k) { return css('--' + k) || '#3156d3'; }
+
+  // ---------- models ----------
+  function mat(color, o) { return new THREE.MeshStandardMaterial(Object.assign({ color: color, roughness: 0.55, metalness: 0.05 }, o || {})); }
+  function at(mesh, p, n) { mesh.position.set(p[0], p[1], p[2]); var t = new THREE.Vector3(p[0] + n[0], p[1] + n[1], p[2] + n[2]); mesh.lookAt(t); return mesh; }
+  function disc(r, depth, color, o) { var g = new THREE.CylinderGeometry(r, r, depth, 32); g.rotateX(Math.PI / 2); return new THREE.Mesh(g, mat(color, o)); }
+  function norm(v) { var l = Math.hypot(v[0], v[1], v[2]); return [v[0] / l, v[1] / l, v[2] / l]; }
+
+  // The ball's model comes from dist/kibo-nav-sandbox.js (src/element/robots.ts).
+  function buildIb2() {
+    var m = window.KiboNavSandbox.buildBall(THREE);
+    shells.push.apply(shells, m.shells);
+    spinners.push.apply(spinners, m.spinners);
+    return m.group;
+  }
+
+  // The cube's model, from the same file.
+  function buildAb() {
+    var m = window.KiboNavSandbox.buildCube(THREE);
+    shells.push.apply(shells, m.shells);
+    spinners.push.apply(spinners, m.spinners);
+    return m.group;
+  }
+
+  // ---------- view ----------
+  function aim(part) {
+    var n = norm(part.n), y = Math.atan2(-n[0], n[2]), h = Math.hypot(n[0], n[2]), p = Math.atan2(n[1], h);
+    // the shortest way round
+    while (y - yaw > Math.PI) y -= 2 * Math.PI;
+    while (y - yaw < -Math.PI) y += 2 * Math.PI;
+    return { yaw: y, pitch: Math.max(-1.2, Math.min(1.2, p)) };
+  }
+  function setInside(on) {
+    shells.forEach(function (m) { m.opacity = on ? 0.18 : 1; m.depthWrite = !on; });
+    Object.keys(groups).forEach(function (k) { var ins = groups[k].getObjectByName('inside'); if (ins) ins.visible = on; });
+  }
+  function select(id, fromUser) {
+    var r = ROBOTS[cur], part = r.parts.filter(function (p) { return p.id === id; })[0] || r.parts[0];
+    sel = part.id;
+    document.getElementById('infoName').textContent = part.name;
+    var k = document.getElementById('infoKind'); k.textContent = KIND[part.kind]; k.className = 'chip ' + part.kind;
+    document.getElementById('infoText').textContent = part.text;
+    partsEl.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.part === sel)); });
+    dots.forEach(function (d) { d.el.classList.toggle('on', d.part.id === sel); });
+    if (renderer) {
+      setInside(!!part.inside);
+      if (fromUser) { idle = false; goal = aim(part); if (reduce) { yaw = goal.yaw; pitch = goal.pitch; goal = null; } }
+      draw();
+    }
+  }
+  function show(id) {
+    cur = id;
+    document.querySelectorAll('[data-robot]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.robot === id)); });
+    // One robot at a time: its 3D model and its own section; the comparison below stays.
+    document.querySelectorAll('[data-rb]').forEach(function (sec) { sec.hidden = sec.dataset.rb !== id; });
+    var r = ROBOTS[id];
+    partsEl.innerHTML = r.parts.map(function (p, i) { return '<li><button data-part="' + p.id + '" style="--dotc:var(--' + p.kind + ')"><span class="n">' + num(i + 1) + '</span>' + p.name + '</button></li>'; }).join('');
+    if (renderer) {
+      Object.keys(groups).forEach(function (k) { groups[k].visible = k === id; });
+      dots.forEach(function (d) { d.el.remove(); });
+      dots = r.parts.map(function (p, i) {
+        var el = document.createElement('button'); el.className = 'dot'; el.textContent = num(i + 1); el.title = p.name; el.style.setProperty('--dotc', kindColor(p.kind));
+        el.setAttribute('aria-label', num(i + 1) + ': ' + p.name);
+        el.addEventListener('click', function (e) { e.stopPropagation(); select(p.id, true); });
+        stage.appendChild(el); return { el: el, part: p };
+      });
+      yaw = 0.65; pitch = 0.22; zoom = 1; goal = null; idle = true;
+    }
+    select(r.parts[0].id, false);
+  }
+
+  var v = THREE ? new THREE.Vector3() : null, nv = THREE ? new THREE.Vector3() : null;
+  function draw() {
+    if (!renderer) return;
+    var g = groups[cur], w = stage.clientWidth, h = stage.clientHeight;
+    g.rotation.set(pitch, yaw, 0, 'XYZ');
+    camera.position.set(0, 0, ROBOTS[cur].dist / zoom); camera.lookAt(0, 0, 0);
+    g.updateMatrixWorld(true);
+    renderer.render(scene, camera);
+    dots.forEach(function (d) {
+      var p = d.part;
+      v.set(p.pos[0], p.pos[1], p.pos[2]).applyMatrix4(g.matrixWorld);
+      nv.set(p.n[0], p.n[1], p.n[2]).normalize().applyQuaternion(g.quaternion);
+      var toCam = camera.position.clone().sub(v).normalize(), facing = p.inside || nv.dot(toCam) > 0.12;
+      v.project(camera);
+      d.el.style.transform = 'translate(' + ((v.x + 1) / 2 * w) + 'px,' + ((1 - v.y) / 2 * h) + 'px)' + (d.part.id === sel ? ' scale(1.3)' : '');
+      d.el.classList.toggle('away', !facing);
+    });
+  }
+  var last = 0, visible = true;
+  function loop(t) {
+    requestAnimationFrame(loop);
+    if (!visible || document.hidden) return;
+    var dt = Math.min(0.05, (t - last) / 1000 || 0); last = t;
+    if (goal) {
+      var k = 1 - Math.pow(0.0015, dt);
+      yaw += (goal.yaw - yaw) * k; pitch += (goal.pitch - pitch) * k;
+      if (Math.abs(goal.yaw - yaw) < 0.002 && Math.abs(goal.pitch - pitch) < 0.002) goal = null;
+    } else if (idle && !reduce) yaw += dt * 0.25;
+    if (!reduce) spinners.forEach(function (s) { s.rotateZ(s.userData.dir * dt * 14); });
+    draw();
+  }
+
+  function resize() {
+    if (!renderer) return;
+    var w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); draw();
+  }
+
+  function init3d() {
+    try {
+      if (!THREE) throw new Error('three.js did not load');
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (e) { stage.classList.add('nogl'); renderer = null; return; }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    if ('outputEncoding' in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
+    stage.insertBefore(renderer.domElement, stage.firstChild);
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+    scene.add(new THREE.HemisphereLight('#ffffff', '#8a93a6', 0.85));
+    var key = new THREE.DirectionalLight('#ffffff', 0.85); key.position.set(3, 4, 5); scene.add(key);
+    var rim = new THREE.DirectionalLight('#cfd8ff', 0.35); rim.position.set(-4, -2, -3); scene.add(rim);
+    groups.ib2 = buildIb2(); groups.ab = buildAb();
+    scene.add(groups.ib2); scene.add(groups.ab);
+    setInside(false);
+    // Drag to turn. On touch screens only sideways drags turn (touch-action: pan-y keeps the page scrolling).
+    var drag = null;
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('button')) return;
+      drag = { x: e.clientX, y: e.clientY, id: e.pointerId, touch: e.pointerType === 'touch' }; idle = false; goal = null;
+      stage.classList.add('drag');
+      try { stage.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY;
+      yaw += dx * 0.012; if (!drag.touch) pitch = Math.max(-1.3, Math.min(1.3, pitch + dy * 0.012));
+      draw();
+    });
+    function end() { drag = null; stage.classList.remove('drag'); }
+    stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+    stage.querySelector('.tools').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-zoom')) zoom = Math.max(0.7, Math.min(2.2, zoom * (b.dataset.zoom > 0 ? 1.2 : 1 / 1.2)));
+      if (b.hasAttribute('data-reset')) { zoom = 1; goal = null; yaw = 0.65; pitch = 0.22; idle = true; select(ROBOTS[cur].parts[0].id, false); }
+      draw();
+    });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(stage);
+    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(stage); else window.addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(loop);
+  }
+
+  partsEl.addEventListener('click', function (e) { var b = e.target.closest('[data-part]'); if (b) select(b.dataset.part, true); });
+  document.querySelectorAll('[data-robot]').forEach(function (b) {
+    b.addEventListener('click', function () { show(b.dataset.robot); try { history.replaceState(null, '', b.dataset.robot === 'ab' ? '#astrobee' : '#int-ball2'); } catch (e) { /* ignore */ } });
+  });
+  // A link to the other robot's section (in the contents, say) switches to it first, so there is something to scroll to.
+  window.addEventListener('hashchange', function () {
+    var h = location.hash.slice(1), id = /astrobee/i.test(h) ? 'ab' : /ib2|int-ball2/i.test(h) ? 'ib2' : null;
+    if (!id) return;
+    if (id !== cur) show(id);
+    var el = document.getElementById(h); if (el) el.scrollIntoView();
+  });
+  init3d();
+  show(/astrobee/i.test(location.hash) ? 'ab' : 'ib2');
+})();
+</script>
+</body>
+</html>

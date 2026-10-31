@@ -1,0 +1,47 @@
+<!doctype html>
+<!--
+  Full-page KIBO RPC 7 Nav Sandbox, for showing it in an <iframe>.
+  Optional URL parameters:
+    theme=light|dark     (default: follow the device)
+    mode=practice        (no helpers, empty start; default is guided)
+    config=world.json    (a world JSON file, same as the config-url attribute)
+    id=name              (storage name; use a different one per iframe)
+  Example: <iframe src="embed.html?theme=light" style="width:100%;height:1200px;border:0" allow="clipboard-write"></iframe>
+-->
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KIBO RPC 7 Nav Sandbox</title>
+  <meta name="title-en" content="KIBO RPC 7 Nav Sandbox">
+  <link rel="stylesheet" href="vendor/fonts.css">
+  <script src="lang.js"></script>
+  <style>
+    /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
+    html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
+    html[data-lang="bn"] body { line-height: 1.75; }
+    nav.tabs .langsw { flex: none; margin-left: auto; align-self: center; padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; color: var(--fg); font-size: 13.5px; font-weight: 600; }
+    nav.tabs .langsw:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 480px) { nav.tabs .langsw { flex: none; min-height: 32px; padding: 0 9px; margin: 0 0 0 4px; border-radius: 999px; font-size: 12.5px; } }
+    html, body { margin: 0; height: 100%; background: #f6f7fb; }
+    @media (prefers-color-scheme: dark) { html, body { background: #11141b; } }
+  </style>
+  <script src="dist/kibo-nav-sandbox.js"></script>
+</head>
+<body>
+<script>
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var el = document.createElement('kibo-nav-sandbox');
+    el.id = (q.get('id') || 'embed').replace(/[^\w-]/g, '').slice(0, 40) || 'embed';
+    el.setAttribute('height', '70vh'); // the views; the tabs sit below them
+    var theme = q.get('theme');
+    if (theme === 'light' || theme === 'dark') el.setAttribute('theme', theme);
+    if (q.get('mode') === 'practice') el.setAttribute('mode', 'practice');
+    var config = q.get('config');
+    if (config) el.setAttribute('config-url', config);
+    document.body.appendChild(el);
+  })();
+</script>
+</body>
+</html>

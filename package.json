@@ -1,0 +1,24 @@
+{
+  "name": "kibo-rpc-sandbox",
+  "version": "0.1.0",
+  "description": "Kibo-RPC practice pages: a navigation sandbox, the robots, coordinates and rotations, and a rules guide. Static files only, no server.",
+  "author": "ihashib (https://ihashib.github.io)",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "scripts": {
+    "bundle": "rollup -c",
+    "build": "npm run bundle && node scripts/build-site.mjs",
+    "typecheck": "tsc -p .",
+    "pretest": "npm run bundle",
+    "test": "node --test",
+    "serve": "python3 -m http.server 8080 --directory site"
+  },
+  "devDependencies": {
+    "@fontsource/noto-sans-bengali": "^5.3.0",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@types/three": "^0.128.0",
+    "rollup": "^4.64.9",
+    "three": "^0.128.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3"
+  }
+}
