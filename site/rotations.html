@@ -9,6 +9,7 @@
   <meta name="description" content="Kibo-RPC-র শিক্ষার্থীদের জন্য Kibo-র স্থানাঙ্ক ব্যবস্থা, অয়লার কোণ আর কোয়াটারনিয়ন হাতে-কলমে বোঝার একটি সিমুলেটর।">
   <link rel="stylesheet" href="vendor/fonts.css">
   <script src="lang.js"></script>
+  <link rel="stylesheet" href="viz.css">
   <style>
     /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
     html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
@@ -285,6 +286,7 @@
     <dt>অক্ষ</dt><dd>যে সোজা রেখা বরাবর মাপা হয়: x অক্ষ, y অক্ষ, z অক্ষ।</dd>
     <dt>স্থানাঙ্ক</dt><dd>জায়গা বোঝানোর সংখ্যাগুলো, যেমন (৩, ২, ১)।</dd>
   </dl></div>
+  <div class="viz" data-viz="kibo"></div>
   <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
     <details><summary>(০, ০, ০) কোথায়?</summary><p>ঠিক মূলবিন্দুতে, যেখান থেকে মাপা শুরু।</p></details>
     <details><summary>(২, −১, ০)-তে যেতে y বরাবর কোন দিকে যাবে?</summary><p>উল্টো দিকে ১ মিটার, কারণ y-এর সংখ্যাটা মাইনাস। আর z = ০, তাই ওপর-নিচে যেতে হবে না।</p></details>
@@ -359,6 +361,7 @@
     </figure>
   </div>
   <div class="try"><span class="tag">নিজে করে দেখো</span>দাঁড়িয়ে ৯০° ঘোরো, তারপর আরও ৯০°। এখন তুমি পেছন ফিরে আছ: মোট ১৮০°। আরও ১৮০° ঘুরলে? আবার আগের মতো: ৩৬০° = এক পাক।</div>
+  <div class="viz" data-viz="dial"></div>
   <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
     <details><summary>৪৫° কত পাক?</summary><p>আট ভাগের এক পাক (৩৬০ ÷ ৮ = ৪৫)।</p></details>
     <details><summary>৭২০° ঘুরলে রোবট কোন দিকে মুখ করে থাকবে?</summary><p>যেদিকে ছিল, সেদিকেই। ৭২০° = দুই পাক।</p></details>
@@ -409,6 +412,7 @@
   <details class="deeper"><summary>আরও গভীরে: <code>/ctl/command</code> কোন ফ্রেমে লক্ষ্য নেয়?</summary>
     <p>দুই ফ্রেমেই: <code>MOVE_TO_ABSOLUTE_TARGET</code> নেয় <code>iss_body</code>-তে (Kibo-র ফ্রেম), আর <code>MOVE_TO_RELATIVE_TARGET</code> নেয় <code>body</code>-তে (রোবটের ফ্রেম)। তাই রিলেটিভ চলায় “১ মি সামনে” মানে “রোবটের X বরাবর ১ মি”, রোবট যেদিকেই মুখ করে থাকুক।</p>
   </details>
+  <div class="viz" data-viz="facing"></div>
   <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
     <details><summary>রোবট এয়ারলকের দিকে মুখ করে আছে। সে “সামনে ১ মি” গেল। Kibo-র কোন দিকে গেল?</summary><p>+x দিকে: এয়ারলকের দিকে ১ মিটার।</p></details>
     <details><summary>এবার রোবট EPS2 দেয়ালের দিকে মুখ ফেরাল। এখন “সামনে ১ মি” গেলে?</summary><p>+y দিকে: EPS2 দেয়ালের দিকে ১ মিটার। আদেশ একই, কিন্তু রোবট ঘুরে আছে বলে অন্য দিকে গেল।</p></details>
@@ -558,6 +562,7 @@
     <dt>axis (axes)</dt><dd>A straight line you measure along: the x axis, the y axis, the z axis.</dd>
     <dt>coordinates</dt><dd>The numbers that say where something is, such as (3, 2, 1).</dd>
   </dl></div>
+  <div class="viz" data-viz="kibo"></div>
   <div class="check"><span class="tag">Check yourself</span>
     <details><summary>Where is (0, 0, 0)?</summary><p>Right at the origin, where measuring starts.</p></details>
     <details><summary>To get to (2, −1, 0), which way do you go along y?</summary><p>1 metre the other way, because the y number is minus. And z = 0, so no going up or down.</p></details>
@@ -632,6 +637,7 @@
     </figure>
   </div>
   <div class="try"><span class="tag">Try it yourself</span>Stand up and turn 90°, then another 90°. Now you face backwards: 180° in all. Turn another 180°? You're back where you started: 360° = one turn.</div>
+  <div class="viz" data-viz="dial"></div>
   <div class="check"><span class="tag">Check yourself</span>
     <details><summary>What part of a turn is 45°?</summary><p>One eighth (360 ÷ 8 = 45).</p></details>
     <details><summary>After turning 720°, which way does the robot face?</summary><p>The same way as before. 720° is two whole turns.</p></details>
@@ -682,6 +688,7 @@
   <details class="deeper"><summary>Go deeper: which frame does <code>/ctl/command</code> use?</summary>
     <p>Both: <code>MOVE_TO_ABSOLUTE_TARGET</code> takes targets in <code>iss_body</code> (Kibo's frame), and <code>MOVE_TO_RELATIVE_TARGET</code> in <code>body</code> (the robot's frame). So in a relative move, "1 m forward" means "1 m along the robot's X", whichever way the robot faces.</p>
   </details>
+  <div class="viz" data-viz="facing"></div>
   <div class="check"><span class="tag">Check yourself</span>
     <details><summary>The robot faces the airlock and goes "1 m forward". Which way does it move in Kibo?</summary><p>Along +x: 1 metre toward the airlock.</p></details>
     <details><summary>Now the robot turns to face the EPS2 wall. Where does "1 m forward" take it?</summary><p>Along +y: 1 metre toward the EPS2 wall. Same command, but the robot has turned, so it goes a different way.</p></details>
@@ -829,6 +836,7 @@
   <h3>একটা গোলমাল: গিম্বল লক</h3>
   <p>পিচ যদি ঠিক ৯০° হয় (ক্যামেরা সোজা ছাদের দিকে), তাহলে রোল আর ইয় একই কাজ করে ফেলে: দুটোই রোবটকে একই রেখা বরাবর ঘোরায়। তখন তিনটা সংখ্যার একটা কোনো কাজে আসে না। এর নাম <b>গিম্বল লক</b>। নিচের বোতাম চেপে দেখো।</p>
   <div class="row"><button class="btn" data-demo="gimbal">গিম্বল লক দেখাও</button></div>
+  <div class="viz" data-viz="gimbal"></div>
   <p>অয়লার কোণ পড়তে সহজ, কিন্তু এই দুই ঝামেলার (ক্রম আর গিম্বল লক) জন্য রোবটের প্রোগ্রাম অন্য একটা উপায়ে দিক লেখে: <b>কোয়াটারনিয়ন</b>। সেটাই পরের পাঠ।</p>
   <details class="deeper"><summary>আরও গভীরে: কোন অক্ষ বরাবর ঘোরে?</summary>
     <p>ROS-এর নিয়মে রোল, পিচ আর ইয় প্রয়োগ হয় Kibo-র স্থির অক্ষ বরাবর (x, তারপর y, তারপর z)। একই ফল পাওয়া যায় উল্টো ক্রমে রোবটের নিজের অক্ষ বরাবর ঘোরালে: আগে ইয় (Z), তারপর নতুন Y বরাবর পিচ, তারপর নতুন X বরাবর রোল।</p>
@@ -886,6 +894,7 @@
   <p><b>উদাহরণ ১: z বরাবর ৯০°।</b> অক্ষ (0, 0, 1)। অর্ধেক কোণ ৪৫°। sin ৪৫° = 0.7071, তাই অক্ষ × 0.7071 = (0, 0, 0.7071)। cos ৪৫° = 0.7071, তাই w = 0.7071। <b>উত্তর: (0, 0, 0.7071, 0.7071)</b>।</p>
   <p><b>উদাহরণ ২: x বরাবর ১৮০°।</b> অক্ষ (1, 0, 0)। অর্ধেক কোণ ৯০°। sin ৯০° = 1, তাই (1, 0, 0)। cos ৯০° = 0, তাই w = 0। <b>উত্তর: (1, 0, 0, 0)</b>।</p>
   <p><b>উদাহরণ ৩: কোনো ঘোরা নেই।</b> θ = ০°, অর্ধেকও ০°। sin ০° = 0, তাই (0, 0, 0)। cos ০° = 1, তাই w = 1। <b>উত্তর: (0, 0, 0, 1)</b>। মনে রেখো: “কোনো ঘোরা নেই” মানে চারটা শূন্য নয়, শেষেরটা ১!</p>
+  <div class="viz" data-viz="halfangle"></div>
   <h3>ধাপ ৩: দুটো নিয়ম</h3>
   <ul>
     <li><b>দৈর্ঘ্য সবসময় ১:</b> চারটা সংখ্যার প্রতিটার বর্গ যোগ করলে ১ হয়: x² + y² + z² + w² = 1। পরীক্ষা করো: 0.7071² + 0.7071² = 0.5 + 0.5 = 1 ✓। সিমুলেটরে ভুল সংখ্যা লিখলে সে নিজেই মাপমতো ঠিক করে নেয়।</li>
@@ -994,6 +1003,7 @@
   <h3>A problem: gimbal lock</h3>
   <p>If the pitch is exactly 90° (the camera looks straight at the overhead), roll and yaw do the same job: both spin the robot about the same line. Then one of the three numbers is wasted. This is called <b>gimbal lock</b>. Press the button to see it.</p>
   <div class="row"><button class="btn" data-demo="gimbal">Show gimbal lock</button></div>
+  <div class="viz" data-viz="gimbal"></div>
   <p>Euler angles are easy to read, but because of these two problems (order and gimbal lock), robot programs write orientations another way: as a <b>quaternion</b>. That's the next lesson.</p>
   <details class="deeper"><summary>Go deeper: which axes do they turn about?</summary>
     <p>In ROS, roll, pitch and yaw are applied about Kibo's fixed axes (x, then y, then z). You get the same result turning about the robot's own axes in the opposite order: yaw about Z first, then pitch about the new Y, then roll about the new X.</p>
@@ -1051,6 +1061,7 @@
   <p><b>Example 1: 90° about z.</b> Axis (0, 0, 1). Half the angle is 45°. sin 45° = 0.7071, so axis × 0.7071 = (0, 0, 0.7071). cos 45° = 0.7071, so w = 0.7071. <b>Answer: (0, 0, 0.7071, 0.7071)</b>.</p>
   <p><b>Example 2: 180° about x.</b> Axis (1, 0, 0). Half the angle is 90°. sin 90° = 1, giving (1, 0, 0). cos 90° = 0, so w = 0. <b>Answer: (1, 0, 0, 0)</b>.</p>
   <p><b>Example 3: no turn.</b> θ = 0°, and half of it is 0° too. sin 0° = 0, giving (0, 0, 0). cos 0° = 1, so w = 1. <b>Answer: (0, 0, 0, 1)</b>. Remember: "no turn" isn't four zeros; the last number is 1!</p>
+  <div class="viz" data-viz="halfangle"></div>
   <h3>Step 3: two rules</h3>
   <ul>
     <li><b>The length is always 1:</b> square each of the four numbers and add them up, and you get 1: x² + y² + z² + w² = 1. Check: 0.7071² + 0.7071² = 0.5 + 0.5 = 1 ✓. If you type numbers that break this rule, the simulator scales them to fit.</li>
@@ -1438,5 +1449,7 @@
   var cur = document.querySelector('nav.tabs [aria-current]'); if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 })();
 </script>
+<script src="viz.js"></script>
+<script src="pagenav.js"></script>
 </body>
 </html>

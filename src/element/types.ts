@@ -61,10 +61,6 @@ export interface DriveState {
   /** The markers the camera read last frame, and the last checkpoint level logged ("cp3:2"). */
   lastIds?: (number | null)[];
   lastLv?: string;
-  /** Zero gravity: the controls fire thrusters; `vel` (m/s, ISS frame) and `spin` (rad/s about body x, y, z) carry on. */
-  zeroG?: boolean;
-  vel?: Vec3;
-  spin?: Vec3;
 }
 
 /** One step of Play: a move (`dur` seconds at 1×) or a hold to read the markers (real seconds). */

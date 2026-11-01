@@ -79,11 +79,8 @@ export class Drive {
       // camera axis so the camera picture is the right way up. Reset returns here.
       let q0 = Core.qNorm(p.q);
       if (Core.dot(Core.topDir(q0), [0, 0, -1]) < 0) q0 = Core.qNorm(Core.qMul(q0, Core.qFromAxisAngle([1, 0, 0], Math.PI)));
-      this._drive = { pos: p.pos.slice(), q: q0, start: { pos: p.pos.slice(), q: q0 }, keys: {}, joy: { move: [0, 0], turn: [0, 0] }, hold: {}, fine: false, last: 0, hudAt: 0,
-        zeroG: false, vel: [0, 0, 0], spin: [0, 0, 0] };
+      this._drive = { pos: p.pos.slice(), q: q0, start: { pos: p.pos.slice(), q: q0 }, keys: {}, joy: { move: [0, 0], turn: [0, 0] }, hold: {}, fine: false, last: 0, hudAt: 0 };
       this.$('[data-act=drivefine]').setAttribute('aria-pressed', 'false');
-      this.$('[data-act=drivezerog]').setAttribute('aria-checked', 'false'); // zero gravity starts off every time
-      this._root.classList.remove('zerog');
       window.addEventListener('blur', this._winBlur);
       const pageKeys = function () {
         self._root.removeEventListener('pointerdown', pageKeys); self._root.removeEventListener('focusin', pageKeys);
@@ -98,7 +95,7 @@ export class Drive {
       }
       const touch = this._sticks;
       this._toast(touch ? L('Left stick moves, right stick turns. Add waypoint drops one.', 'বাঁ স্টিকে চলবে, ডান স্টিকে ঘুরবে। ‘ওয়েপয়েন্ট বসাও’ চাপলে একটা বসে যাবে।')
-        : L('W A S D move, R / F up and down, arrows turn, Q / E roll, Enter adds a waypoint, G zero gravity.', 'W A S D দিয়ে চলো, R / F দিয়ে ওপর-নিচ, অ্যারো কি দিয়ে ঘোরো, Q / E দিয়ে রোল। Enter চাপলে ওয়েপয়েন্ট বসবে, G দিয়ে শূন্য মাধ্যাকর্ষণ।'));
+        : L('W A S D move, R / F up and down, arrows turn, Q / E roll, Enter adds a waypoint.', 'W A S D দিয়ে চলো, R / F দিয়ে ওপর-নিচ, অ্যারো কি দিয়ে ঘোরো, Q / E দিয়ে রোল। Enter চাপলে ওয়েপয়েন্ট বসবে।'));
       this._log(L('● Drive · ', '● ড্রাইভ · ') + (touch ? L('left stick moves, right stick turns', 'বাঁ স্টিকে চলা, ডান স্টিকে ঘোরা') : L('W A S D move, R / F up / down, arrows turn, Q / E roll', 'W A S D চলা, R / F ওপর / নিচ, অ্যারো ঘোরা, Q / E রোল')), 'head');
 
       // A fixed side view of the whole module while driving; the previous view comes back afterwards.
@@ -170,7 +167,6 @@ export class Drive {
     if (!d || !d.start) return;
     d.pos = d.start.pos.slice(); d.q = d.start.q.slice();
     d.keys = {}; d.joy = { move: [0, 0], turn: [0, 0] }; d.hold = {};
-    d.vel = [0, 0, 0]; d.spin = [0, 0, 0];
     this._touched3d = false;
     this._driveView3d();
     this._driveKeysUi();
@@ -212,9 +208,7 @@ export class Drive {
 
     if (code === 'KeyU') { if (!e.repeat) this._driveUpdate(); return true; }
     if (code === 'KeyH') { if (!e.repeat) this._driveReset(); return true; }
-    if (code === 'KeyG') { if (!e.repeat) this._toggleZeroG(); return true; }
-    if (code === 'KeyX' && !e.repeat) this._driveHalt(); // stops at once; held, it keeps braking
-    const held = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR', 'KeyF', 'KeyQ', 'KeyE', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight', 'KeyX'];
+    const held = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR', 'KeyF', 'KeyQ', 'KeyE', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight'];
     if (held.indexOf(code) < 0) return false;
     e.preventDefault();
     if (this._sticks) { this._keyboard = true; this._applyTouchMode(); this._layoutDrive(); } // a real keyboard: show its keys, not the sticks
@@ -242,7 +236,7 @@ export class Drive {
     const dt = d.last ? Math.min(0.1, (now - d.last) / 1000) : 0;
     d.last = now;
     if (!dt) return;
-    const S = Core.STEER, fine = d.fine || k.ShiftLeft || k.ShiftRight, v = fine ? S.fineSpeed : S.speed, w = fine ? S.fineTurn : S.turn; // as in Free flight
+    const S = Core.STEER, fine = d.fine || k.ShiftLeft || k.ShiftRight, v = fine ? S.fineSpeed : S.speed, w = fine ? S.fineTurn : S.turn;
     const fwd = (k.KeyW ? 1 : 0) - (k.KeyS ? 1 : 0) - d.joy.move[1];
     const side = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0) + d.joy.move[0];
     const vert = (k.KeyR ? 1 : 0) - (k.KeyF ? 1 : 0) + (d.hold.up ? 1 : 0) - (d.hold.down ? 1 : 0); // up in the camera picture
@@ -253,8 +247,7 @@ export class Drive {
     const rollIn = (k.KeyQ ? 1 : 0) - (k.KeyE ? 1 : 0) + (d.hold.rollL ? 1 : 0) - (d.hold.rollR ? 1 : 0);
     let changed = false;
 
-    if (d.zeroG) changed = this._zeroGStep(dt, !!fine, [fwd, side, vert], [rollIn, -pitchIn, -yawIn], !!k.KeyX);
-    else if (fwd || side || vert) {
+    if (fwd || side || vert) {
       // Every move follows the camera picture, whichever way up the robot is: forward along the camera,
       // right = the picture's right (body -Y), up = the picture's up (the robot's top, body +Z).
       const f = Core.cameraDir(d.q), r = Core.qRotate(d.q, [0, -1, 0]), u = Core.topDir(d.q);
@@ -263,7 +256,7 @@ export class Drive {
       if (Core.len(moved) > 1e-9) { d.pos = np; changed = true; }
     }
 
-    if (!d.zeroG && (yawIn || pitchIn || rollIn)) {
+    if (yawIn || pitchIn || rollIn) {
       // Turn about the robot's own axes, as the camera sees them: left / right about its top (+Z),
       // look up / down about its left (+Y), roll about the camera axis (+X, + = robot clockwise).
       let rad = w * dt * Math.PI / 180, q = d.q;
@@ -295,41 +288,6 @@ export class Drive {
     if (Math.abs(r.top + r.height / 2 - innerHeight / 2) > 40) this._centerViews();
   }
 
-  // Zero gravity on / off (the switch beside Reset, or G). Either way the robot starts still.
-  _toggleZeroG(this: KiboNavSandbox) {
-    const d = this._drive;
-    if (!d) return;
-    d.zeroG = !d.zeroG;
-    d.vel = [0, 0, 0]; d.spin = [0, 0, 0];
-    this.$('[data-act=drivezerog]').setAttribute('aria-checked', String(d.zeroG));
-    this._root.classList.toggle('zerog', d.zeroG); // shows Halt
-    const x = this._sticks ? '' : ' (X)';
-    const msg = d.zeroG ? L('Zero gravity on: the controls fire thrusters and the robot keeps drifting. Halt' + x + ' stops it at once; thrusting the other way brakes too.', 'শূন্য মাধ্যাকর্ষণ চালু: কন্ট্রোল চাপলে থ্রাস্টার জ্বলে, আর রোবট ভেসে চলতেই থাকে। ‘থামো’' + x + ' চাপলে সঙ্গে সঙ্গে থেমে যাবে; উল্টো দিকে থ্রাস্ট দিলেও গতি কমে।')
-      : L('Zero gravity off: the robot moves only while you steer.', 'শূন্য মাধ্যাকর্ষণ বন্ধ: যতক্ষণ চালাবে, রোবট শুধু ততক্ষণই নড়বে।');
-    this._toast(msg);
-    this._log(d.zeroG ? L('◌ Zero gravity on', '◌ শূন্য মাধ্যাকর্ষণ চালু') : L('● Zero gravity off', '● শূন্য মাধ্যাকর্ষণ বন্ধ'));
-    this._driveHud();
-  }
-
-  // Halt (zero gravity): stop drifting and spinning at once, where the robot is.
-  _driveHalt(this: KiboNavSandbox) {
-    const d = this._drive;
-    if (!d || !d.zeroG) return;
-    const moving = Core.len(d.vel!) > 0 || Core.len(d.spin!) > 0;
-    d.vel = [0, 0, 0]; d.spin = [0, 0, 0];
-    if (moving) this._log(L('◼ Halted', '◼ থেমে গেছে'));
-    this._driveHud();
-  }
-
-  // One frame of zero-gravity flight (Core.zeroGStep, shared with the Free flight page) inside the keep-in
-  // zones. Returns whether the robot moved.
-  _zeroGStep(this: KiboNavSandbox, dt: number, fine: boolean, move: number[], turn: number[], brake: boolean) {
-    const d = this._drive!, cfg = this._config, b = { pos: d.pos, q: d.q, vel: d.vel!, spin: d.spin! };
-    const r = Core.zeroGStep(b, dt, fine, move, turn, brake, function (p, delta) { return Core.driveStep(cfg, p, delta); }, Core.ZERO_G_GAME); // Free flight's feel
-    d.pos = b.pos; d.q = b.q; d.vel = b.vel; d.spin = b.spin;
-    return r.changed;
-  }
-
   _driveHud(this: KiboNavSandbox) {
     if (!this._drive) return;
     const d = this._drive, cfg = this._config, pose = this._drivePose(), st = Core.pointStatus(cfg, d.pos);
@@ -337,8 +295,7 @@ export class Drive {
 
     // The pose first: on a computer a long line is cut short from the end, so the additions go last.
     const l1 = '<span class="hpose">x ' + f3(d.pos[0]) + '  y ' + f3(d.pos[1]) + '  z ' + f3(d.pos[2]) + '  <span class="mut">' + L('heading', 'হেডিং') + '</span> ' + Math.round(ypr.yaw) + '°  <span class="mut">' + L('pitch', 'পিচ') + '</span> ' + Math.round(ypr.pitch) + '°  <span class="mut">' + L('roll', 'রোল') + '</span> ' + Math.round(ypr.roll) + '°</span>' +
-      (st.free ? '' : '  <span class="bad">' + esc(Core.whyText(st)) + '</span>') +
-      (d.zeroG ? '  <span class="mut">' + L('drift', 'ভাসা') + '</span> ' + f2(Core.len(d.vel!)) + L(' m/s ', ' মি/সে ') + Math.round(Core.len(d.spin!) * 180 / Math.PI) + L('°/s', '°/সে') : '');
+      (st.free ? '' : '  <span class="bad">' + esc(Core.whyText(st)) + '</span>');
 
     // What the camera is looking at.
     let best = null as { t: Target; ck: CaptureCheck } | null;

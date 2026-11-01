@@ -37,11 +37,9 @@ export class Events {
       case 'replay': this._replay(); this._centerViews(); break;
       // Drive only starts Drive (Play leaves it); while driving it brings a paused Drive back.
       case 'drive': if (!this._drive) this._toggleDrive(true); else if (this._ui.view !== 'split') this._viewBack(); this._centerViews(); break;
-      case 'drivehalt': this._driveHalt(); break;
       case 'driveadd': this._driveAdd(); break;
       case 'driveupdate': this._driveUpdate(); break;
       case 'drivereset': this._driveReset(); this._centerViews(); break;
-      case 'drivezerog': this._toggleZeroG(); break;
       case 'viewsmenu': this._showViews(!this._root.classList.contains('views-open')); break;
       case 'drivefine': if (this._drive) { this._drive.fine = !this._drive.fine; t.setAttribute('aria-pressed', String(this._drive.fine)); } break;
       case 'saves': this._openSaves(); break;

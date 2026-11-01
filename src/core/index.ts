@@ -13,7 +13,7 @@ import { nearestFree, planPath } from './planner.js';
 import { aimQuat, angleDeg, cameraDir, faceQuat, qAngleDeg, qConj, qFromAxisAngle, qFromTo, qFromYawPitch, qMul, qNorm, qRotate, qSlerp, rollErrorDeg, topDir, yawPitchFromQ } from './quat.js';
 import { analyzeRoute, appendGoTo, appendWaypoint, exampleRoute, exampleWaypoint, fixRoute, goToWaypoint, makeCheckpoints, normalizeRoute, normalizeWaypoint, resolveRoute, routeAround, standoffPose, starterRoute } from './route.js';
 import { checkSegment, driveStep, inBox, isFree, oasisLength, pointStatus, slideStep, whyText } from './space.js';
-import { ENERGY, STEER, ZERO_G, ZERO_G_FLY, ZERO_G_GAME, ZERO_G_TIRED, ZERO_G_TOUCH, energyHalt, energyStep, zeroGStep } from './flight.js';
+import { STEER } from './flight.js';
 import { add, copy, cross, dist, dot, fmt, isVec, len, lerp, norm, round, roundVec, scale, sub } from './vec.js';
 import { boxCenter, boxSize, findCheckpoint, findPose, findTarget, kizBounds, markerNumber, normalizeWorld, targetCenter, worldBounds } from './world.js';
 import { VERSION } from '../version.js';
@@ -36,7 +36,7 @@ const Core = {
   resolveRoute: resolveRoute, analyzeRoute: analyzeRoute, routeAround: routeAround, fixRoute: fixRoute,
   goToWaypoint: goToWaypoint, appendGoTo: appendGoTo, exampleRoute: exampleRoute, toJava: toJava, toCpp: toCpp, toPython: toPython, toCode: toCode,
   captureCheck: captureCheck, missionStatus: missionStatus, blockHint: blockHint, dirText: dirText,
-  slideStep: slideStep, ZERO_G: ZERO_G, ZERO_G_GAME: ZERO_G_GAME, ZERO_G_FLY: ZERO_G_FLY, ZERO_G_TIRED: ZERO_G_TIRED, ZERO_G_TOUCH: ZERO_G_TOUCH, STEER: STEER, zeroGStep: zeroGStep, ENERGY: ENERGY, energyStep: energyStep, energyHalt: energyHalt, 
+  slideStep: slideStep, STEER: STEER, 
   
 };
 

@@ -93,18 +93,9 @@ main{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:var(--v
 .viewport:focus{outline:none}\
 .viewport:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}\
 .btn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}\
-/* The Zero-g toggle switch in Drive: a track with a knob that slides right (accent) when it is on. */\
-.zgswitch{display:inline-flex;align-items:center;gap:7px}\
-.dbtns .haltbtn{display:inline-flex;align-items:center;justify-content:center;visibility:hidden}\
 .mvl{display:inline-grid;justify-items:center}\
 .mvl>span{grid-area:1/1}\
 .mvl>span~span{visibility:hidden}\
-.root.zerog .dbtns .haltbtn{visibility:visible}\
-.zgswitch .sw{position:relative;flex:none;width:30px;height:17px;border-radius:9px;background:var(--border);transition:background .15s}\
-.zgswitch .sw::after{content:"";position:absolute;left:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .15s}\
-.zgswitch[aria-checked=true] .sw{background:var(--accent)}\
-.zgswitch[aria-checked=true] .sw::after{transform:translateX(13px)}\
-@media (prefers-reduced-motion:reduce){.zgswitch .sw,.zgswitch .sw::after{transition:none}}\
 .drive{position:absolute;inset:0;pointer-events:none;z-index:4;display:flex;flex-direction:column;justify-content:space-between}\
 .drive[hidden]{display:none}\
 .hud{margin:30px 8px 0;align-self:flex-start;max-width:min(560px,calc(100% - 16px));background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--border);border-radius:8px;padding:5px 9px;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans Bengali",monospace;color:var(--fg)}\
@@ -474,11 +465,8 @@ header{position:relative}\
 .root.short .dbtns [data-act=driveupdate]::before{content:"Move"}\
 .root.short .dbtns [data-act=drivefine]::before{content:"Fine"}\
 .root.short .dbtns [data-act=drivereset]::before{content:"\\21BA";font-size:19px;line-height:1}\
-.root.short .dbtns [data-act=drivehalt]::before{content:"Halt"}\
 .root.short .dbtns{gap:3px}\
 .root.short .dbtns .btn{padding:0 7px}\
-.root.short .dbtns [data-act=drivezerog]{gap:6px}\
-.root.short .dbtns [data-act=drivezerog]::after{content:"0g";font-size:14px}\
 .root.short .vbtns{gap:4px}\
 .root.short .vbtns .btn{min-width:40px;min-height:40px}\
 .root.short .joy{background:color-mix(in srgb,var(--panel) 40%,transparent)}\

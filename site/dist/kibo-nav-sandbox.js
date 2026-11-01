@@ -1672,160 +1672,9 @@
     function toCpp(world, route, analysis) { return toCode(world, route, analysis, 'cpp'); }
     function toPython(world, route, analysis) { return toCode(world, route, analysis, 'python'); }
 
-    /* ---------- zero-gravity flight (Drive's Zero-g and the Free flight page) ---------- */
-    // Accelerations in m/s² and °/s², fine = with Shift / Fine; drag per second.
-    // As on the station, drift is never lost (`drag` 0): the robot keeps moving until it thrusts the other way,
-    // halts (X) or hits a wall. Spin is held to `maxSpin` and settles over a few seconds; thrusting against the
-    // motion brakes `counter` times harder. The default for Core.zeroGStep.
-    const ZERO_G = { accel: 0.15, fineAccel: 0.04, spinAccel: 60, fineSpinAccel: 15, spinDrag: 0.2, counter: 1.2, maxSpeed: 0.5, maxSpin: 30, restSpeed: 0.003, restSpin: 0.3, drag: 0 };
-    // A little more forgiving, for flying by hand (the sandbox's Drive and the Free flight game): turning settles in
-    // about 2 s, thrusting backward brakes a bit harder, and the drift fades very slowly (half of it in about 20 s).
-    // Thrust is quicker, up to 1 m/s, since the station is about 60 m from end to end.
-    const ZERO_G_GAME = { accel: 0.32, fineAccel: 0.07, spinAccel: 90, fineSpinAccel: 22, spinDrag: 1.5, counter: 1.6, maxSpeed: 1, maxSpin: 40, restSpeed: 0.006, restSpin: 1, drag: 0.035 };
-    // The Free flight game's feel: ZERO_G_GAME with help to stay in control, so stopping a drift never ends in a
-    // string of bumps. While thrusting, drift across the thrust fades (the robot goes where it is pushed); thrusting
-    // against the drift brakes harder; drifting toward a wall slows to a touch before it, unless thrusting that way on
-    // purpose (as Int-Ball2's own controller keeps it off the walls); and turning is quicker (held, it reaches 45°/s,
-    // gentle 10°/s, as with Zero-g off) and settles faster. Letting go still drifts.
-    const ZERO_G_FLY = Object.assign({}, ZERO_G_GAME, { counter: 2.5, spinAccel: 135, fineSpinAccel: 30, spinDrag: 3, maxSpin: 60, steerAssist: 1.5, wallReach: 0.6, wallBrake: 2.5 });
-    // On a touch screen turning is quicker: a thumb on a stick has little travel and no feel for a slow spin.
-    const ZERO_G_TOUCH = Object.assign({}, ZERO_G_FLY, { spinAccel: 210, fineSpinAccel: 45, maxSpin: 100 });
-    // Out of energy (Free flight): the robot barely crawls. Thrust is weaker than gentle, and any faster drift fades to
-    // 0.12 m/s (from full speed in about a second and a half).
-    const ZERO_G_TIRED = Object.assign({}, ZERO_G_FLY, { fineAccel: 0.03, slowTo: 0.12, slowDrag: 1.5 });
-    /** Flying by hand without zero gravity (Drive and Free flight): moves in m/s and turns in °/s while held. */
-    const STEER = { speed: 0.6, fineSpeed: 0.1, tiredSpeed: 0.04, turn: 45, fineTurn: 10, touchTurn: 75 };
-    // One frame of zero-gravity flight. `move` is [forward, right, up] and `turn` is [roll, pitch, yaw] about
-    // the body axes, each -1..1: they accelerate the robot instead of moving it, and it keeps drifting and
-    // spinning afterwards (the spin settles; the drift does not, unless `zg` has drag). `step(pos, delta)` moves
-    // through the allowed space (sliding along walls); the motion into a wall stops. `brake` fires against the
-    // motion. `zg` is the feel (ZERO_G, the default, or ZERO_G_GAME).
-    // Updates `b` and returns whether it moved, and `impact`: the speed (m/s) the walls took away this frame.
-    function zeroGStep(b, dt, fine, move, turn, brake, step, zg) {
-        const ZG = zg || ZERO_G, accel = fine ? ZG.fineAccel : ZG.accel, spinAccel = (fine ? ZG.fineSpinAccel : ZG.spinAccel) * Math.PI / 180;
-        let vel = b.vel, spin = b.spin, impact = 0, push = null;
-        if (move[0] || move[1] || move[2]) {
-            // Thrust follows the camera picture, like normal driving: forward, the picture's right, the robot's top.
-            const f = cameraDir(b.q), r = qRotate(b.q, [0, -1, 0]), u = topDir(b.q);
-            const dir = add(add(scale(f, move[0]), scale(r, move[1])), scale(u, move[2]));
-            const dv = scale(dir, accel * dt), sv = len(vel), vh = sv > 0 ? scale(vel, 1 / sv) : null;
-            vel = add(vel, dv);
-            // Thrust against the drift brakes harder, down to a stop (never past it).
-            const along = vh ? dot(dv, vh) : 0;
-            if (vh && along < 0)
-                vel = add(vel, scale(vh, Math.min(0, Math.max(-(sv + along), (ZG.counter - 1) * along))));
-            // Help: drift across the thrust fades, so the robot goes where it is pushed.
-            if (len(dir) > 1e-9) {
-                push = norm(dir);
-                if (ZG.steerAssist) {
-                    const across = sub(vel, scale(push, dot(vel, push)));
-                    vel = sub(vel, scale(across, Math.min(1, ZG.steerAssist * dt)));
-                }
-            }
-        }
-        spin = spin.map(function (w, i) {
-            const dw = turn[i] * spinAccel * dt;
-            if (w * dw >= 0)
-                return w + dw;
-            const s = w + dw * ZG.counter; // turning against the spin: harder, down to a stop
-            return s * w >= 0 ? s : Math.abs(dw) > Math.abs(w) ? w + dw : 0;
-        });
-        if (brake) {
-            const sv = len(vel), sw = len(spin);
-            vel = sv <= accel * dt ? [0, 0, 0] : scale(vel, 1 - accel * dt / sv);
-            spin = sw <= spinAccel * dt ? [0, 0, 0] : scale(spin, 1 - spinAccel * dt / sw);
-        }
-        // The spin settles (the drift is kept, or fades with `drag`), the speed limits, and rest below a crawl.
-        const maxSpin = ZG.maxSpin * Math.PI / 180;
-        spin = scale(spin, Math.exp(-ZG.spinDrag * dt));
-        if (ZG.drag)
-            vel = scale(vel, Math.exp(-ZG.drag * dt));
-        if (ZG.slowTo && len(vel) > ZG.slowTo)
-            vel = scale(vel, Math.max(ZG.slowTo / len(vel), Math.exp(-(ZG.slowDrag || 1) * dt)));
-        if (len(vel) > ZG.maxSpeed)
-            vel = scale(norm(vel), ZG.maxSpeed);
-        if (len(spin) > maxSpin)
-            spin = scale(norm(spin), maxSpin);
-        const thrusting = move.some(Boolean) || turn.some(Boolean);
-        if (!thrusting && len(vel) < ZG.restSpeed)
-            vel = [0, 0, 0];
-        // Help: drifting toward a wall (not thrusting that way), slow down to arrive at a touch: an even braking (0.8 m/s²)
-        // that ends at 0.08 m/s on the wall, about a second from half a metre away.
-        const sp = len(vel);
-        if (ZG.wallBrake && sp > 0.05 && !(push && dot(push, vel) > 0.3 * sp)) {
-            const reach = ZG.wallReach || 0.5, vh = scale(vel, 1 / sp), pos = b.pos;
-            // How far a step straight on gets (step() takes a move that ends in a wall only along the axes it can).
-            const gets = function (s) { return dot(sub(step(pos, scale(vh, s)), pos), vh) >= s - 1e-6; };
-            if (!gets(reach)) {
-                let free = 0, hi = reach; // clear straight on, to about a centimetre
-                for (let k = 0; k < 6; k++) {
-                    const m = (free + hi) / 2;
-                    if (gets(m))
-                        free = m;
-                    else
-                        hi = m;
-                }
-                const allowed = Math.sqrt(0.0064 + 1.6 * free);
-                if (sp > allowed)
-                    vel = scale(vh, Math.max(allowed, sp - ZG.wallBrake * dt));
-            }
-        }
-        if (!thrusting && len(spin) < ZG.restSpin * Math.PI / 180)
-            spin = [0, 0, 0];
-        let changed = false;
-        if (len(vel) > 0) {
-            const delta = scale(vel, dt), np = step(b.pos, delta), moved = [np[0] - b.pos[0], np[1] - b.pos[1], np[2] - b.pos[2]];
-            // A wall stopped part of the move: that part of the motion stops too (sliding along it carries on).
-            const kept = vel.map(function (v, i) { return Math.abs(moved[i] - delta[i]) > 1e-9 ? 0 : v; });
-            impact = len([vel[0] - kept[0], vel[1] - kept[1], vel[2] - kept[2]]);
-            vel = kept;
-            if (len(moved) > 1e-9) {
-                b.pos = np;
-                changed = true;
-            }
-        }
-        if (len(spin) > 0) {
-            let q = b.q;
-            if (spin[0])
-                q = qMul(q, qFromAxisAngle([1, 0, 0], spin[0] * dt));
-            if (spin[1])
-                q = qMul(q, qFromAxisAngle([0, 1, 0], spin[1] * dt));
-            if (spin[2])
-                q = qMul(q, qFromAxisAngle([0, 0, 1], spin[2] * dt));
-            b.q = qNorm(q);
-            changed = true;
-        }
-        b.vel = vel;
-        b.spin = spin;
-        return { changed: changed, impact: impact };
-    }
-    const ENERGY = { use: 100 / 15, delay: 1, refill: 30, halt: 25 };
-    // One frame of energy: `use` is the full thrust held (0 to 1; gentle thrust is 0).
-    function energyStep(e, dt, use) {
-        let level = e.level, rest = e.rest, tired = e.tired;
-        if (use > 0) {
-            rest = 0;
-            if (!tired) {
-                level = Math.max(0, level - ENERGY.use * use * dt);
-                if (level <= 0)
-                    tired = true;
-            }
-        }
-        else {
-            tired = false;
-            rest += dt;
-            if (rest >= ENERGY.delay)
-                level = Math.min(100, level + ENERGY.refill * dt);
-        }
-        return { level: level, rest: rest, tired: tired };
-    }
-    // Halt (a roll): with any energy left it stops the robot at once and costs ENERGY.halt, down to empty at worst;
-    // with none, it can't. Returns the energy after, and whether it halted.
-    function energyHalt(e) {
-        if (e.level <= 0)
-            return { energy: e, ok: false };
-        return { energy: { level: Math.max(0, e.level - ENERGY.halt), rest: 0, tired: e.tired }, ok: true };
-    }
+    /* ---------- flying by hand (Drive) ---------- */
+    /** Moves in m/s and turns in °/s while held; fine = with Shift / Fine. */
+    const STEER = { speed: 0.6, fineSpeed: 0.1, turn: 45, fineTurn: 10 };
 
     const VERSION = '0.1.0';
 
@@ -1853,7 +1702,7 @@
         resolveRoute: resolveRoute, analyzeRoute: analyzeRoute, routeAround: routeAround, fixRoute: fixRoute,
         goToWaypoint: goToWaypoint, appendGoTo: appendGoTo, exampleRoute: exampleRoute, toJava: toJava, toCpp: toCpp, toPython: toPython, toCode: toCode,
         captureCheck: captureCheck, missionStatus: missionStatus, blockHint: blockHint, dirText: dirText,
-        slideStep: slideStep, ZERO_G: ZERO_G, ZERO_G_GAME: ZERO_G_GAME, ZERO_G_FLY: ZERO_G_FLY, ZERO_G_TIRED: ZERO_G_TIRED, ZERO_G_TOUCH: ZERO_G_TOUCH, STEER: STEER, zeroGStep: zeroGStep, ENERGY: ENERGY, energyStep: energyStep, energyHalt: energyHalt,
+        slideStep: slideStep, STEER: STEER,
     };
 
     // Text formatting for the panel, the log and the HUD.
@@ -2782,11 +2631,8 @@
                 let q0 = Core.qNorm(p.q);
                 if (Core.dot(Core.topDir(q0), [0, 0, -1]) < 0)
                     q0 = Core.qNorm(Core.qMul(q0, Core.qFromAxisAngle([1, 0, 0], Math.PI)));
-                this._drive = { pos: p.pos.slice(), q: q0, start: { pos: p.pos.slice(), q: q0 }, keys: {}, joy: { move: [0, 0], turn: [0, 0] }, hold: {}, fine: false, last: 0, hudAt: 0,
-                    zeroG: false, vel: [0, 0, 0], spin: [0, 0, 0] };
+                this._drive = { pos: p.pos.slice(), q: q0, start: { pos: p.pos.slice(), q: q0 }, keys: {}, joy: { move: [0, 0], turn: [0, 0] }, hold: {}, fine: false, last: 0, hudAt: 0 };
                 this.$('[data-act=drivefine]').setAttribute('aria-pressed', 'false');
-                this.$('[data-act=drivezerog]').setAttribute('aria-checked', 'false'); // zero gravity starts off every time
-                this._root.classList.remove('zerog');
                 window.addEventListener('blur', this._winBlur);
                 const pageKeys = function () {
                     self._root.removeEventListener('pointerdown', pageKeys);
@@ -2811,7 +2657,7 @@
                 }
                 const touch = this._sticks;
                 this._toast(touch ? L('Left stick moves, right stick turns. Add waypoint drops one.', 'বাঁ স্টিকে চলবে, ডান স্টিকে ঘুরবে। ‘ওয়েপয়েন্ট বসাও’ চাপলে একটা বসে যাবে।')
-                    : L('W A S D move, R / F up and down, arrows turn, Q / E roll, Enter adds a waypoint, G zero gravity.', 'W A S D দিয়ে চলো, R / F দিয়ে ওপর-নিচ, অ্যারো কি দিয়ে ঘোরো, Q / E দিয়ে রোল। Enter চাপলে ওয়েপয়েন্ট বসবে, G দিয়ে শূন্য মাধ্যাকর্ষণ।'));
+                    : L('W A S D move, R / F up and down, arrows turn, Q / E roll, Enter adds a waypoint.', 'W A S D দিয়ে চলো, R / F দিয়ে ওপর-নিচ, অ্যারো কি দিয়ে ঘোরো, Q / E দিয়ে রোল। Enter চাপলে ওয়েপয়েন্ট বসবে।'));
                 this._log(L('● Drive · ', '● ড্রাইভ · ') + (touch ? L('left stick moves, right stick turns', 'বাঁ স্টিকে চলা, ডান স্টিকে ঘোরা') : L('W A S D move, R / F up / down, arrows turn, Q / E roll', 'W A S D চলা, R / F ওপর / নিচ, অ্যারো ঘোরা, Q / E রোল')), 'head');
                 // A fixed side view of the whole module while driving; the previous view comes back afterwards.
                 if (this._camera)
@@ -2899,8 +2745,6 @@
             d.keys = {};
             d.joy = { move: [0, 0], turn: [0, 0] };
             d.hold = {};
-            d.vel = [0, 0, 0];
-            d.spin = [0, 0, 0];
             this._touched3d = false;
             this._driveView3d();
             this._driveKeysUi();
@@ -2958,14 +2802,7 @@
                     this._driveReset();
                 return true;
             }
-            if (code === 'KeyG') {
-                if (!e.repeat)
-                    this._toggleZeroG();
-                return true;
-            }
-            if (code === 'KeyX' && !e.repeat)
-                this._driveHalt(); // stops at once; held, it keeps braking
-            const held = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR', 'KeyF', 'KeyQ', 'KeyE', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight', 'KeyX'];
+            const held = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR', 'KeyF', 'KeyQ', 'KeyE', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight'];
             if (held.indexOf(code) < 0)
                 return false;
             e.preventDefault();
@@ -3001,7 +2838,7 @@
             d.last = now;
             if (!dt)
                 return;
-            const S = Core.STEER, fine = d.fine || k.ShiftLeft || k.ShiftRight, v = fine ? S.fineSpeed : S.speed, w = fine ? S.fineTurn : S.turn; // as in Free flight
+            const S = Core.STEER, fine = d.fine || k.ShiftLeft || k.ShiftRight, v = fine ? S.fineSpeed : S.speed, w = fine ? S.fineTurn : S.turn;
             const fwd = (k.KeyW ? 1 : 0) - (k.KeyS ? 1 : 0) - d.joy.move[1];
             const side = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0) + d.joy.move[0];
             const vert = (k.KeyR ? 1 : 0) - (k.KeyF ? 1 : 0) + (d.hold.up ? 1 : 0) - (d.hold.down ? 1 : 0); // up in the camera picture
@@ -3010,9 +2847,7 @@
             // ⟲ / Q turn the camera picture anticlockwise (the robot rolls clockwise), ⟳ / E the other way.
             const rollIn = (k.KeyQ ? 1 : 0) - (k.KeyE ? 1 : 0) + (d.hold.rollL ? 1 : 0) - (d.hold.rollR ? 1 : 0);
             let changed = false;
-            if (d.zeroG)
-                changed = this._zeroGStep(dt, !!fine, [fwd, side, vert], [rollIn, -pitchIn, -yawIn], !!k.KeyX);
-            else if (fwd || side || vert) {
+            if (fwd || side || vert) {
                 // Every move follows the camera picture, whichever way up the robot is: forward along the camera,
                 // right = the picture's right (body -Y), up = the picture's up (the robot's top, body +Z).
                 const f = Core.cameraDir(d.q), r = Core.qRotate(d.q, [0, -1, 0]), u = Core.topDir(d.q);
@@ -3023,7 +2858,7 @@
                     changed = true;
                 }
             }
-            if (!d.zeroG && (yawIn || pitchIn || rollIn)) {
+            if (yawIn || pitchIn || rollIn) {
                 // Turn about the robot's own axes, as the camera sees them: left / right about its top (+Z),
                 // look up / down about its left (+Y), roll about the camera axis (+X, + = robot clockwise).
                 let rad = w * dt * Math.PI / 180, q = d.q;
@@ -3060,46 +2895,6 @@
             if (Math.abs(r.top + r.height / 2 - innerHeight / 2) > 40)
                 this._centerViews();
         }
-        // Zero gravity on / off (the switch beside Reset, or G). Either way the robot starts still.
-        _toggleZeroG() {
-            const d = this._drive;
-            if (!d)
-                return;
-            d.zeroG = !d.zeroG;
-            d.vel = [0, 0, 0];
-            d.spin = [0, 0, 0];
-            this.$('[data-act=drivezerog]').setAttribute('aria-checked', String(d.zeroG));
-            this._root.classList.toggle('zerog', d.zeroG); // shows Halt
-            const x = this._sticks ? '' : ' (X)';
-            const msg = d.zeroG ? L('Zero gravity on: the controls fire thrusters and the robot keeps drifting. Halt' + x + ' stops it at once; thrusting the other way brakes too.', 'শূন্য মাধ্যাকর্ষণ চালু: কন্ট্রোল চাপলে থ্রাস্টার জ্বলে, আর রোবট ভেসে চলতেই থাকে। ‘থামো’' + x + ' চাপলে সঙ্গে সঙ্গে থেমে যাবে; উল্টো দিকে থ্রাস্ট দিলেও গতি কমে।')
-                : L('Zero gravity off: the robot moves only while you steer.', 'শূন্য মাধ্যাকর্ষণ বন্ধ: যতক্ষণ চালাবে, রোবট শুধু ততক্ষণই নড়বে।');
-            this._toast(msg);
-            this._log(d.zeroG ? L('◌ Zero gravity on', '◌ শূন্য মাধ্যাকর্ষণ চালু') : L('● Zero gravity off', '● শূন্য মাধ্যাকর্ষণ বন্ধ'));
-            this._driveHud();
-        }
-        // Halt (zero gravity): stop drifting and spinning at once, where the robot is.
-        _driveHalt() {
-            const d = this._drive;
-            if (!d || !d.zeroG)
-                return;
-            const moving = Core.len(d.vel) > 0 || Core.len(d.spin) > 0;
-            d.vel = [0, 0, 0];
-            d.spin = [0, 0, 0];
-            if (moving)
-                this._log(L('◼ Halted', '◼ থেমে গেছে'));
-            this._driveHud();
-        }
-        // One frame of zero-gravity flight (Core.zeroGStep, shared with the Free flight page) inside the keep-in
-        // zones. Returns whether the robot moved.
-        _zeroGStep(dt, fine, move, turn, brake) {
-            const d = this._drive, cfg = this._config, b = { pos: d.pos, q: d.q, vel: d.vel, spin: d.spin };
-            const r = Core.zeroGStep(b, dt, fine, move, turn, brake, function (p, delta) { return Core.driveStep(cfg, p, delta); }, Core.ZERO_G_GAME); // Free flight's feel
-            d.pos = b.pos;
-            d.q = b.q;
-            d.vel = b.vel;
-            d.spin = b.spin;
-            return r.changed;
-        }
         _driveHud() {
             if (!this._drive)
                 return;
@@ -3107,8 +2902,7 @@
             const ypr = Core.yawPitchFromQ(d.q);
             // The pose first: on a computer a long line is cut short from the end, so the additions go last.
             const l1 = '<span class="hpose">x ' + f3(d.pos[0]) + '  y ' + f3(d.pos[1]) + '  z ' + f3(d.pos[2]) + '  <span class="mut">' + L('heading', 'হেডিং') + '</span> ' + Math.round(ypr.yaw) + '°  <span class="mut">' + L('pitch', 'পিচ') + '</span> ' + Math.round(ypr.pitch) + '°  <span class="mut">' + L('roll', 'রোল') + '</span> ' + Math.round(ypr.roll) + '°</span>' +
-                (st.free ? '' : '  <span class="bad">' + esc(Core.whyText(st)) + '</span>') +
-                (d.zeroG ? '  <span class="mut">' + L('drift', 'ভাসা') + '</span> ' + f2(Core.len(d.vel)) + L(' m/s ', ' মি/সে ') + Math.round(Core.len(d.spin) * 180 / Math.PI) + L('°/s', '°/সে') : '');
+                (st.free ? '' : '  <span class="bad">' + esc(Core.whyText(st)) + '</span>');
             // What the camera is looking at.
             let best = null;
             cfg.targets.forEach(function (t) {
@@ -3319,9 +3113,6 @@
                         this._viewBack();
                     this._centerViews();
                     break;
-                case 'drivehalt':
-                    this._driveHalt();
-                    break;
                 case 'driveadd':
                     this._driveAdd();
                     break;
@@ -3331,9 +3122,6 @@
                 case 'drivereset':
                     this._driveReset();
                     this._centerViews();
-                    break;
-                case 'drivezerog':
-                    this._toggleZeroG();
                     break;
                 case 'viewsmenu':
                     this._showViews(!this._root.classList.contains('views-open'));
@@ -5031,18 +4819,9 @@ main{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:var(--v
 .viewport:focus{outline:none}\
 .viewport:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}\
 .btn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}\
-/* The Zero-g toggle switch in Drive: a track with a knob that slides right (accent) when it is on. */\
-.zgswitch{display:inline-flex;align-items:center;gap:7px}\
-.dbtns .haltbtn{display:inline-flex;align-items:center;justify-content:center;visibility:hidden}\
 .mvl{display:inline-grid;justify-items:center}\
 .mvl>span{grid-area:1/1}\
 .mvl>span~span{visibility:hidden}\
-.root.zerog .dbtns .haltbtn{visibility:visible}\
-.zgswitch .sw{position:relative;flex:none;width:30px;height:17px;border-radius:9px;background:var(--border);transition:background .15s}\
-.zgswitch .sw::after{content:"";position:absolute;left:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .15s}\
-.zgswitch[aria-checked=true] .sw{background:var(--accent)}\
-.zgswitch[aria-checked=true] .sw::after{transform:translateX(13px)}\
-@media (prefers-reduced-motion:reduce){.zgswitch .sw,.zgswitch .sw::after{transition:none}}\
 .drive{position:absolute;inset:0;pointer-events:none;z-index:4;display:flex;flex-direction:column;justify-content:space-between}\
 .drive[hidden]{display:none}\
 .hud{margin:30px 8px 0;align-self:flex-start;max-width:min(560px,calc(100% - 16px));background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--border);border-radius:8px;padding:5px 9px;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans Bengali",monospace;color:var(--fg)}\
@@ -5412,11 +5191,8 @@ header{position:relative}\
 .root.short .dbtns [data-act=driveupdate]::before{content:"Move"}\
 .root.short .dbtns [data-act=drivefine]::before{content:"Fine"}\
 .root.short .dbtns [data-act=drivereset]::before{content:"\\21BA";font-size:19px;line-height:1}\
-.root.short .dbtns [data-act=drivehalt]::before{content:"Halt"}\
 .root.short .dbtns{gap:3px}\
 .root.short .dbtns .btn{padding:0 7px}\
-.root.short .dbtns [data-act=drivezerog]{gap:6px}\
-.root.short .dbtns [data-act=drivezerog]::after{content:"0g";font-size:14px}\
 .root.short .vbtns{gap:4px}\
 .root.short .vbtns .btn{min-width:40px;min-height:40px}\
 .root.short .joy{background:color-mix(in srgb,var(--panel) 40%,transparent)}\
@@ -5496,7 +5272,7 @@ header{position:relative}\
           </div>\
           <div class="dmid">\
             <div class="vbtns"><button class="btn" data-hold="up" aria-label="' + L('Up', 'ওপরে') + '" title="' + L('Move up in the camera picture', 'ক্যামেরার ছবিতে ওপরে যাও') + '">▲<span class="lbl"> ' + L('Up', 'ওপরে') + '</span></button><button class="btn" data-hold="down" aria-label="' + L('Down', 'নিচে') + '" title="' + L('Move down in the camera picture', 'ক্যামেরার ছবিতে নিচে যাও') + '">▼<span class="lbl"> ' + L('Down', 'নিচে') + '</span></button><button class="btn" data-hold="rollL" aria-label="' + L('Roll anticlockwise', 'ঘড়ির কাঁটার উল্টো দিকে রোল') + '" title="' + L('Turn the camera picture anticlockwise', 'ক্যামেরার ছবি ঘড়ির কাঁটার উল্টো দিকে ঘোরাও') + '">⟲<span class="lbl"> ' + L('Roll', 'রোল') + '</span></button><button class="btn" data-hold="rollR" aria-label="' + L('Roll clockwise', 'ঘড়ির কাঁটার দিকে রোল') + '" title="' + L('Turn the camera picture clockwise', 'ক্যামেরার ছবি ঘড়ির কাঁটার দিকে ঘোরাও') + '">⟳<span class="lbl"> ' + L('Roll', 'রোল') + '</span></button></div>\
-            <div class="dbtns"><button class="btn primary" data-act="driveadd">' + L('Add waypoint here', 'এখানে ওয়েপয়েন্ট বসাও') + '</button><button class="btn drawerbtn listbtn" data-act="drawer" aria-pressed="false" aria-label="' + L('Waypoints', 'ওয়েপয়েন্ট') + '" title="' + waypointsTitle + '">' + MENU_ICON + '<span class="lbl">' + L('Waypoints', 'ওয়েপয়েন্ট') + '</span></button><button class="btn" data-act="driveupdate">' + L('Move selected here', 'বাছাই করাটা এখানে আনো') + '</button><button class="btn" data-act="drivefine" aria-pressed="false">' + L('Fine', 'ধীরে') + '<kbd>Shift</kbd></button><button class="btn" data-act="drivereset" title="' + L('Back to where you started driving, upright', 'যেখান থেকে চালানো শুরু করেছিলে, সোজা হয়ে সেখানে ফিরে যাও') + '">' + L('Reset', 'শুরুতে ফেরো') + '<kbd>H</kbd></button><button class="btn zgswitch" data-act="drivezerog" role="switch" aria-checked="false" title="' + L('Zero gravity: the controls fire thrusters and the robot keeps drifting (hold X to brake)', 'শূন্য মাধ্যাকর্ষণ: কন্ট্রোল চাপলে থ্রাস্টার জ্বলে আর রোবট ভেসে চলতে থাকে (থামাতে X চেপে ধরো)') + '"><span class="sw" aria-hidden="true"></span>Zero-g<kbd>G</kbd></button><button class="btn haltbtn" data-act="drivehalt" title="' + L('Zero gravity: stop drifting and spinning now', 'শূন্য মাধ্যাকর্ষণ: এখনই ভেসে চলা আর ঘোরা থামাও') + '">' + L('Halt', 'থামো') + '<kbd>X</kbd></button></div>\
+            <div class="dbtns"><button class="btn primary" data-act="driveadd">' + L('Add waypoint here', 'এখানে ওয়েপয়েন্ট বসাও') + '</button><button class="btn drawerbtn listbtn" data-act="drawer" aria-pressed="false" aria-label="' + L('Waypoints', 'ওয়েপয়েন্ট') + '" title="' + waypointsTitle + '">' + MENU_ICON + '<span class="lbl">' + L('Waypoints', 'ওয়েপয়েন্ট') + '</span></button><button class="btn" data-act="driveupdate">' + L('Move selected here', 'বাছাই করাটা এখানে আনো') + '</button><button class="btn" data-act="drivefine" aria-pressed="false">' + L('Fine', 'ধীরে') + '<kbd>Shift</kbd></button><button class="btn" data-act="drivereset" title="' + L('Back to where you started driving, upright', 'যেখান থেকে চালানো শুরু করেছিলে, সোজা হয়ে সেখানে ফিরে যাও') + '">' + L('Reset', 'শুরুতে ফেরো') + '<kbd>H</kbd></button></div>\
             <div class="keys">' + L('Keys work anywhere on the page while Drive is on (not while typing in a box).', 'ড্রাইভ চালু থাকলে পাতার যেকোনো জায়গা থেকে কি কাজ করে (কোনো বক্সে লেখার সময় বাদে)।') + '</div>\
           </div>\
           <div class="joy" data-joy="turn"><div class="halo"></div><div class="knob"></div><span>' + L('Turn / look', 'ঘোরাও / দেখো') + '</span></div>\
