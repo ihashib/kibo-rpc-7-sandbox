@@ -9,6 +9,7 @@
   <meta name="description" content="KIBO RPC 7 Nav Sandbox কীভাবে ব্যবহার করবে: ভিউ, মিশন আর স্কোর, রোবট চালানো, রোবটের ক্যামেরা, ওয়েপয়েন্ট আর কোড।">
   <link rel="stylesheet" href="vendor/fonts.css">
   <script src="lang.js"></script>
+  <link rel="stylesheet" href="viz.css">
   <style>
     /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
     html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
@@ -230,7 +231,7 @@
   </div>
 
   <h2 id="drive">৫. রোবট চালানো</h2>
-  <div class="need"><span class="tag">আগে যা জানা দরকার</span>রোল, পিচ, ইয়: <a href="rotations.html#turns">স্থানাঙ্ক ও ঘূর্ণনের ৬ নম্বর পাঠ</a>। শূন্য মাধ্যাকর্ষণে কেন রোবট ভেসে চলতেই থাকে: <a href="robots.html#float">রোবটের পাতা, অংশ ২</a>।</div>
+  <div class="need"><span class="tag">আগে যা জানা দরকার</span>রোল, পিচ, ইয়: <a href="rotations.html#turns">স্থানাঙ্ক ও ঘূর্ণনের ৬ নম্বর পাঠ</a>।</div>
   <p>স্যান্ডবক্স খোলে <b>ড্রাইভ</b> মোডে, তাই শুরু থেকেই হাতে রোবট চালাতে পারবে (<b>▶ চালাও</b> চাপলে ড্রাইভ থেকে বেরিয়ে যাবে, <b>ড্রাইভ</b> চাপলে আবার ফিরবে; ড্রাইভের মধ্যে <b>ড্রাইভ</b> চাপলেও ড্রাইভেই থাকবে)। আগে স্যান্ডবক্সের ভেতরে একবার ট্যাপ বা ক্লিক করো: তার আগে কিবোর্ড চাপলে পাতাই স্ক্রল হতে থাকবে। বাঁয়ে রোবটের ক্যামেরা আর ডানে 3D ভিউ দেখা যায় (ফোন খাড়া করে ধরলে ক্যামেরা ওপরে)। রোবট যেভাবেই উল্টে থাকুক, কন্ট্রোল চলে ক্যামেরার ছবি অনুযায়ী।</p>
   <div class="wrap"><table>
     <tr><th>যা করতে চাও</th><th>কিবোর্ড</th><th>ফোন</th></tr>
@@ -241,13 +242,10 @@
     <tr><td>ওপরে / নিচে তাকাও</td><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>ডান স্টিক ওপরে / নিচে</td></tr>
     <tr><td>ছবিটা ঘড়ির কাঁটার উল্টো দিকে / দিকে রোল করো</td><td><kbd>Q</kbd> <kbd>E</kbd></td><td>⟲ ⟳</td></tr>
     <tr><td>সূক্ষ্ম নিয়ন্ত্রণ (ধীরে)</td><td><kbd>Shift</kbd> চেপে রাখো</td><td><b>ধীরে</b></td></tr>
-    <tr><td>শূন্য মাধ্যাকর্ষণ চালু / বন্ধ</td><td><kbd>G</kbd></td><td><b>Zero-g</b> সুইচ</td></tr>
-    <tr><td>ভেসে চলা আর ঘোরা থামাও (শূন্য মাধ্যাকর্ষণে)</td><td><kbd>X</kbd></td><td><b>থামো</b></td></tr>
     <tr><td>এখানে ওয়েপয়েন্ট বসাও</td><td><kbd>Enter</kbd></td><td><b>ওয়েপয়েন্ট বসাও</b></td></tr>
     <tr><td>বাছাই করা ওয়েপয়েন্ট এখানে আনো</td><td><kbd>U</kbd></td><td><b>এখানে আনো</b></td></tr>
     <tr><td>যেখান থেকে শুরু করেছিলে, সোজা হয়ে সেখানে ফেরো</td><td><kbd>H</kbd></td><td><b>শুরুতে ফেরো</b></td></tr>
   </table></div>
-  <p><b>শূন্য মাধ্যাকর্ষণ</b> (<b>শুরুতে ফেরো</b>-র পাশের <b>Zero-g</b> সুইচ, বা <kbd>G</kbd>; প্রতিবার ড্রাইভ শুরু হলে বন্ধ থাকে) চালু করলে রোবট ঠিক স্টেশনে যেভাবে চলে, সেভাবে ওড়ে: কন্ট্রোল চাপলে থ্রাস্টার জ্বলে, আর ছেড়ে দিলেও রোবট ভেসে চলতে আর ঘুরতে থাকে। ভেসে চলার গতি খুব ধীরে কমে (মোটামুটি ২০ সেকেন্ডে অর্ধেক), তাই উল্টো দিকে থ্রাস্ট না দেওয়া, <b>থামো</b> না চাপা বা দেয়ালে না লাগা পর্যন্ত রোবট চলতেই থাকে। থ্রাস্টে গতি বাড়ে সেকেন্ডে ১ মিটার পর্যন্ত; ঘোরা সেকেন্ডে ৪০°-এর মধ্যে থাকে আর মোটামুটি ২ সেকেন্ডে থিতু হয়; উল্টো দিকে থ্রাস্ট দিলে সামনে ঠেলার চেয়ে জোরে ব্রেক হয়। সঙ্গে সঙ্গে থামাতে <b>থামো</b> (শূন্য মাধ্যাকর্ষণ চালু থাকলে সুইচের পাশে দেখা যায়) বা <kbd>X</kbd> চাপো; উল্টো দিকে থ্রাস্ট দিলেও গতি কমে। দেয়ালে ধাক্কা লাগলে সেই দিকের গতি থেমে যায়। HUD-এ ভেসে চলার গতি দেখা যায়। <b>শুরুতে ফেরো</b> চাপলে বা Zero-g বন্ধ করলে রোবট থেমে যায়।</p>
   <ul>
     <li>ড্রাইভ চালু থাকলে পাতার যেকোনো জায়গা থেকে কি কাজ করে, শুধু কোনো বক্সে লেখার সময় বাদে। কম্পিউটারে স্ক্রিনের কিগুলো মাউসে চেপেও ধরে রাখা যায়।</li>
     <li>ওপরের লেখায় অবস্থান, হেডিং, পিচ আর রোল দেখা যায়; কোনো চেকপয়েন্টের কাছে গেলে অবস্থান, কেন্দ্রে রাখা আর রোলে তার লেভেলও। ক্যামেরা কী পড়ছে, তাও বলে। কম্পিউটারে এটা সবসময় দুই লাইন জায়গা নেয়, যাতে ক্যামেরার ছবি নড়ে না যায়; কোনো লাইন বেশি লম্বা হলে … দিয়ে ছেঁটে দেওয়া হয়, আর লেখার ওপর মাউস রাখলে পুরোটা দেখা যায়।</li>
@@ -319,7 +317,6 @@
     <dt>লেভেল</dt><dd>চেকপয়েন্ট কত ভালোভাবে পার হলো: Lv1 থেকে Lv3।</dd>
     <dt>কিপ-ইন / কিপ-আউট জোন</dt><dd>যেখানে থাকতে হবে / যেখানে ঢোকা যাবে না।</dd>
     <dt>ড্রাইভ</dt><dd>হাতে রোবট চালানো।</dd>
-    <dt>শূন্য মাধ্যাকর্ষণ (Zero-g)</dt><dd>রোবট স্টেশনের মতো ভেসে চলে; থামাতে উল্টো দিকে ঠেলতে হয়।</dd>
     <dt>HUD বা ওপরের লেখা</dt><dd>ছবির ওপরে রোবটের অবস্থান, দিক আর কাছের চেকপয়েন্টের খবর।</dd>
     <dt>লগ</dt><dd>কী ঘটল, তার ছোট ডায়েরি।</dd>
     <dt>কোয়াটারনিয়ন</dt><dd>দিক লেখার চারটা সংখ্যা। (<a href="rotations.html#quaternion">স্থানাঙ্ক ও ঘূর্ণন</a>)</dd>
@@ -431,7 +428,7 @@
   </div>
 
   <h2 id="en-drive">5. Driving the robot</h2>
-  <div class="need"><span class="tag">Read this first</span>Roll, pitch and yaw: <a href="rotations.html#turns">lesson 6 of Coordinates and rotations</a>. Why the robot keeps drifting in zero gravity: <a href="robots.html#float">the robots page, part 2</a>.</div>
+  <div class="need"><span class="tag">Read this first</span>Roll, pitch and yaw: <a href="rotations.html#turns">lesson 6 of Coordinates and rotations</a>.</div>
   <p>The sandbox opens in <b>Drive</b>, so you can fly the robot by hand straight away (<b>▶ Play</b> leaves it and <b>Drive</b> brings you back; pressing <b>Drive</b> while driving keeps you in Drive). Tap or click in the sandbox first: until then the keyboard keeps scrolling the page. The robot camera appears on the left and the 3D view on the right (camera on top on a phone held upright). The controls follow the camera picture, whichever way up the robot is.</p>
   <div class="wrap"><table>
     <tr><th>To</th><th>Keyboard</th><th>Phone</th></tr>
@@ -442,13 +439,10 @@
     <tr><td>Look up / down</td><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Right stick up / down</td></tr>
     <tr><td>Roll the picture anticlockwise / clockwise</td><td><kbd>Q</kbd> <kbd>E</kbd></td><td>⟲ ⟳</td></tr>
     <tr><td>Fine control (slower)</td><td>Hold <kbd>Shift</kbd></td><td><b>Fine</b></td></tr>
-    <tr><td>Zero gravity on / off</td><td><kbd>G</kbd></td><td><b>Zero-g</b> switch</td></tr>
-    <tr><td>Stop drifting and spinning (zero gravity)</td><td><kbd>X</kbd></td><td><b>Halt</b></td></tr>
     <tr><td>Add a waypoint here</td><td><kbd>Enter</kbd></td><td><b>Add waypoint</b></td></tr>
     <tr><td>Move the selected waypoint here</td><td><kbd>U</kbd></td><td><b>Move here</b></td></tr>
     <tr><td>Go back to where you started, upright</td><td><kbd>H</kbd></td><td><b>Reset</b></td></tr>
   </table></div>
-  <p><b>Zero gravity</b> (the <b>Zero-g</b> switch beside <b>Reset</b>, or <kbd>G</kbd>; off each time Drive starts) flies the robot the way it moves on the station: the controls fire thrusters, and when you let go it keeps drifting and turning. The drift fades only very slowly (to half in about 20 seconds), so the robot keeps going until you thrust the other way, press <b>Halt</b> or hit a wall. Thrust builds speed up to 1 m/s; turning is limited to 40° a second and settles in about 2 seconds; thrusting the other way brakes harder than it pushes. To stop at once, press <b>Halt</b> (shown beside the switch while zero gravity is on) or <kbd>X</kbd>; thrusting the other way brakes too. Bumping a wall stops the motion into it. The HUD shows the drift speed. <b>Reset</b> or turning Zero-g off stops the robot.</p>
   <ul>
     <li>The keys work anywhere on the page while Drive is on, except while you are typing in a box. On a computer you can also hold the on-screen keys with the mouse.</li>
     <li>The readout at the top shows the position, heading, pitch and roll, and near a checkpoint its level for position, centring and roll. It also says what the camera reads. On a computer it always takes two lines, so the camera picture stays put; a line too long to fit is cut short with …, and hovering over the readout shows all of it.</li>
@@ -520,7 +514,6 @@
     <dt>level</dt><dd>How well a checkpoint was passed: Lv1 to Lv3.</dd>
     <dt>Keep-In / Keep-Out Zone</dt><dd>Where the robot must stay / where it must not go.</dd>
     <dt>Drive</dt><dd>Flying the robot by hand.</dd>
-    <dt>zero gravity (Zero-g)</dt><dd>The robot floats like on the station; to stop, it has to push the other way.</dd>
     <dt>HUD, the readout</dt><dd>The lines over the picture: where the robot is, which way it faces, and the nearby checkpoint.</dd>
     <dt>log</dt><dd>A short diary of what happened.</dd>
     <dt>quaternion</dt><dd>Four numbers that write an orientation. (<a href="rotations.html#quaternion">Coordinates and rotations</a>)</dd>
@@ -533,5 +526,6 @@
   </footer>
 </div>
 </main>
+<script src="pagenav.js"></script>
 </body>
 </html>

@@ -9,6 +9,7 @@
   <meta name="description" content="Kibo Robot Programming Challenge-এর দুই উড়ন্ত রোবট Int-Ball2 আর Astrobee: তাদের ক্যামেরা, সেন্সর আর অন্যান্য অংশ থ্রিডিতে, ছবি আর লিংকসহ।">
   <link rel="stylesheet" href="vendor/fonts.css">
   <script src="lang.js"></script>
+  <link rel="stylesheet" href="viz.css">
   <style>
     /* Bangla and English side by side: lang.js shows one (Bangla unless English was chosen). */
     html[data-lang="bn"] .en, html[data-lang="en"] .bn { display: none !important; }
@@ -295,7 +296,7 @@
     <div>
       <p>তাহলে রোবট চলে কীভাবে? চাকা কাজ করবে না, কারণ ভাসমান রোবট মেঝেই ছোঁয় না! বেলুনের কথা ভাবো: ফুলিয়ে মুখটা ছেড়ে দিলে বাতাস পেছন দিয়ে বেরোয়, আর বেলুন ছোটে সামনে।</p>
       <p>Int-Ball2-ও তাই করে: এর ভেতরের ছোট ছোট পাখা বাতাস এক দিকে ঠেলে দেয়, আর রোবট সরে যায় উল্টো দিকে। আলাদা আলাদা পাখা চালিয়ে রোবট যেকোনো দিকে সরতে আর ঘুরতে পারে।</p>
-      <p>আরেকটা মজার ব্যাপার: একবার চলতে শুরু করলে রোবট নিজে থেকে প্রায় থামেই না; থামাতে হলে উল্টো দিকে ঠেলতে হয়। <a href="index.html">স্যান্ডবক্সে</a> ড্রাইভ খুলে Zero-g চালু করে নিজে অনুভব করে দেখো!</p>
+      <p>আরেকটা মজার ব্যাপার: একবার চলতে শুরু করলে রোবট নিজে থেকে প্রায় থামেই না; থামাতে হলে উল্টো দিকে ঠেলতে হয়।</p>
     </div>
     <figure>
       <svg viewBox="0 0 300 130" role="img" aria-label="বেলুন আর রোবট: বাতাস এক দিকে বেরোয়, জিনিসটা উল্টো দিকে যায়">
@@ -312,6 +313,7 @@
     </figure>
   </div>
   <div class="try"><span class="tag">নিজে করে দেখো</span>একটা বেলুন ফুলিয়ে মুখ চেপে ধরো, তারপর ছেড়ে দাও। বাতাস কোন দিকে বেরোল, আর বেলুন কোন দিকে ছুটল?</div>
+  <div class="viz" data-viz="thrust"></div>
   <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
     <details><summary>মহাকাশ স্টেশনে চাকাওয়ালা রোবট কেন চলতে পারবে না?</summary><p>চাকা ঘুরে মেঝেতে চাপ দিয়ে এগোয়। কিন্তু ভাসমান রোবট মেঝে ছোঁয় না, তাই চাকা শুধু শূন্যে ঘুরবে।</p></details>
     <details><summary>রোবটকে বাঁয়ে সরাতে পাখাগুলো বাতাস কোন দিকে ঠেলবে?</summary><p>ডানে। বাতাস যেদিকে যায়, রোবট যায় তার উল্টো দিকে।</p></details>
@@ -342,6 +344,7 @@
     </figure>
   </div>
   <p>IMU আর স্টেরিও ক্যামেরা মিলিয়ে রোবট সবসময় জানে সে কোথায় আছে আর কোন দিকে মুখ করে আছে। “কোথায়” আর “কোন দিকে” কীভাবে সংখ্যায় লেখা হয়, তা শিখবে শেখার পথের পরের ধাপে: <a href="rotations.html">স্থানাঙ্ক ও ঘূর্ণন</a>।</p>
+  <div class="viz" data-viz="sight"></div>
   <div class="check"><span class="tag">নিজেকে যাচাই করো</span>
     <details><summary>IMU কী টের পায়?</summary><p>রোবট কতটা ঘুরছে, আর কতটা জোরে গতি বাড়াচ্ছে বা কমাচ্ছে।</p></details>
     <details><summary>পাশাপাশি দুটো ক্যামেরা থাকলে কী সুবিধা?</summary><p>কোন জিনিস কত দূরে, তা বোঝা যায়, ঠিক আমাদের দুই চোখের মতো।</p></details>
@@ -557,7 +560,7 @@
     <div>
       <p>So how does the robot move? Wheels are no use, because a floating robot doesn't even touch the floor! Think of a balloon: blow it up and let go, and the air rushes out of the back while the balloon shoots forward.</p>
       <p>Int-Ball2 does the same: small fans inside it push air one way, and the robot moves the other way. By running different fans, it can move and turn in any direction.</p>
-      <p>Here's a strange thing: once it starts moving, the robot hardly slows down by itself; to stop, it has to push the other way. Open Drive in the <a href="index.html">sandbox</a>, turn on Zero-g and feel it for yourself!</p>
+      <p>Here's a strange thing: once it starts moving, the robot hardly slows down by itself; to stop, it has to push the other way.</p>
     </div>
     <figure>
       <svg viewBox="0 0 300 130" role="img" aria-label="A balloon and the robot: air goes one way, the object goes the other way">
@@ -574,6 +577,7 @@
     </figure>
   </div>
   <div class="try"><span class="tag">Try it yourself</span>Blow up a balloon, pinch the neck, then let go. Which way did the air rush out, and which way did the balloon fly?</div>
+  <div class="viz" data-viz="thrust"></div>
   <div class="check"><span class="tag">Check yourself</span>
     <details><summary>Why can't a robot with wheels move around the space station?</summary><p>Wheels move by pushing against the floor. A floating robot doesn't touch the floor, so the wheels would just spin in the air.</p></details>
     <details><summary>To move the robot to the left, which way do the fans push the air?</summary><p>To the right. The robot always goes the opposite way to the air.</p></details>
@@ -604,6 +608,7 @@
     </figure>
   </div>
   <p>Using the IMU and the stereo camera together, the robot always knows where it is and which way it faces. How "where" and "which way" are written as numbers is the next step on the learning path: <a href="rotations.html">Coordinates and rotations</a>.</p>
+  <div class="viz" data-viz="sight"></div>
   <div class="check"><span class="tag">Check yourself</span>
     <details><summary>What does the IMU feel?</summary><p>How much the robot turns, and how hard it speeds up or slows down.</p></details>
     <details><summary>Why is it useful to have two cameras side by side?</summary><p>They show how far away things are, just like our two eyes.</p></details>
@@ -1017,5 +1022,7 @@
   show(/astrobee/i.test(location.hash) ? 'ab' : 'ib2');
 })();
 </script>
+<script src="viz.js"></script>
+<script src="pagenav.js"></script>
 </body>
 </html>
